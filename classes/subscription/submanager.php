@@ -76,17 +76,17 @@ class submanager {
      *
      * @param int $subid
      * @param string $subname
-     * @param mixed $apps
+     * @param mixed $plugins
      * @param mixed $note
      * @return bool|int
      */
-    public static function create_sub($subid, $subname, $apps, $note) {
+    public static function create_sub($subid, $subname, $plugins, $note) {
         global $DB;
 
         // Add the sub.
         $thesub = new \stdClass;
         $thesub->name = $subname;
-        $thesub->plugins = $apps;
+        $thesub->plugins = $plugins;
         $thesub->note = $note;
         $thesub->timemodified = time();
 

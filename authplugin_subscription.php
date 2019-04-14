@@ -26,7 +26,7 @@ require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 use \local_ltsauthplugin\subscription\submanager;
-use \local_ltsauthplugin\subscription\appmanager;
+use \local_ltsauthplugin\subscription\pluginmanager;
 
 admin_externalpage_setup('ltsauthplugin/authplugin_subscription');
 $PAGE->set_title(get_string('authplugin_subscription', 'local_ltsauthplugin'));
@@ -38,7 +38,7 @@ $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 echo $renderer->header(get_string('authplugin_subscription', 'local_ltsauthplugin'), 2);
 
 $subs = submanager::get_subs();
-$plugins = appmanager::get_plugins();
+$plugins = pluginmanager::get_plugins();
 echo $renderer->add_sub_link();
 echo $renderer->show_subs_list($subs);
 echo $renderer->add_plugin_link();

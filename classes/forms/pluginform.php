@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * class appform
+ * class pluginform
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
  * @author    Justin Hunt
@@ -27,21 +27,21 @@ namespace local_ltsauthplugin\forms;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class appform
+ * Class pluginform
  *
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
  * @author    Justin Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class appform extends baseform {
+class pluginform extends baseform {
 
     /**
      * Custom definition
      */
     public function custom_definition() {
-        // App.
-        $this->_form->addElement('text', 'name', get_string('appname', 'local_ltsauthplugin'));
+        // Plugin name.
+        $this->_form->addElement('text', 'name', get_string('ltspluginname', 'local_ltsauthplugin'));
         $this->_form->setType('name', PARAM_TEXT);
         $this->_form->setDefault('name', '');
         // Notes.

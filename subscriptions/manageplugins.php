@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Action for adding/editing an app.
+ * Action for adding/editing a plugin.
  *
  * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst,
  * then iii) usersite eg fbquestion, then iv) create a capability
@@ -29,8 +29,8 @@ require_once("../../../config.php");
 require_once($CFG->libdir . '/adminlib.php');
 
 use \local_ltsauthplugin\constants;
-use \local_ltsauthplugin\subscription\appmanager;
-use \local_ltsauthplugin\forms\appform;
+use \local_ltsauthplugin\subscription\pluginmanager;
+use \local_ltsauthplugin\forms\pluginform;
 
 global $USER, $DB;
 
@@ -38,7 +38,7 @@ global $USER, $DB;
 $id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
-$url = new moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php', array('id' => $id));
+$url = new moodle_url('/local/ltsauthplugin/subscriptions/manageplugins.php', array('id' => $id));
 admin_externalpage_setup('ltsauthplugin/authplugin_subscription', '', null, $url);
 
 $PAGE->set_title(get_string('addedititem', 'local_ltsauthplugin'));
@@ -48,7 +48,7 @@ $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 if ($id) {
     $item = $DB->get_record(constants::PLUGIN_TABLE, array('id' => $id), '*');
     if (!$item) {
-        print_error('could not find item of app id:' . $id);
+        print_error('could not find item of plugin id:' . $id);
     }
     $edit = true;
 } else {
@@ -63,7 +63,7 @@ if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('plugins', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
     echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->name),
-        new moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php', array('action' => 'delete', 'id' => $id)),
+        new moodle_url('/local/ltsauthplugin/subscriptions/manageplugins.php', array('action' => 'delete', 'id' => $id)),
         $redirecturl);
     echo $renderer->footer();
     return;
@@ -71,16 +71,16 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = appmanager::delete_plugin($item->name);
+    $success = pluginmanager::delete_plugin($item->name);
     if (!$success) {
-        print_error("Could not delete authplugin app!");
+        print_error("Could not delete authplugin plugin!");
         redirect($redirecturl);
     }
     redirect($redirecturl);
 }
 
 // Create the app form.
-$mform = new appform();
+$mform = new pluginform();
 
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
@@ -100,20 +100,20 @@ if ($data = $mform->get_data()) {
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = appmanager::create_plugin($theitem->name, $theitem->note);
+        $ret = pluginmanager::create_plugin($theitem->name, $theitem->note);
         if (!$ret) {
-            print_error("Could not insert authplugin app!");
+            print_error("Could not insert authplugin plugin!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
         if ($data->name != $item->name) {
-            print_error("I am sorry but you can not edit the app name. Delete and remake it. ");
+            print_error("I am sorry but you can not edit the plugin name. Delete and remake it. ");
             redirect($redirecturl);
         } else {
-            $ret = appmanager::update_plugin($theitem->name, $theitem->note);
+            $ret = pluginmanager::update_plugin($theitem->name, $theitem->note);
             if (!$ret) {
-                print_error("Could not update authplugin app!");
+                print_error("Could not update authplugin plugin!");
                 redirect($redirecturl);
             }
         }

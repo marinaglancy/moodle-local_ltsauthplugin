@@ -363,11 +363,11 @@ class renderer extends \plugin_renderer_base {
     public function add_plugin_link() {
         global $CFG;
 
-        $output = $this->output->heading(get_string("showapps", "local_ltsauthplugin"), 4);
+        $output = $this->output->heading(get_string("showplugins", "local_ltsauthplugin"), 4);
          $links = array();
 
-        $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php', array());
-        $links[] = \html_writer::link($additemurl, get_string('addnewapp', 'local_ltsauthplugin'));
+        $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageplugins.php', array());
+        $links[] = \html_writer::link($additemurl, get_string('addnewplugin', 'local_ltsauthplugin'));
 
         return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
     }
@@ -382,14 +382,14 @@ class renderer extends \plugin_renderer_base {
         global $DB;
 
         if (!$items) {
-            return $this->output->heading(get_string('noapps', 'local_ltsauthplugin'), 3, 'main');
+            return $this->output->heading(get_string('noplugins', 'local_ltsauthplugin'), 3, 'main');
         }
 
         $table = new \html_table();
-        $table->id = 'local_ltsauthplugin_appsitempanel';
+        $table->id = 'local_ltsauthplugin_pluginsitempanel';
         $table->head = array(
             'ID',
-            get_string('appname', 'local_ltsauthplugin'),
+            get_string('ltspluginname', 'local_ltsauthplugin'),
             get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
@@ -415,14 +415,14 @@ class renderer extends \plugin_renderer_base {
             $notecell = new \html_table_cell($item->note);
             $row->cells[] = $notecell;
 
-            $itemactionurl = '/local/ltsauthplugin/subscriptions/manageapps.php';
+            $itemactionurl = '/local/ltsauthplugin/subscriptions/manageplugins.php';
             $itemediturl = new \moodle_url($itemactionurl, array('id' => $item->id));
-            $itemeditlink = \html_writer::link($itemediturl, get_string('editapp', 'local_ltsauthplugin'));
+            $itemeditlink = \html_writer::link($itemediturl, get_string('editplugin', 'local_ltsauthplugin'));
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
             $itemdeleteurl = new \moodle_url($itemactionurl, array('id' => $item->id, 'action' => 'confirmdelete'));
-            $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteapp', 'local_ltsauthplugin'));
+            $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteplugin', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);
             $row->cells[] = $itemdeletecell;
 

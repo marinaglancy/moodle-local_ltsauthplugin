@@ -32,7 +32,7 @@ if ($hassiteconfig ) {
     $settings = new admin_settingpage('local_ltsauthplugin', get_string('authpluginsettings', 'local_ltsauthplugin'));
     $ADMIN->add('localplugins', $settings );
 
-    $ADMIN->add('root', new admin_category('ltsauthplugin', new lang_string('pluginname', 'local_ltsauthplugin')));
+    $ADMIN->add('root', new admin_category('ltsauthplugin', new lang_string('ltspluginname', 'local_ltsauthplugin')));
     $ADMIN->add('ltsauthplugin', new admin_externalpage('ltsauthplugin/authplugin_user',
         new lang_string('authplugin_user', 'local_ltsauthplugin'),
         new moodle_url('/local/ltsauthplugin/authplugin_user.php')));

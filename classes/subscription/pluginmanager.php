@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * class appmanager
+ * class pluginmanager
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
  * @author    Justin Hunt
@@ -36,9 +36,9 @@ use \local_ltsauthplugin\constants;
  * @author    Justin Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class appmanager {
+class pluginmanager {
     /**
-     * Delete an app
+     * Delete a plugin
      *
      * @param string $pluginname
      */
@@ -48,7 +48,7 @@ class appmanager {
     }
 
     /**
-     * Get a  particular app
+     * Get a  particular plugin
      *
      * @param string $pluginname
      */
@@ -58,7 +58,7 @@ class appmanager {
     }
 
     /**
-     * Get a  particular app
+     * Get a  particular plugin
      */
     public static function get_plugins() {
         global $DB;
@@ -66,7 +66,7 @@ class appmanager {
     }
 
     /**
-     * Create a new app
+     * Create a new plugin
      *
      * @param string $pluginname
      * @param string $note
@@ -74,13 +74,13 @@ class appmanager {
     public static function create_plugin($pluginname, $note) {
         global $DB;
 
-        // Make sure we do not already have this app. And if so, just update it.
+        // Make sure we do not already have this plugin. And if so, just update it.
         $theplugin = $DB->get_record(constants::PLUGIN_TABLE, ['name' => $pluginname]);
         if ($theplugin) {
-            throw new \moodle_exception('App with this name already exists');
+            throw new \moodle_exception('Plugin with this name already exists');
         }
 
-        // Add the app.
+        // Add the plugin.
         $theplugin = new \stdClass;
         $theplugin->name = $pluginname;
         $theplugin->note = $note;
@@ -92,16 +92,16 @@ class appmanager {
     }
 
     /**
-     * Update app
+     * Update plugin
      *
-     * @param string $appname
+     * @param string $pluginname
      * @param string $note
      * @return bool
      */
-    public static function update_plugin($appname, $note) {
+    public static function update_plugin($pluginname, $note) {
         global $DB;
 
-        $theplugin = $DB->get_record(constants::PLUGIN_TABLE, ['name' => $appname]);
+        $theplugin = $DB->get_record(constants::PLUGIN_TABLE, ['name' => $pluginname]);
         if (!$theplugin) {
             return false;
         }

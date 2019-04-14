@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class usermanager
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\user;
 
 defined('MOODLE_INTERNAL') || die();
@@ -24,7 +32,6 @@ require_once($CFG->dirroot . '/user/lib.php');
 use \local_ltsauthplugin\constants;
 
 /**
- *
  * This is a class containing functions for sending authplugins
  *
  * @package   local_ltsauthplugin

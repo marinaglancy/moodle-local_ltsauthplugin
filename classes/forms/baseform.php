@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class baseform
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\forms;
 
 defined('MOODLE_INTERNAL') || die();
@@ -25,7 +33,6 @@ require_once($CFG->libdir . '/formslib.php');
  *
  * This is the abstract class that add item type forms must extend.
  *
- * @abstract
  * @copyright  2018 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,6 +46,11 @@ abstract class baseform extends \moodleform {
     public function custom_definition() {
     }
 
+    /**
+     * set user field
+     * @param string $fieldname
+     * @param string $fieldlabel
+     */
     public function set_users_field($fieldname, $fieldlabel) {
         global $DB;
         $users = $DB->get_records_sql_menu('SELECT id,username FROM {user}', array());
@@ -46,6 +58,11 @@ abstract class baseform extends \moodleform {
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
+    /**
+     * set subs field
+     * @param string $fieldname
+     * @param string $fieldlabel
+     */
     public function set_subs_field($fieldname, $fieldlabel) {
         global $DB;
         $subs = $DB->get_records_sql_menu('SELECT subscriptionid, subscriptionname FROM {local_ltsauthplugin_subs}', array());
@@ -53,6 +70,11 @@ abstract class baseform extends \moodleform {
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
+    /**
+     * set apps field
+     * @param string $fieldname
+     * @param string $fieldlabel
+     */
     public function set_apps_field($fieldname, $fieldlabel) {
         global $DB;
         $apps = $DB->get_records_sql_menu('SELECT appid, appname FROM {local_ltsauthplugin_apps}', array());
@@ -86,6 +108,8 @@ abstract class baseform extends \moodleform {
      * This can be used to process an immediate action if required. Currently it
      * is only used in special cases by non-standard item types.
      *
+     * @param int $itemid
+     * @param string $authplugin
      * @return bool
      */
     public function construction_override($itemid, $authplugin) {

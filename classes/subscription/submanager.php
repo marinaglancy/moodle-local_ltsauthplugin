@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class submanager
+ *
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\subscription;
 
 defined('MOODLE_INTERNAL') || die();
@@ -31,7 +40,9 @@ use \local_ltsauthplugin\constants;
 class submanager {
 
     /**
-     * Delete a usersite
+     * Delete sub
+     * @param int $subscriptionid
+     * @return array
      */
     public static function delete_sub($subscriptionid) {
         global $DB;
@@ -41,6 +52,8 @@ class submanager {
 
     /**
      * Get a  particular subscription
+     * @param int $subscriptionid
+     * @return array
      */
     public static function get_sub($subscriptionid) {
         global $DB;
@@ -50,6 +63,7 @@ class submanager {
 
     /**
      * Get a  particular subscription
+     * @return array
      */
     public static function get_subs() {
         global $DB;
@@ -59,6 +73,12 @@ class submanager {
 
     /**
      * Create a new subscription
+     *
+     * @param int $subid
+     * @param string $subname
+     * @param mixed $apps
+     * @param mixed $wildcard
+     * @return bool|int
      */
     public static function create_sub($subid, $subname, $apps, $wildcard) {
         global $DB;
@@ -82,6 +102,15 @@ class submanager {
         return $ret;
     }
 
+    /**
+     * update sub
+     *
+     * @param int $subid
+     * @param string $subname
+     * @param array $apps
+     * @param mixed $wildcard
+     * @return bool
+     */
     public static function update_sub($subid, $subname, $apps, $wildcard) {
         global $DB;
 

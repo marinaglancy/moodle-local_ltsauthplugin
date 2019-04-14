@@ -17,10 +17,10 @@
 /**
  * Provides the interface for overall managing of items
  *
- * @package mod_authplugin
+ * @package    local_ltsauthplugin
  * @copyright  2018 Justin Hunt  {@link http://poodll.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- **/
+ */
 
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');

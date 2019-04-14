@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class appmanager
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\subscription;
 
 defined('MOODLE_INTERNAL') || die();
@@ -21,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 use \local_ltsauthplugin\constants;
 
 /**
- *
  * This is a class containing functions for storing info about apps
  *
  * @package   local_ltsauthplugin
@@ -32,6 +39,7 @@ use \local_ltsauthplugin\constants;
 class appmanager {
     /**
      * Delete a usersite
+     * @param int $appid
      */
     public static function delete_app($appid) {
         global $DB;
@@ -61,6 +69,8 @@ class appmanager {
 
     /**
      * Create a new app
+     * @param int $appid
+     * @param string $appname
      */
     public static function create_app($appid, $appname) {
         global $DB;

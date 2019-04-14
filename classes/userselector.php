@@ -14,17 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class userselector
+ *
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../../../user/selector/lib.php');
 
-/*
- * This class displays either all the Moodle users allowed to use a service,
- * either all the other Moodle users.
+/**
+ * This class displays either all the Moodle users allowed to use a service, or all other Moodle users.
+ *
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class userselector extends \user_selector_base {
     /** @var boolean Whether the conrol should allow selection of many users, or just one. */
     protected $multiselect = false;
@@ -34,8 +46,7 @@ class userselector extends \user_selector_base {
     /**
      * Find allowed or not allowed users of a service (depend of $this->displayallowedusers)
      *
-     * @global object $DB
-     * @param <type> $search
+     * @param string $search
      * @return array
      */
     public function find_users($search) {
@@ -70,8 +81,7 @@ class userselector extends \user_selector_base {
     /**
      * This options are automatically used by the AJAX search
      *
-     * @global object $CFG
-     * @return object options pass to the constructor when AJAX search call a new selector
+     * @return array options pass to the constructor when AJAX search call a new selector
      */
     protected function get_options() {
         global $CFG;

@@ -14,11 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class usersiteform
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\forms;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Class usersiteform
+ *
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class usersiteform extends baseform {
+    /**
+     * Custom definition
+     */
     public function custom_definition() {
         $this->_form->addElement('hidden', 'userid');
         $this->_form->setType('userid', PARAM_INT);

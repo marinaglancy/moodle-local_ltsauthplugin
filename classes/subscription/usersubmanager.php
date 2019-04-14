@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class usersubmanager
+ *
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\subscription;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,6 +41,10 @@ class usersubmanager {
 
     /**
      * Delete a usersubscription
+     *
+     * @param int $userid
+     * @param int $subscriptionid
+     * @return bool
      */
     public static function delete_usersub($userid, $subscriptionid) {
         global $DB;
@@ -41,6 +54,10 @@ class usersubmanager {
 
     /**
      * Create a  particular user subscriptions
+     *
+     * @param int $userid
+     * @param int $subscriptionid
+     * @return \stdClass
      */
     public static function get_usersub($userid, $subscriptionid) {
         global $DB;
@@ -50,6 +67,8 @@ class usersubmanager {
 
     /**
      * Create a  particular user subscriptions
+     * @param int $userid
+     * @return array
      */
     public static function get_usersubs_apps($userid) {
         global $DB;
@@ -65,6 +84,8 @@ class usersubmanager {
 
     /**
      * Create a users subscriptions
+     * @param int $userid
+     * @return array|false
      */
     public static function get_usersubs($userid) {
         global $DB;
@@ -78,6 +99,12 @@ class usersubmanager {
         return $ret;
     }
 
+    /**
+     * get usersubs for display
+     *
+     * @param int $userid
+     * @return array|bool
+     */
     public static function get_usersubs_fordisplay($userid) {
         global $DB;
         $ret = false;
@@ -97,6 +124,10 @@ class usersubmanager {
 
     /**
      * Create a users subscriptions
+     *
+     * @param int $userid
+     * @param int $subscriptionid
+     * @return \stdClass|false
      */
     public static function get_usersub_by_subscriptionid($userid, $subscriptionid) {
         global $DB;
@@ -109,6 +140,11 @@ class usersubmanager {
         return $ret;
     }
 
+    /**
+     * get auth plugin user by username
+     * @param string $username
+     * @return mixed
+     */
     public static function get_authpluginuser_by_username($username) {
         global $DB;
 
@@ -119,6 +155,8 @@ class usersubmanager {
 
     /**
      * Create a users subscriptions
+     *
+     * @param string $username
      */
     public static function get_usersubs_by_username($username) {
         $ret = false;
@@ -132,6 +170,12 @@ class usersubmanager {
 
     /**
      * Create a new usersubscription
+     *
+     * @param int $subid
+     * @param int $transid
+     * @param int $expiredate
+     * @param bool $userid
+     * @return bool|int
      */
     public static function create_usersub($subid = 0, $transid = 0, $expiredate = 0, $userid = false) {
         global $DB, $USER;
@@ -161,6 +205,15 @@ class usersubmanager {
         return $ret;
     }
 
+    /**
+     * update user sub
+     *
+     * @param int $subscriptionid
+     * @param int $transactionid
+     * @param int $expiredate
+     * @param int $userid
+     * @return bool
+     */
     public static function update_usersub($subscriptionid, $transactionid, $expiredate, $userid) {
         global $DB;
 

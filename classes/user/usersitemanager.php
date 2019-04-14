@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class usersitemanager
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\user;
 
 defined('MOODLE_INTERNAL') || die();
@@ -95,6 +103,8 @@ class usersitemanager {
     }
 
     /**
+     * get user by username
+     *
      * @param string $username
      * @return mixed
      */
@@ -142,12 +152,12 @@ class usersitemanager {
     /**
      * Get all a user urls
      *
-     * @param $username
-     * @param $url1
-     * @param $url2
-     * @param $url3
-     * @param $url4
-     * @param $url5
+     * @param string $username
+     * @param string $url1
+     * @param string $url2
+     * @param string $url3
+     * @param string $url4
+     * @param string $url5
      * @return bool
      */
     public static function update_usersites_by_username($username, $url1, $url2, $url3, $url4, $url5) {
@@ -185,7 +195,7 @@ class usersitemanager {
     /**
      * Create a new usersite
      *
-     * @param $url
+     * @param string $url
      * @param bool $userid
      * @return bool|int
      */
@@ -212,6 +222,14 @@ class usersitemanager {
         return $ret;
     }
 
+    /**
+     * update usersite
+     *
+     * @param int $id
+     * @param string $url
+     * @param int $userid
+     * @return bool
+     */
     public static function update_usersite($id, $url, $userid) {
         global $DB;
 

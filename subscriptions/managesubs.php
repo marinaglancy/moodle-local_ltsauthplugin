@@ -16,13 +16,14 @@
 
 /**
  * Action for adding/editing a subscription.
+ *
  * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst,
  * then iii) usersite eg fbquestion, then iv) create a capability
  *
  * @package local_ltsauthplugin
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- **/
+ */
 
 require_once("../../../config.php");
 require_once($CFG->libdir . '/adminlib.php');

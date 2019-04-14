@@ -14,29 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * class renderer
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace local_ltsauthplugin\output;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class renderer
- *
- * @package local_ltsauthplugin
+ * class renderer
+ * @package   local_ltsauthplugin
+ * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
+ * @author    Justin Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends \plugin_renderer_base {
 
     /**
-     * Return HTML to display add first page links
-     *
-     * @param lesson $lesson
+     * User selection form.
+     * @param \user_selector_base $userselector
      * @return string
      */
-    public function say_hello() {
-
-        return "say hello";
-    }
-
-    // User selection form.
     public function user_selection_form(\user_selector_base $userselector) {
         $output = '';
         $formattributes = array();
@@ -59,6 +62,13 @@ class renderer extends \plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * show user summary
+     *
+     * @param \stdClass $selecteduser
+     * @param \stdClass $authpluginuser
+     * @return string
+     */
     public function show_user_summary($selecteduser, $authpluginuser) {
         global $DB;
 
@@ -110,6 +120,12 @@ class renderer extends \plugin_renderer_base {
         return $output . \html_writer::table($table);
     }
 
+    /**
+     * add siteitem link
+     *
+     * @param \stdClass $selecteduser
+     * @return string
+     */
     public function add_siteitem_link($selecteduser) {
         global $CFG;
 
@@ -126,8 +142,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of homeworks for a group  / course
      *
-     * @param array homework objects
-     * @param integer $courseid
+     * @param array $items
      * @return string html of table
      */
     public function show_siteitems_list($items) {
@@ -181,6 +196,12 @@ class renderer extends \plugin_renderer_base {
         return \html_writer::table($table);
     }
 
+    /**
+     * add subs item link
+     *
+     * @param \stdClass $selecteduser
+     * @return string
+     */
     public function add_subsitem_link($selecteduser) {
         global $CFG;
 
@@ -197,8 +218,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of subscriptions for a user
      *
-     * @param array usersub objects
-     * @param integer $courseid
+     * @param array $items
      * @return string html of table
      */
     public function show_subsitems_list($items) {
@@ -264,7 +284,7 @@ class renderer extends \plugin_renderer_base {
         return \html_writer::table($table);
     }
 
-    /*
+    /**
      * Show the add subscription button
      */
     public function add_sub_link() {
@@ -282,8 +302,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of subscriptions
      *
-     * @param array usersub objects
-     * @param integer $courseid
+     * @param array $items
      * @return string html of table
      */
     public function show_subs_list($items) {
@@ -348,7 +367,7 @@ class renderer extends \plugin_renderer_base {
         return \html_writer::table($table);
     }
 
-    /*
+    /**
      * Show the add subscription button
      */
     public function add_app_link() {

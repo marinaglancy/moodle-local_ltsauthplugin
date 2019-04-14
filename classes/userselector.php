@@ -1,32 +1,43 @@
 <?php
-/*
-*  LOCAL CPAPI
-*
- *  @author  Justin Hunt
-*  @version $Id: extension.php 162 2012-12-03 07:03:42Z malu $
- */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_ltsauthplugin;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__.'/../../../user/selector/lib.php';
+require_once __DIR__ . '/../../../user/selector/lib.php';
 
 /*
  * This class displays either all the Moodle users allowed to use a service,
  * either all the other Moodle users.
  */
+
 class userselector extends \user_selector_base {
     /** @var boolean Whether the conrol should allow selection of many users, or just one. */
     protected $multiselect = false;
     /** @var int The height this control should have, in rows. */
     protected $rows = 5;
+
     public function __construct($name, $options) {
         parent::__construct($name, $options);
     }
 
     /**
      * Find allowed or not allowed users of a service (depend of $this->displayallowedusers)
+     *
      * @global object $DB
      * @param <type> $search
      * @return array
@@ -36,7 +47,7 @@ class userselector extends \user_selector_base {
         //by default wherecondition retrieves all users except the deleted, not
         //confirmed and guest
         list($wherecondition, $params) = $this->search_sql($search, 'u');
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
         $sql = " FROM {user} u
                  WHERE $wherecondition
@@ -63,6 +74,7 @@ class userselector extends \user_selector_base {
 
     /**
      * This options are automatically used by the AJAX search
+     *
      * @global object $CFG
      * @return object options pass to the constructor when AJAX search call a new selector
      */

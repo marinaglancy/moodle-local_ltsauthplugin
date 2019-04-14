@@ -20,132 +20,142 @@ defined('MOODLE_INTERNAL') || die();
 
 use \local_ltsauthplugin\constants;
 
-
 /**
  *
  * This is a class containing functions for sending authplugins
+ *
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
  * @author    Justin Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class usersitemanager
-{
+class usersitemanager {
 
-
-    /*
+    /**
      * Delete a usersite
      *
-     *
-     *
+     * @param int $siteid
+     * @return bool
      */
     public static function delete_usersite($siteid) {
         global $DB;
-        $ret = $DB->delete_records(constants::USERSITE_TABLE, array('id'=>$siteid));
+        $ret = $DB->delete_records(constants::USERSITE_TABLE, array('id' => $siteid));
         return $ret;
     }
 
-    /*
-    * Create a  particular user sites
-    *
-    *
-    *
-    */
+    /**
+     * Create a  particular user sites
+     *
+     * @param int $id
+     * @return mixed
+     */
     public static function get_usersite($id) {
         global $DB;
-        $site = $DB->get_record(constants::USERSITE_TABLE, array('id'=>$id));
+        $site = $DB->get_record(constants::USERSITE_TABLE, array('id' => $id));
         return $site;
     }
 
-    /*
+    /**
      * Create a users sites
      *
-     *
-     *
+     * @param int $userid
+     * @return array|bool
      */
     public static function get_usersites($userid) {
         global $DB;
         $ret = false;
 
-        $sites = $DB->get_records(constants::USERSITE_TABLE, array('userid'=>$userid));
-        if($sites){
+        $sites = $DB->get_records(constants::USERSITE_TABLE, array('userid' => $userid));
+        if ($sites) {
             return $sites;
         }
 
         return $ret;
     }
 
-    /*
-   * Get a list of user sites ready for display
-   *
-   *
-   *
-   */
+    /**
+     * Get a list of user sites ready for display
+     *
+     * @param int $userid
+     * @return array|bool
+     */
     public static function get_usersites_fordisplay($userid) {
         global $DB;
         $ret = false;
 
         $sites = $DB->get_records_sql('SELECT ust.*, u.username FROM {' . constants::USERSITE_TABLE . '} ust INNER JOIN {user} u ON u.id = ust.userid WHERE userid = ?'
-        , array($userid));
+            , array($userid));
 
-        if($sites){
+        if ($sites) {
             return $sites;
         }
 
         return $ret;
     }
 
-    public static function get_authpluginuser_by_username($username){
+    /**
+     * @param string $username
+     * @return mixed
+     */
+    public static function get_authpluginuser_by_username($username) {
         global $DB;
 
         $authplugin_user = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE .
-                "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;",array($username));
+            "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;", array($username));
         return $authplugin_user;
     }
 
-    /*
-    * Create a users sites
-    *
-    *
-    *
-    */
-    public static function get_usersites_by_username($username)
-    {
-        $ret=false;
+    /**
+     * Create a users sites
+     *
+     * @param string $username
+     * @return array|bool
+     */
+    public static function get_usersites_by_username($username) {
+        $ret = false;
 
         $authplugin_user = self::get_authpluginuser_by_username($username);
-        if($authplugin_user){
+        if ($authplugin_user) {
             $ret = self::get_usersites($authplugin_user->userid);
         }
         return $ret;
     }
 
-    /*
+    /**
      * Get all a user urls
      *
+     * @param int $userid
+     * @return array
      */
     public static function get_userurls($userid) {
         $urls = array();
         $sites = self::get_usersites($userid);
-        if($sites){
-            foreach($sites as $site){
+        if ($sites) {
+            foreach ($sites as $site) {
                 $urls[] = $site->url1;
             }
         }
         return $urls;
     }
 
-    /*
+    /**
      * Get all a user urls
      *
+     * @param $username
+     * @param $url1
+     * @param $url2
+     * @param $url3
+     * @param $url4
+     * @param $url5
+     * @return bool
      */
-    public static function update_usersites_by_username($username,$url1,$url2,$url3,$url4,$url5) {
+    public static function update_usersites_by_username($username, $url1, $url2, $url3, $url4, $url5) {
 
         global $DB;
         $ret = false;
         //remove all the sites
         $usersites = self::get_usersites_by_username($username);
-        if($usersites) {
+        if ($usersites) {
             foreach ($usersites as $usersite) {
                 self::delete_usersite($usersite->id);
             }
@@ -153,34 +163,39 @@ class usersitemanager
 
         //Re-register all the valid looking URLs
         $authplugin_user = self::get_authpluginuser_by_username($username);
-        if(!$authplugin_user){return $ret;}
-        $urls = array($url1,$url2,$url3,$url4,$url5);
-        foreach($urls as $url){
-            if(empty($url)){continue;}
-            $url =trim($url);
+        if (!$authplugin_user) {
+            return $ret;
+        }
+        $urls = array($url1, $url2, $url3, $url4, $url5);
+        foreach ($urls as $url) {
+            if (empty($url)) {
+                continue;
+            }
+            $url = trim($url);
             $url = strtolower($url);
-            if(strpos($url,'http')===0) {
+            if (strpos($url, 'http') === 0) {
                 self::create_usersite($url, $authplugin_user->userid);
             }
         }
-        $ret =true;
+        $ret = true;
         return $ret;
     }
 
-    /*
+    /**
      * Create a new usersite
      *
-     *
-     *
+     * @param $url
+     * @param bool $userid
+     * @return bool|int
      */
-    public static function create_usersite($url,$userid=false) {
+    public static function create_usersite($url, $userid = false) {
         global $DB, $USER;
         $ret = false;
 
         //if the userid was not passed in, then we use the current user
         //this will be when added from webservice
-        if(!$userid){
-            $userid=$USER->id;
+        if (!$userid) {
+            $userid = $USER->id;
         }
 
         $thesite = new \stdClass;
@@ -188,19 +203,19 @@ class usersitemanager
         $thesite->url1 = $url;
         $thesite->wildcardok = 0;
         $thesite->expiredate = 0;
-        $thesite->timemodified=time();
+        $thesite->timemodified = time();
 
-        $thesite->id = $DB->insert_record(constants::USERSITE_TABLE,$thesite);
+        $thesite->id = $DB->insert_record(constants::USERSITE_TABLE, $thesite);
         $ret = $thesite->id;
 
         return $ret;
     }
 
-    public static function update_usersite($id, $url,$userid) {
+    public static function update_usersite($id, $url, $userid) {
         global $DB;
 
         //It should not be possible to not pass in a userid here
-        if(!$userid){
+        if (!$userid) {
             return false;
         }
 
@@ -210,12 +225,11 @@ class usersitemanager
         $thesite->userid = $userid;
         $thesite->url1 = $url;
         $thesite->wildcardok = 0;
-        $thesite->expiredate =0;
-        $thesite->timemodified=time();
+        $thesite->expiredate = 0;
+        $thesite->timemodified = time();
 
         //execute updaet and return
-        $ret = $DB->update_record(constants::USERSITE_TABLE,$thesite);
+        $ret = $DB->update_record(constants::USERSITE_TABLE, $thesite);
         return $ret;
     }
-
 }

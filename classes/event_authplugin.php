@@ -21,15 +21,14 @@ defined('MOODLE_INTERNAL') || die();
 use local_ltsauthplugin\user\usermanager;
 
 /**
- *
  * This is a class responding to Moodle create user events
+ *
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
  * @author    Justin Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class event_authplugin
-{
+class event_authplugin {
 
     /**
      * authplugin the event
@@ -38,29 +37,28 @@ class event_authplugin
      *
      *
      */
-    public static function create_user_handler($event)
-    {
+    public static function create_user_handler($event) {
         //get the event data.
         $event_data = $event->get_data();
 
-                try {
-                    //user data
-                    $userid=false;
-                    if(array_key_exists('relateduserid', $event_data)){
-                        $userid = $event_data['relateduserid'];
-                        $event_data['userid'] = $userid;
-                    }elseif(array_key_exists('userid', $event_data)){
-                        $userid = $event_data['userid'];
-                    }
-                    if ($userid) {
-                        $exists = usermanager::user_exists($userid);
-                        if(!$exists){
-                            $success = usermanager::create_user(0,$userid,"",0);
-                        }
-                    }
-
-                } catch (\Exception $error) {
-                    debugging("fetching user error for authplugin request  failed with error: " . $error->getMessage(), DEBUG_ALL);
+        try {
+            //user data
+            $userid = false;
+            if (array_key_exists('relateduserid', $event_data)) {
+                $userid = $event_data['relateduserid'];
+                $event_data['userid'] = $userid;
+            } elseif (array_key_exists('userid', $event_data)) {
+                $userid = $event_data['userid'];
+            }
+            if ($userid) {
+                $exists = usermanager::user_exists($userid);
+                if (!$exists) {
+                    $success = usermanager::create_user(0, $userid, "", 0);
                 }
-            }//end of create user handler
+            }
+
+        } catch (\Exception $error) {
+            debugging("fetching user error for authplugin request  failed with error: " . $error->getMessage(), DEBUG_ALL);
+        }
+    }
 }

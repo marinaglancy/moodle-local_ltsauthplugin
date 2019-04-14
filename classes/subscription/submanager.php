@@ -20,97 +20,84 @@ defined('MOODLE_INTERNAL') || die();
 
 use \local_ltsauthplugin\constants;
 
-
 /**
- *
  * This is a class containing functions for storing info about subs
+ *
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
  * @author    Justin Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class submanager
-{
+class submanager {
 
-
-    /*
+    /**
      * Delete a usersite
-     *
-     *
-     *
      */
     public static function delete_sub($subscriptionid) {
         global $DB;
-        $ret = $DB->delete_records(constants::SUB_TABLE, array('subscriptionid'=>$subscriptionid));
+        $ret = $DB->delete_records(constants::SUB_TABLE, array('subscriptionid' => $subscriptionid));
         return $ret;
     }
 
-    /*
-    * Get a  particular subscription
-    *
-    *
-    *
-    */
+    /**
+     * Get a  particular subscription
+     */
     public static function get_sub($subscriptionid) {
         global $DB;
-        $sub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid'=>$subscriptionid));
+        $sub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid' => $subscriptionid));
         return $sub;
     }
 
-    /*
-   * Get a  particular subscription
-   *
-   *
-   *
-   */
+    /**
+     * Get a  particular subscription
+     */
     public static function get_subs() {
         global $DB;
         $sub = $DB->get_records(constants::SUB_TABLE, array());
         return $sub;
     }
 
-    /*
+    /**
      * Create a new subscription
-     *
-     *
-     *
      */
-    public static function create_sub($subid,$subname,$apps,$wildcard) {
+    public static function create_sub($subid, $subname, $apps, $wildcard) {
         global $DB;
 
         //make sure we do not already have this sub. And if so, just update it.
-        $thesub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid'=>$subid));
-        if($thesub){
-            return self::update_sub($subid,$subname,$apps,$wildcard);
+        $thesub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid' => $subid));
+        if ($thesub) {
+            return self::update_sub($subid, $subname, $apps, $wildcard);
         }
 
         //add the sub
         $thesub = new \stdClass;
         $thesub->subscriptionid = $subid;
-        $thesub->subscriptionname= $subname;
-        $thesub->apps= $apps;
-        $thesub->wildcard= $wildcard;
-        $thesub->timemodified=time();
+        $thesub->subscriptionname = $subname;
+        $thesub->apps = $apps;
+        $thesub->wildcard = $wildcard;
+        $thesub->timemodified = time();
 
-        $thesub->id = $DB->insert_record(constants::SUB_TABLE,$thesub);
+        $thesub->id = $DB->insert_record(constants::SUB_TABLE, $thesub);
         $ret = $thesub->id;
         return $ret;
     }
 
-    public static function update_sub($subid,$subname,$apps,$wildcard) {
+    public static function update_sub($subid, $subname, $apps, $wildcard) {
         global $DB;
 
-        $thesub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid'=>$subid));
-        if(!$thesub){return false;}
+        $thesub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid' => $subid));
+        if (!$thesub) {
+            return false;
+        }
 
         //build siteurl object
         $thesub->subscriptionname = $subname;
-        $thesub->apps= $apps;
-        $thesub->wildcard= $wildcard;
-        $thesub->timemodified=time();
+        $thesub->apps = $apps;
+        $thesub->wildcard = $wildcard;
+        $thesub->timemodified = time();
 
         //execute updaet and return
-        $ret = $DB->update_record(constants::SUB_TABLE,$thesub);
+        $ret = $DB->update_record(constants::SUB_TABLE, $thesub);
         return $ret;
     }
 

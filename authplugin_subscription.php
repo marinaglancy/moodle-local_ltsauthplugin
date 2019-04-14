@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,8 +29,8 @@ use \local_ltsauthplugin\subscription\submanager;
 use \local_ltsauthplugin\subscription\appmanager;
 
 admin_externalpage_setup('ltsauthplugin/authplugin_subscription');
-$PAGE->set_title(get_string('authplugin_subscription','local_ltsauthplugin'));
-$PAGE->set_heading(get_string('authplugin_subscription','local_ltsauthplugin'));
+$PAGE->set_title(get_string('authplugin_subscription', 'local_ltsauthplugin'));
+$PAGE->set_heading(get_string('authplugin_subscription', 'local_ltsauthplugin'));
 
 // Set up renderer and nav.
 /** @var local_ltsauthplugin\output\renderer $renderer */

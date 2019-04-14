@@ -31,8 +31,8 @@ use \local_ltsauthplugin\user\usersitemanager;
 use \local_ltsauthplugin\user\usermanager;
 
 admin_externalpage_setup('ltsauthplugin/authplugin_user');
-$PAGE->set_title(get_string('authplugin_user','local_ltsauthplugin'));
-$PAGE->set_heading(get_string('authplugin_user','local_ltsauthplugin'));
+$PAGE->set_title(get_string('authplugin_user', 'local_ltsauthplugin'));
+$PAGE->set_heading(get_string('authplugin_user', 'local_ltsauthplugin'));
 
 // Display a selectors so we can update contributor, site and sitecourseid.
 $userselector = new \local_ltsauthplugin\userselector('selecteduser', array());
@@ -41,18 +41,19 @@ $selecteduser = $userselector->get_selected_user();
 // Set up renderer and nav.
 /** @var local_ltsauthplugin\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
-echo $renderer->header(get_string('authplugin_user', 'local_ltsauthplugin'),2);
+echo $renderer->header(get_string('authplugin_user', 'local_ltsauthplugin'), 2);
 echo $renderer->user_selection_form($userselector);
 
-if($selecteduser){
+if ($selecteduser) {
     global $DB;
     $authplugin_user = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
     if (!$authplugin_user) {
-        usermanager::create_user(0, $selecteduser->id,"",0);
+        usermanager::create_user(0, $selecteduser->id, "", 0);
         $authplugin_user = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
-        print_object($authplugin_user);exit;
+        print_object($authplugin_user);
+        exit;
     }
-    if($authplugin_user) {
+    if ($authplugin_user) {
 
         $siteitems = usersitemanager::get_usersites_fordisplay($selecteduser->id);
         $subsitems = usersubmanager::get_usersubs_fordisplay($selecteduser->id);
@@ -63,7 +64,7 @@ if($selecteduser){
         echo $renderer->add_subsitem_link($selecteduser);
         echo $renderer->show_subsitems_list($subsitems, $selecteduser);
     }
-}else{
+} else {
     echo $renderer->heading(get_string('nouserselected', 'local_ltsauthplugin'), 3, 'main');
 }
 

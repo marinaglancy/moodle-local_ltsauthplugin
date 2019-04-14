@@ -1,10 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ishineguy
- * Date: 2018/05/12
- * Time: 23:28
- */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_ltsauthplugin\forms;
 
@@ -26,25 +34,26 @@ abstract class baseform extends \moodleform {
      * Each item type can and should override this to add any custom elements to
      * the basic form that they want
      */
-    public function custom_definition() {}
+    public function custom_definition() {
+    }
 
-    public function setUsersField($fieldname,$fieldlabel){
+    public function setUsersField($fieldname, $fieldlabel) {
         global $DB;
-        $users = $DB->get_records_sql_menu('SELECT id,username FROM {user}',array());
+        $users = $DB->get_records_sql_menu('SELECT id,username FROM {user}', array());
         $this->_form->addElement('select', $fieldname, $fieldlabel, $users);
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
-    public function setSubsField($fieldname,$fieldlabel){
+    public function setSubsField($fieldname, $fieldlabel) {
         global $DB;
-        $subs = $DB->get_records_sql_menu('SELECT subscriptionid, subscriptionname FROM {local_ltsauthplugin_subs}',array());
+        $subs = $DB->get_records_sql_menu('SELECT subscriptionid, subscriptionname FROM {local_ltsauthplugin_subs}', array());
         $this->_form->addElement('select', $fieldname, $fieldlabel, $subs);
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
-    public function setAppsField($fieldname,$fieldlabel){
+    public function setAppsField($fieldname, $fieldlabel) {
         global $DB;
-        $apps = $DB->get_records_sql_menu('SELECT appid, appname FROM {local_ltsauthplugin_apps}',array());
+        $apps = $DB->get_records_sql_menu('SELECT appid, appname FROM {local_ltsauthplugin_apps}', array());
         $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $apps);
         $this->_form->setType($fieldname, PARAM_TEXT);
         $select->setMultiple($fieldname, PARAM_TEXT);
@@ -68,10 +77,7 @@ abstract class baseform extends \moodleform {
 
         //add the action buttons
         $this->add_action_buttons(get_string('cancel'), get_string('saveitem', 'local_ltsauthplugin'));
-
     }
-
-
 
     /**
      * A function that gets called upon init of this object by the calling script.
@@ -81,7 +87,7 @@ abstract class baseform extends \moodleform {
      *
      * @return bool
      */
-    public function construction_override($itemid,  $authplugin) {
+    public function construction_override($itemid, $authplugin) {
         return true;
     }
 }

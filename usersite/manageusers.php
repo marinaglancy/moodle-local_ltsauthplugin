@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -31,32 +30,32 @@ use \local_ltsauthplugin\constants;
 use \local_ltsauthplugin\user\usermanager;
 use \local_ltsauthplugin\forms\userform;
 
-global $USER,$DB;
+global $USER, $DB;
 
 // first get the nfo passed in to set up the page
-$userid = required_param('userid' ,PARAM_INT);
-$id     = optional_param('id', 0,PARAM_INT);         // item id
-$action = optional_param('action','edit',PARAM_TEXT);
+$userid = required_param('userid', PARAM_INT);
+$id = optional_param('id', 0, PARAM_INT);         // item id
+$action = optional_param('action', 'edit', PARAM_TEXT);
 
 $url = new moodle_url('/local/ltsauthplugin/usersite/manageusers.php', ['userid' => $userid, 'id' => $id]);
 admin_externalpage_setup('ltsauthplugin/authplugin_user', '', null, $url);
 
-$PAGE->set_title(get_string('addedituser','local_ltsauthplugin'));
-$PAGE->set_heading(get_string('addedituser','local_ltsauthplugin'));
+$PAGE->set_title(get_string('addedituser', 'local_ltsauthplugin'));
+$PAGE->set_heading(get_string('addedituser', 'local_ltsauthplugin'));
 
 //are we in new or edit mode?
 if ($userid) {
-    $item = $DB->get_record(constants::USER_TABLE, array('userid'=>$userid), '*');
-	if(!$item){
-		print_error('could not find authplugin_user entry of id:' . $id );
-	}
+    $item = $DB->get_record(constants::USER_TABLE, array('userid' => $userid), '*');
+    if (!$item) {
+        print_error('could not find authplugin_user entry of id:' . $id);
+    }
     $edit = true;
 } else {
     $edit = false;
 }
 
 //we always head back to the authplugin items page
-$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser'=>$userid));
+$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $userid));
 
 //get create our user form
 $mform = new userform();
@@ -69,63 +68,63 @@ if ($mform->is_cancelled()) {
 
 //if we have data, then our job here is to save it and return to the quiz edit page
 if ($data = $mform->get_data()) {
-		require_sesskey();
-		
-		$theitem = new stdClass;
-        $theitem->userid = $data->userid;
-        $theitem->resellerid = $data->resellerid;
-        $theitem->awsaccessid = $data->awsaccessid;
-        $theitem->awsaccesssecret = $data->awsaccesssecret;
-        $theitem->timemodified=time();
-		
-		//first insert a new item if we need to
-		//that will give us a itemid, we need that for saving files
-		if(!$edit){
+    require_sesskey();
 
-            $ret  = usermanager::create_user(
-                $data->resellerid,
-                $data->userid,
-                $data->awsaccessid,
-                $data->awsaccesssecret);
+    $theitem = new stdClass;
+    $theitem->userid = $data->userid;
+    $theitem->resellerid = $data->resellerid;
+    $theitem->awsaccessid = $data->awsaccessid;
+    $theitem->awsaccesssecret = $data->awsaccesssecret;
+    $theitem->timemodified = time();
 
-			if (!$ret){
-					print_error("Could not insert authplugin user!");
-					redirect($redirecturl);
-			}
-		}else {
+    //first insert a new item if we need to
+    //that will give us a itemid, we need that for saving files
+    if (!$edit) {
 
-            $ret  = usermanager::update_user($id,
-                $data->resellerid,
-                $data->userid,
-                $data->awsaccessid,
-                $data->awsaccesssecret);
+        $ret = usermanager::create_user(
+            $data->resellerid,
+            $data->userid,
+            $data->awsaccessid,
+            $data->awsaccesssecret);
 
-		    if (!$ret){
-                print_error("Could not update authplugin user!");
-                redirect($redirecturl);
-            }
+        if (!$ret) {
+            print_error("Could not insert authplugin user!");
+            redirect($redirecturl);
         }
+    } else {
 
-		//go back to edit quiz page
-		redirect($redirecturl);
+        $ret = usermanager::update_user($id,
+            $data->resellerid,
+            $data->userid,
+            $data->awsaccessid,
+            $data->awsaccesssecret);
+
+        if (!$ret) {
+            print_error("Could not update authplugin user!");
+            redirect($redirecturl);
+        }
+    }
+
+    //go back to edit quiz page
+    redirect($redirecturl);
 }
 
 
 //if  we got here, there was no cancel, and no form data, so we are showing the form
 //if edit mode load up the item into a data object
 if ($edit) {
-	$data = $item;		
-	$data->id = $item->id;
+    $data = $item;
+    $data->id = $item->id;
     $data->userid = $userid;
 
     $mform->set_data($data);
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
-    echo $renderer->header( get_string('edit', 'local_ltsauthplugin'));
+    echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));
     $mform->display();
     echo $renderer->footer();
 
-}else{
-    echo $renderer->header( get_string('edit', 'local_ltsauthplugin'));
+} else {
+    echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));
     echo "you can not add new users here";
     echo $renderer->footer();
     return;

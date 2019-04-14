@@ -1,20 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ishineguy
- * Date: 2018/05/12
- * Time: 23:31
- */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_ltsauthplugin\forms;
 
 defined('MOODLE_INTERNAL') || die();
 
 
-class subform  extends baseform
-{
+class subform extends baseform {
     public function custom_definition() {
-    //add wild card
+        //add wild card
         global $DB;
 
         //subscription id
@@ -27,13 +34,10 @@ class subform  extends baseform
         $this->_form->setDefault('subscriptionname', '');
 
         //add apps selector
-        $this->setAppsField('apps', get_string('apps','local_ltsauthplugin')) ;
+        $this->setAppsField('apps', get_string('apps', 'local_ltsauthplugin'));
 
         //add wild card
         $this->_form->addElement('selectyesno', 'wildcard', get_string('wildcard', 'local_ltsauthplugin'));
         $this->_form->setDefault('wildcard', 0);
-
     }
-
-
 }

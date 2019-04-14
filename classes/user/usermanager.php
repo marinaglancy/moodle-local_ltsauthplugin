@@ -18,64 +18,65 @@ namespace local_ltsauthplugin\user;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 use \local_ltsauthplugin\constants;
-
 
 /**
  *
  * This is a class containing functions for sending authplugins
+ *
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
  * @author    Justin Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class usermanager
-{
-
-    /*
-    * Check if CPAPI user exists
-    *
-    *
-    *
-    */
-    public static function user_exists($userid){
+class usermanager {
+    /**
+     * Check if CPAPI user exists
+     *
+     * @param int $userid
+     * @return bool
+     */
+    public static function user_exists($userid) {
         global $DB;
-        return $DB->record_exists(constants::USER_TABLE,array('userid'=>$userid));
+        return $DB->record_exists(constants::USER_TABLE, array('userid' => $userid));
     }
 
-    /*
-    * Check if CPAPI user exists
-    *
-    *
-    *
-    */
-    public static function get_user($userid){
+    /**
+     * Check if CPAPI user exists
+     *
+     * @param $userid
+     * @return mixed
+     */
+    public static function get_user($userid) {
         global $DB;
-        return $DB->get_record(constants::USER_TABLE,array('userid'=>$userid));
+        return $DB->get_record(constants::USER_TABLE, array('userid' => $userid));
     }
 
-    /*
+    /**
      * Create a new CPAPI user
      *
-     *
-     *
+     * @param int $resellerid
+     * @param bool $userid
+     * @param bool $awsaccessid
+     * @param bool $awsaccesssecret
+     * @return bool|int
      */
-    public static function create_user($resellerid=0, $userid=false,$awsaccessid=false,$awsaccesssecret=false) {
+    public static function create_user($resellerid = 0, $userid = false, $awsaccessid = false, $awsaccesssecret = false) {
         global $DB, $USER;
         $ret = false;
 
         //if the userid was not passed in, then we use the current user
         //this will be when added from webservice
-        if(!$userid){
-            $userid=$USER->id;
+        if (!$userid) {
+            $userid = $USER->id;
         }
 
         $theuser = new \stdClass;
         $theuser->userid = $userid;
         $theuser->resellerid = $resellerid;
-        $theuser->timemodified=time();
+        $theuser->timemodified = time();
 
         //legacy and currently unused fields BEGIN
         //now store this info in seperate tables
@@ -100,15 +101,18 @@ class usermanager
         return $ret;
     }
 
-    /*
-    * Update existing CPAPI user
-    *
-    *
-    *
-    */
-    public static function update_user($id,$resellerid=0, $userid=false,
-                                       $awsaccessid=false,$awsaccesssecret=false)
-    {
+    /**
+     * Update existing CPAPI user
+     *
+     * @param $id
+     * @param int $resellerid
+     * @param bool $userid
+     * @param bool $awsaccessid
+     * @param bool $awsaccesssecret
+     * @return bool
+     */
+    public static function update_user($id, $resellerid = 0, $userid = false,
+                                       $awsaccessid = false, $awsaccesssecret = false) {
         global $DB;
 
         //It should not be possible to not pass in a userid here
@@ -139,108 +143,114 @@ class usermanager
         }
 
         //execute updaet and return
-        $ret = $DB->update_record(constants::USER_TABLE,$theuser);
+        $ret = $DB->update_record(constants::USER_TABLE, $theuser);
         return $ret;
     }
 
-    /*
+    /**
      * Update existing Auth Plugin user, by username
      *
-     *
-     *
+     * @param $username
+     * @param $awsaccessid
+     * @param $awsaccesssecret
+     * @return bool|int
      */
-    public static function update_authpluginuser_by_username($username,$awsaccessid,$awsaccesssecret)
-    {
+    public static function update_authpluginuser_by_username($username, $awsaccessid, $awsaccesssecret) {
         global $DB;
-        $ret=false;
+        $ret = false;
 
-        $record = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE . "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;",array($username));
-        if($record){
-            $userid=$record->userid;
-            $authplugin_user_id=$record->id;
-            $resellerid=$record->resellerid;
-            $ret = self::update_user($authplugin_user_id,$resellerid,$userid,$awsaccessid,$awsaccesssecret);
-        }else{
-            $moodleuser = $DB->get_record('user',array('username'=>$username));
-            if($moodleuser) {
-                $ret = self::create_user( 0, $moodleuser->id,$awsaccessid,$awsaccesssecret);
+        $record = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE . "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;", array($username));
+        if ($record) {
+            $userid = $record->userid;
+            $authplugin_user_id = $record->id;
+            $resellerid = $record->resellerid;
+            $ret = self::update_user($authplugin_user_id, $resellerid, $userid, $awsaccessid, $awsaccesssecret);
+        } else {
+            $moodleuser = $DB->get_record('user', array('username' => $username));
+            if ($moodleuser) {
+                $ret = self::create_user(0, $moodleuser->id, $awsaccessid, $awsaccesssecret);
             }
         }
         return $ret;
     }
 
-    /*
+    /**
      * Update standard user by username
      *
-     *
-     *
+     * @param $username
+     * @param $firstname
+     * @param $lastname
+     * @param $email
+     * @return bool
      */
-    public static function update_standarduser_by_username($username, $firstname,$lastname,$email)
-    {
+    public static function update_standarduser_by_username($username, $firstname, $lastname, $email) {
         global $DB;
-        $ret=false;
+        $ret = false;
 
-        $record = $DB->get_record('user',array('username'=>$username));
+        $record = $DB->get_record('user', array('username' => $username));
 
-        if($record){
+        if ($record) {
             $user = new \stdClass();
             $user->id = $record->id;
             $user->firstname = $firstname;
             $user->lastname = $lastname;
             $user->email = $email;
             user_update_user($user);
-            $ret=true;
+            $ret = true;
         }
         return $ret;
     }
 
-    /*
+    /**
      * Reset the user's secret (standard user)
      *
-     *
-     *
+     * @param $username
+     * @param $currentsecret
+     * @return bool|string
      */
-    public static function reset_user_secret($username,$currentsecret)
-    {
+    public static function reset_user_secret($username, $currentsecret) {
         global $DB;
-        $ret=false;
+        $ret = false;
 
-        $record = $DB->get_record('user',array('username'=>$username));
+        $record = $DB->get_record('user', array('username' => $username));
 
-        if($record){
-                $newpassword = self::create_secret(16);
-                $user = new \stdClass();
-                $user->id = $record->id;
-                $user->password = $newpassword;
-                user_update_user($user);
-                $ret=$newpassword;
+        if ($record) {
+            $newpassword = self::create_secret(16);
+            $user = new \stdClass();
+            $user->id = $record->id;
+            $user->password = $newpassword;
+            user_update_user($user);
+            $ret = $newpassword;
         }
         return $ret;
     }
 
-    /*
+    /**
      * Create a new secret (standard user password)
+     *
+     * @param $length
+     * @return string
      */
-    public static function create_secret($length){
-         $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            $pieces = [];
-            $max = mb_strlen($keyspace, '8bit') - 1;
-            for ($i = 0; $i < $length; ++$i) {
-                $pieces []= $keyspace[random_int(0, $max)];
-            }
-            return implode('', $pieces);
+    public static function create_secret($length) {
+        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $pieces = [];
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; ++$i) {
+            $pieces [] = $keyspace[random_int(0, $max)];
+        }
+        return implode('', $pieces);
     }
 
-    /*
-    * Fetch the AWS creds for a user
-    */
-    public static function fetch_awscreds($moodleuserid){
-        $ret=false;
+    /**
+     * Fetch the AWS creds for a user
+     */
+    public static function fetch_awscreds($moodleuserid) {
+        $ret = false;
         $user = self::get_user($moodleuserid);
-        if($user->awsaccessid && $user->awsaccesssecret){
+        if ($user->awsaccessid && $user->awsaccesssecret) {
             $ret = new \stdClass();
-            $ret->awsaccessid=$user->awsaccessid;
-            $ret->awsaccesssecret=$user->awsaccesssecret;
+            $ret->awsaccessid = $user->awsaccessid;
+            $ret->awsaccesssecret = $user->awsaccesssecret;
         }
         return $ret;
     }

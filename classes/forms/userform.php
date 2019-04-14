@@ -1,20 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ishineguy
- * Date: 2018/05/12
- * Time: 23:31
- */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_ltsauthplugin\forms;
 
 defined('MOODLE_INTERNAL') || die();
 
-class userform extends baseform
-{
+class userform extends baseform {
     public function custom_definition() {
         //add user selector
-        $this->setUsersField('userid', get_string('user')) ;
+        $this->setUsersField('userid', get_string('user'));
 
         //reseller id
         $this->_form->addElement('text', 'resellerid', get_string('resellerid', 'local_ltsauthplugin'));
@@ -31,5 +38,4 @@ class userform extends baseform
         $this->_form->setType('awsaccesssecret', PARAM_TEXT);
         $this->_form->setDefault('awsaccesssecret', '');
     }
-
 }

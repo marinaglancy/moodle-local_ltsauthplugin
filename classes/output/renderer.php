@@ -1,23 +1,36 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ishineguy
- * Date: 2018/05/12
- * Time: 23:42
- */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_ltsauthplugin\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-
+/**
+ * Class renderer
+ *
+ * @package local_ltsauthplugin
+ */
 class renderer extends \plugin_renderer_base {
 
-    /*
-* Return HTML to display add first page links
-* @param lesson $lesson
-* @return string
-*/
+    /**
+     * Return HTML to display add first page links
+     *
+     * @param lesson $lesson
+     * @return string
+     */
     public function say_hello() {
 
         return "say hello";
@@ -33,7 +46,7 @@ class renderer extends \plugin_renderer_base {
         \html_writer::start_div('userselector');
         $output .= \html_writer::start_tag('form', $formattributes);
         $output .= \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-        $output  .= $userselector->display(true);
+        $output .= $userselector->display(true);
         $output .= \html_writer::empty_tag('input', array(
                 'type' => 'submit',
                 'name' => 'Choose',
@@ -50,8 +63,8 @@ class renderer extends \plugin_renderer_base {
     public function show_user_summary($selecteduser, $authplugin_user) {
         global $DB;
 
-        $output = $this->output->heading(get_string("userheader", "local_ltsauthplugin",$selecteduser), 3);
-        $theuser= $DB->get_record('user',array('id'=>$selecteduser->id));
+        $output = $this->output->heading(get_string("userheader", "local_ltsauthplugin", $selecteduser), 3);
+        $theuser = $DB->get_record('user', array('id' => $selecteduser->id));
         $selecteduser->username = $theuser->username;
 
         $table = new \html_table();
@@ -64,9 +77,9 @@ class renderer extends \plugin_renderer_base {
             get_string('awsaccesssecret', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
-        $table->headspan = array(1, 1, 1, 1,1,1);
+        $table->headspan = array(1, 1, 1, 1, 1, 1);
         $table->colclasses = array(
-            'id','username','rid','awsaccessid','awsaccesssecret', 'edit'
+            'id', 'username', 'rid', 'awsaccessid', 'awsaccesssecret', 'edit'
         );
 
         $row = new \html_table_row();
@@ -101,25 +114,25 @@ class renderer extends \plugin_renderer_base {
     public function add_siteitem_link($selecteduser) {
         global $CFG;
 
-        $output = $this->output->heading(get_string("showitemsfor", "local_ltsauthplugin",$selecteduser), 4);
+        $output = $this->output->heading(get_string("showitemsfor", "local_ltsauthplugin", $selecteduser), 4);
         // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/usersite/manageusersites.php',
-            array('userid'=>$selecteduser->id));
+            array('userid' => $selecteduser->id));
         $links[] = \html_writer::link($additemurl, get_string('addnewitem', 'local_ltsauthplugin'));
 
-        return $this->output->box($output.'<p>'.implode('</p><p>', $links).'</p>', 'generalbox firstpageoptions');
+        return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
     }
 
     /**
      * Return the html table of homeworks for a group  / course
+     *
      * @param array homework objects
      * @param integer $courseid
      * @return string html of table
      */
-    function show_siteitems_list($items)
-    {
+    function show_siteitems_list($items) {
         global $DB;
 
         if (!$items) {
@@ -135,7 +148,7 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 2);
         $table->colclasses = array(
-            'id','url', 'edit','delete'
+            'id', 'url', 'edit', 'delete'
         );
 
         //sort by start date
@@ -173,25 +186,25 @@ class renderer extends \plugin_renderer_base {
     public function add_subsitem_link($selecteduser) {
         global $CFG;
 
-        $output = $this->output->heading(get_string("showsubsfor", "local_ltsauthplugin",$selecteduser), 4);
+        $output = $this->output->heading(get_string("showsubsfor", "local_ltsauthplugin", $selecteduser), 4);
         // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageusersubs.php',
-            array('userid'=>$selecteduser->id));
+            array('userid' => $selecteduser->id));
         $links[] = \html_writer::link($additemurl, get_string('addnewsub', 'local_ltsauthplugin'));
 
-        return $this->output->box($output.'<p>'.implode('</p><p>', $links).'</p>', 'generalbox firstpageoptions');
+        return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
     }
 
     /**
      * Return the html table of subscriptions for a user
+     *
      * @param array usersub objects
      * @param integer $courseid
      * @return string html of table
      */
-    function show_subsitems_list($items)
-    {
+    function show_subsitems_list($items) {
         global $DB;
 
         if (!$items) {
@@ -210,7 +223,7 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id','subscriptionid','subscriptionname','transactionid', 'expiredate', 'edit', 'delete'
+            'id', 'subscriptionid', 'subscriptionname', 'transactionid', 'expiredate', 'edit', 'delete'
         );
 
         //sort by start date
@@ -233,7 +246,7 @@ class renderer extends \plugin_renderer_base {
             $itemtranscell = new \html_table_cell($item->transactionid);
             $row->cells[] = $itemtranscell;
 
-            $itemexpiredatecell = new \html_table_cell(($item->expiredate ? date("d/m/Y",$item->expiredate) :'--'));
+            $itemexpiredatecell = new \html_table_cell(($item->expiredate ? date("d/m/Y", $item->expiredate) : '--'));
             $row->cells[] = $itemexpiredatecell;
 
             $itemactionurl = '/local/ltsauthplugin/subscriptions/manageusersubs.php';
@@ -252,8 +265,7 @@ class renderer extends \plugin_renderer_base {
         }
 
         return \html_writer::table($table);
-    } //end of function
-
+    }
 
     /*
      * Show the add subscription button
@@ -265,20 +277,20 @@ class renderer extends \plugin_renderer_base {
         // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
         $links = array();
 
-        $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/managesubs.php',array());
+        $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/managesubs.php', array());
         $links[] = \html_writer::link($additemurl, get_string('addnewsub', 'local_ltsauthplugin'));
 
-        return $this->output->box($output.'<p>'.implode('</p><p>', $links).'</p>', 'generalbox firstpageoptions');
+        return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
     }
 
     /**
      * Return the html table of subscriptions
+     *
      * @param array usersub objects
      * @param integer $courseid
      * @return string html of table
      */
-    function show_subs_list($items)
-    {
+    function show_subs_list($items) {
         global $DB;
 
         if (!$items) {
@@ -297,7 +309,7 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id','subscriptionid','subscriptionname','apps','wildcard','edit', 'delete'
+            'id', 'subscriptionid', 'subscriptionname', 'apps', 'wildcard', 'edit', 'delete'
         );
 
         //sort by start date
@@ -320,7 +332,7 @@ class renderer extends \plugin_renderer_base {
             $appscell = new \html_table_cell($item->apps);
             $row->cells[] = $appscell;
 
-            $wildcardcell = new \html_table_cell($item->wildcard ? get_string('yes'):get_string('no'));
+            $wildcardcell = new \html_table_cell($item->wildcard ? get_string('yes') : get_string('no'));
             $row->cells[] = $wildcardcell;
 
             $itemactionurl = '/local/ltsauthplugin/subscriptions/managesubs.php';
@@ -339,8 +351,7 @@ class renderer extends \plugin_renderer_base {
         }
 
         return \html_writer::table($table);
-    } //end of function
-
+    }
 
     /*
      * Show the add subscription button
@@ -352,20 +363,20 @@ class renderer extends \plugin_renderer_base {
         // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
         $links = array();
 
-        $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php',array());
+        $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php', array());
         $links[] = \html_writer::link($additemurl, get_string('addnewapp', 'local_ltsauthplugin'));
 
-        return $this->output->box($output.'<p>'.implode('</p><p>', $links).'</p>', 'generalbox firstpageoptions');
+        return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
     }
 
     /**
      * Return the html table of subscriptions
+     *
      * @param array app objects
      * @param integer $courseid
      * @return string html of table
      */
-    function show_apps_list($items)
-    {
+    function show_apps_list($items) {
         global $DB;
 
         if (!$items) {
@@ -382,7 +393,7 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 2);
         $table->colclasses = array(
-            'id','appid','appname','edit', 'delete'
+            'id', 'appid', 'appname', 'edit', 'delete'
         );
 
         //sort by start date
@@ -418,6 +429,5 @@ class renderer extends \plugin_renderer_base {
         }
 
         return \html_writer::table($table);
-    } //end of function
-
-}//end of class
+    }
+}

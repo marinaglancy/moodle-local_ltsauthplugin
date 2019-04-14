@@ -62,7 +62,7 @@ $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php'
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('subscriptions', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
-    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->subscriptionname),
+    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->name),
         new moodle_url('/local/ltsauthplugin/subscriptions/managesubs.php', array('action' => 'delete', 'id' => $id)),
         $redirecturl);
     echo $renderer->footer();
@@ -93,26 +93,26 @@ if ($data = $mform->get_data()) {
     require_sesskey();
 
     $theitem = new stdClass;
-    $theitem->subscriptionname = $data->subscriptionname;
+    $theitem->name = $data->name;
     $theitem->note = $data->note;
-    if (!empty($data->apps)) {
-        $theitem->apps = implode(',', $data->apps);
+    if (!empty($data->plugins)) {
+        $theitem->plugins = implode(',', $data->plugins);
     } else {
-        $theitem->apps = '';
+        $theitem->plugins = '';
     }
     $theitem->timemodified = time();
 
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = submanager::create_sub(0, $theitem->subscriptionname, $theitem->apps, $theitem->note);
+        $ret = submanager::create_sub(0, $theitem->name, $theitem->plugins, $theitem->note);
         if (!$ret) {
             print_error("Could not insert authplugin subscription!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
-        $ret = submanager::update_sub($theitem->id, $theitem->subscriptionname, $theitem->apps, $theitem->note);
+        $ret = submanager::update_sub($theitem->id, $theitem->name, $theitem->plugins, $theitem->note);
         if (!$ret) {
             print_error("Could not update authplugin subscription!");
             redirect($redirecturl);
@@ -128,7 +128,7 @@ if ($data = $mform->get_data()) {
 if ($edit) {
     $data = $item;
     $data->id = $item->id;
-    $data->apps = explode(',', $item->apps);
+    $data->plugins = explode(',', $item->plugins);
 } else {
     $data = new stdClass;
     $data->id = null;

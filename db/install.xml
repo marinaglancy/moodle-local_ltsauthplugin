@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="local_ltsauthplugin_users" COMMENT="ltsauthplugin_users table">
+    <TABLE NAME="local_ltsauthplugin_user" COMMENT="ltsauthplugin_users table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
@@ -21,7 +21,6 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="ltsuserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="url" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="expiredate" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="note" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Details"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
@@ -31,7 +30,7 @@
         <KEY NAME="ltsuserid" TYPE="foreign" FIELDS="ltsuserid" REFTABLE="local_ltsauthplugin_users" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="local_ltsauthplugin_usersubs" COMMENT="ltsauthplugin_usersubs table">
+    <TABLE NAME="local_ltsauthplugin_usersub" COMMENT="ltsauthplugin_usersubs table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="ltsuserid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -47,11 +46,11 @@
         <KEY NAME="subid" TYPE="foreign" FIELDS="subscriptionid" REFTABLE="local_ltsauthplugin_subs" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="local_ltsauthplugin_subs" COMMENT="ltsauthplugin_subs table">
+    <TABLE NAME="local_ltsauthplugin_sub" COMMENT="ltsauthplugin_subs table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="subscriptionname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="apps" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="plugins" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="note" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Details"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
@@ -60,10 +59,10 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="local_ltsauthplugin_apps" COMMENT="ltsauthplugin_apps table">
+    <TABLE NAME="local_ltsauthplugin_plugin" COMMENT="ltsauthplugin_plugins table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="appname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="note" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Details"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
@@ -93,7 +92,7 @@
         <FIELD NAME="logid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="pluginname" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="appid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pluginid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>

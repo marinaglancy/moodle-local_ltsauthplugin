@@ -41,12 +41,12 @@ class subform extends baseform {
         global $DB;
 
         // Subscription name.
-        $this->_form->addElement('text', 'subscriptionname', get_string('subscriptionname', 'local_ltsauthplugin'));
-        $this->_form->setType('subscriptionname', PARAM_TEXT);
-        $this->_form->setDefault('subscriptionname', '');
+        $this->_form->addElement('text', 'name', get_string('subscriptionname', 'local_ltsauthplugin'));
+        $this->_form->setType('name', PARAM_TEXT);
+        $this->_form->setDefault('name', '');
 
-        // Add apps selector.
-        $this->set_apps_field('apps', get_string('apps', 'local_ltsauthplugin'));
+        // Add plugins selector.
+        $this->set_plugins_field('plugins', get_string('plugins', 'local_ltsauthplugin'));
 
         // Add note.
         $this->_form->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));

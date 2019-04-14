@@ -39,11 +39,11 @@ class constants {
     /** @var string */
     const USERSITE_TABLE = 'local_ltsauthplugin_usersite';
     /** @var string */
-    const USER_TABLE = 'local_ltsauthplugin_users';
+    const USER_TABLE = 'local_ltsauthplugin_user';
     /** @var string */
-    const SUB_TABLE = 'local_ltsauthplugin_subs';
+    const SUB_TABLE = 'local_ltsauthplugin_sub';
     /** @var string */
-    const APP_TABLE = 'local_ltsauthplugin_apps';
+    const PLUGIN_TABLE = 'local_ltsauthplugin_plugin';
     /** @var string */
-    const USERSUB_TABLE = 'local_ltsauthplugin_usersubs';
+    const USERSUB_TABLE = 'local_ltsauthplugin_usersub';
 }

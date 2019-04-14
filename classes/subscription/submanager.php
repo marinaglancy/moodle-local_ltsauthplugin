@@ -85,8 +85,8 @@ class submanager {
 
         // Add the sub.
         $thesub = new \stdClass;
-        $thesub->subscriptionname = $subname;
-        $thesub->apps = $apps;
+        $thesub->name = $subname;
+        $thesub->plugins = $apps;
         $thesub->note = $note;
         $thesub->timemodified = time();
 
@@ -100,11 +100,11 @@ class submanager {
      *
      * @param int $subid
      * @param string $subname
-     * @param string $apps
+     * @param string $plugins
      * @param string $note
      * @return bool
      */
-    public static function update_sub($subid, $subname, $apps, $note) {
+    public static function update_sub($subid, $subname, $plugins, $note) {
         global $DB;
 
         $thesub = $DB->get_record(constants::SUB_TABLE, array('id' => $subid));
@@ -113,8 +113,8 @@ class submanager {
         }
 
         // Build siteurl object.
-        $thesub->subscriptionname = $subname;
-        $thesub->apps = $apps;
+        $thesub->name = $subname;
+        $thesub->plugins = $plugins;
         $thesub->note = $note;
         $thesub->timemodified = time();
 

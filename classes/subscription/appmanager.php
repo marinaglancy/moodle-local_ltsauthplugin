@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 use \local_ltsauthplugin\constants;
 
 /**
- * This is a class containing functions for storing info about apps
+ * This is a class containing functions for storing info about plugins
  *
  * @package   local_ltsauthplugin
  * @copyright 2016 Poodll Co. Ltd (https://poodll.com)
@@ -39,56 +39,55 @@ use \local_ltsauthplugin\constants;
 class appmanager {
     /**
      * Delete an app
-     * @param string $appname
+     *
+     * @param string $pluginname
      */
-    public static function delete_app($appname) {
+    public static function delete_plugin($pluginname) {
         global $DB;
-        $ret = $DB->delete_records(constants::APP_TABLE, ['appname' => $appname]);
-        return $ret;
+        return $DB->delete_records(constants::PLUGIN_TABLE, ['name' => $pluginname]);
     }
 
     /**
      * Get a  particular app
      *
-     * @param string $appname
+     * @param string $pluginname
      */
-    public static function get_app($appname) {
+    public static function get_plugin($pluginname) {
         global $DB;
-        $app = $DB->get_record(constants::APP_TABLE, ['appname' => $appname]);
-        return $app;
+        return $DB->get_record(constants::PLUGIN_TABLE, ['name' => $pluginname]);
     }
 
     /**
      * Get a  particular app
      */
-    public static function get_apps() {
+    public static function get_plugins() {
         global $DB;
-        $app = $DB->get_records(constants::APP_TABLE, array());
-        return $app;
+        return $DB->get_records(constants::PLUGIN_TABLE, array());
     }
 
     /**
      * Create a new app
-     * @param string $appname
+     *
+     * @param string $pluginname
      * @param string $note
      */
-    public static function create_app($appname, $note) {
+    public static function create_plugin($pluginname, $note) {
         global $DB;
 
         // Make sure we do not already have this app. And if so, just update it.
-        $theapp = $DB->get_record(constants::APP_TABLE, ['appname' => $appname]);
-        if ($theapp) {
+        $theplugin = $DB->get_record(constants::PLUGIN_TABLE, ['name' => $pluginname]);
+        if ($theplugin) {
             throw new \moodle_exception('App with this name already exists');
         }
 
         // Add the app.
-        $theapp = new \stdClass;
-        $theapp->appname = $appname;
-        $theapp->note = $note;
-        $theapp->timemodified = time();
+        $theplugin = new \stdClass;
+        $theplugin->name = $pluginname;
+        $theplugin->note = $note;
+        $theplugin->timemodified = time();
 
-        $theapp->id = $DB->insert_record(constants::APP_TABLE, $theapp);
-        $ret = $theapp->id;
+        $theplugin->id = $DB->insert_record(constants::PLUGIN_TABLE, $theplugin);
+        $ret = $theplugin->id;
         return $ret;
     }
 
@@ -99,20 +98,20 @@ class appmanager {
      * @param string $note
      * @return bool
      */
-    public static function update_app($appname, $note) {
+    public static function update_plugin($appname, $note) {
         global $DB;
 
-        $theapp = $DB->get_record(constants::APP_TABLE, ['appname' => $appname]);
-        if (!$theapp) {
+        $theplugin = $DB->get_record(constants::PLUGIN_TABLE, ['name' => $appname]);
+        if (!$theplugin) {
             return false;
         }
 
         // Build siteurl object.
-        $theapp->note = $note;
-        $theapp->timemodified = time();
+        $theplugin->note = $note;
+        $theplugin->timemodified = time();
 
         // Execute updaet and return.
-        $ret = $DB->update_record(constants::APP_TABLE, $theapp);
+        $ret = $DB->update_record(constants::PLUGIN_TABLE, $theplugin);
         return $ret;
     }
 }

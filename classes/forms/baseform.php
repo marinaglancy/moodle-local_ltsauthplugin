@@ -67,22 +67,22 @@ abstract class baseform extends \moodleform {
      */
     public function set_subs_field($fieldname, $fieldlabel) {
         global $DB;
-        $subs = $DB->get_records_sql_menu('SELECT id, subscriptionname FROM {'.
+        $subs = $DB->get_records_sql_menu('SELECT id, name FROM {'.
             constants::SUB_TABLE . '}', array());
         $this->_form->addElement('select', $fieldname, $fieldlabel, $subs);
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
     /**
-     * set apps field
+     * set plugins field
      * @param string $fieldname
      * @param string $fieldlabel
      */
-    public function set_apps_field($fieldname, $fieldlabel) {
+    public function set_plugins_field($fieldname, $fieldlabel) {
         global $DB;
-        $apps = $DB->get_records_sql_menu('SELECT appname AS kkk, appname AS vvv FROM {'.
-            constants::APP_TABLE . '}', array());
-        $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $apps);
+        $plugins = $DB->get_records_sql_menu('SELECT name AS kkk, name AS vvv FROM {'.
+            constants::PLUGIN_TABLE . '}', array());
+        $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $plugins);
         $this->_form->setType($fieldname, PARAM_TEXT);
         $select->setMultiple($fieldname, PARAM_TEXT);
     }

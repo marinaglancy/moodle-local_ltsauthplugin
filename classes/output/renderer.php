@@ -237,11 +237,11 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'subscriptionname', 'note', 'expiredate', 'edit', 'delete'
+            'id', 'name', 'note', 'expiredate', 'edit', 'delete'
         );
 
         // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'subscriptionname');
+        \core_collator::asort_objects_by_property($items, 'name');
 
         // Loop through the items and add to table.
         foreach ($items as $item) {
@@ -251,7 +251,7 @@ class renderer extends \plugin_renderer_base {
             $itemidcell = new \html_table_cell($item->id);
             $row->cells[] = $itemidcell;
 
-            $namecell = new \html_table_cell($item->subscriptionname);
+            $namecell = new \html_table_cell($item->name);
             $row->cells[] = $namecell;
 
             $notecell = new \html_table_cell($item->note);
@@ -311,17 +311,17 @@ class renderer extends \plugin_renderer_base {
         $table->head = array(
             'ID',
             get_string('subscriptionname', 'local_ltsauthplugin'),
-            get_string('apps', 'local_ltsauthplugin'),
+            get_string('plugins', 'local_ltsauthplugin'),
             get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
         $table->headspan = array(1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'subscriptionname', 'apps', 'note', 'edit', 'delete'
+            'id', 'name', 'plugins', 'note', 'edit', 'delete'
         );
 
         // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'subscriptionname');
+        \core_collator::asort_objects_by_property($items, 'name');
 
         // Loop through the items and add to table.
         foreach ($items as $item) {
@@ -331,11 +331,11 @@ class renderer extends \plugin_renderer_base {
             $itemidcell = new \html_table_cell($item->id);
             $row->cells[] = $itemidcell;
 
-            $namecell = new \html_table_cell($item->subscriptionname);
+            $namecell = new \html_table_cell($item->name);
             $row->cells[] = $namecell;
 
-            $appscell = new \html_table_cell($item->apps);
-            $row->cells[] = $appscell;
+            $pluginscell = new \html_table_cell($item->plugins);
+            $row->cells[] = $pluginscell;
 
             $notecell = new \html_table_cell($item->note);
             $row->cells[] = $notecell;
@@ -360,7 +360,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Show the add subscription button
      */
-    public function add_app_link() {
+    public function add_plugin_link() {
         global $CFG;
 
         $output = $this->output->heading(get_string("showapps", "local_ltsauthplugin"), 4);
@@ -373,12 +373,12 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Return the html table of subscriptions
+     * Return the html table of plugins
      *
      * @param array $items
      * @return string html of table
      */
-    public function show_apps_list($items) {
+    public function show_plugins_list($items) {
         global $DB;
 
         if (!$items) {
@@ -395,11 +395,11 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'appname', 'note', 'edit', 'delete'
+            'id', 'name', 'note', 'edit', 'delete'
         );
 
         // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'appname');
+        \core_collator::asort_objects_by_property($items, 'name');
 
         // Loop through the items and add to table.
         foreach ($items as $item) {
@@ -409,7 +409,7 @@ class renderer extends \plugin_renderer_base {
             $itemidcell = new \html_table_cell($item->id);
             $row->cells[] = $itemidcell;
 
-            $namecell = new \html_table_cell($item->appname);
+            $namecell = new \html_table_cell($item->name);
             $row->cells[] = $namecell;
 
             $notecell = new \html_table_cell($item->note);

@@ -46,7 +46,7 @@ $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
 // Are we in new or edit mode?
 if ($id) {
-    $item = $DB->get_record(constants::APP_TABLE, array('id' => $id), '*');
+    $item = $DB->get_record(constants::PLUGIN_TABLE, array('id' => $id), '*');
     if (!$item) {
         print_error('could not find item of app id:' . $id);
     }
@@ -61,8 +61,8 @@ $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php'
 // Handle delete actions.
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
-    echo $renderer->header('apps', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
-    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->appname),
+    echo $renderer->header('plugins', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
+    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->name),
         new moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php', array('action' => 'delete', 'id' => $id)),
         $redirecturl);
     echo $renderer->footer();
@@ -71,7 +71,7 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = appmanager::delete_app($item->appname);
+    $success = appmanager::delete_plugin($item->name);
     if (!$success) {
         print_error("Could not delete authplugin app!");
         redirect($redirecturl);
@@ -93,25 +93,25 @@ if ($data = $mform->get_data()) {
     require_sesskey();
 
     $theitem = new stdClass;
-    $theitem->appname = $data->appname;
+    $theitem->name = $data->name;
     $theitem->note = $data->note;
     $theitem->timemodified = time();
 
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = appmanager::create_app($theitem->appname, $theitem->note);
+        $ret = appmanager::create_plugin($theitem->name, $theitem->note);
         if (!$ret) {
             print_error("Could not insert authplugin app!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
-        if ($data->appname != $item->appname) {
+        if ($data->name != $item->name) {
             print_error("I am sorry but you can not edit the app name. Delete and remake it. ");
             redirect($redirecturl);
         } else {
-            $ret = appmanager::update_app($theitem->appname, $theitem->note);
+            $ret = appmanager::update_plugin($theitem->name, $theitem->note);
             if (!$ret) {
                 print_error("Could not update authplugin app!");
                 redirect($redirecturl);

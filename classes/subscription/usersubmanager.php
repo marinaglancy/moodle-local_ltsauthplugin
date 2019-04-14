@@ -70,10 +70,10 @@ class usersubmanager {
      * @param int $ltsuserid
      * @return array
      */
-    public static function get_usersubs_apps($ltsuserid) {
+    public static function get_usersubs_plugins($ltsuserid) {
         global $DB;
 
-        $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname,subs.apps FROM {'
+        $subs = $DB->get_records_sql('SELECT usb.*,subs.name,subs.plugins FROM {'
             . constants::USERSUB_TABLE . '} usb'
             . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.id'
             . ' WHERE ltsuserid = ?'
@@ -110,7 +110,7 @@ class usersubmanager {
         global $DB;
         $ret = false;
 
-        $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname, u.username '
+        $subs = $DB->get_records_sql('SELECT usb.*,subs.name, u.username '
             . ' FROM {' . constants::USERSUB_TABLE . '} usb '
             . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.id'
             . ' INNER JOIN {' . constants::USER_TABLE . '} ut ON ut.id = usb.ltsuserid'

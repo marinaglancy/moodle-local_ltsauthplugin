@@ -41,9 +41,9 @@ class appform extends baseform {
      */
     public function custom_definition() {
         // App.
-        $this->_form->addElement('text', 'appname', get_string('appname', 'local_ltsauthplugin'));
-        $this->_form->setType('appname', PARAM_TEXT);
-        $this->_form->setDefault('appname', '');
+        $this->_form->addElement('text', 'name', get_string('appname', 'local_ltsauthplugin'));
+        $this->_form->setType('name', PARAM_TEXT);
+        $this->_form->setDefault('name', '');
         // Notes.
         $this->_form->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));
         $this->_form->setType('note', PARAM_RAW);

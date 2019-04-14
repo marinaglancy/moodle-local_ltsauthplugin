@@ -16,7 +16,8 @@
 
 /**
  * Action for adding/editing a usersite.
- * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst, then iii) usersite eg fbquestion, then iv) create a capability
+ * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst,
+ * then iii) usersite eg fbquestion, then iv) create a capability
  *
  * @package local_ltsauthplugin
  * @copyright  2014 Justin Hunt
@@ -32,9 +33,9 @@ use \local_ltsauthplugin\forms\usersiteform;
 
 global $USER, $DB;
 
-// first get the nfo passed in to set up the page
+// First get the nfo passed in to set up the page.
 $userid = required_param('userid', PARAM_INT);
-$id = optional_param('id', 0, PARAM_INT);         // item id
+$id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
 $url = new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php', ['userid' => $userid, 'id' => $id]);
@@ -54,20 +55,21 @@ if ($id) {
     $edit = false;
 }
 
-// We always head back to the authplugin items page
+// We always head back to the authplugin items page.
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $userid));
 
-// Handle delete actions
+// Handle delete actions.
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('usersites', null, get_string('confirmitemdeletetitle', 'authplugin'));
     echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->url1),
-        new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php', array('action' => 'delete', 'id' => $id, 'userid' => $userid)),
+        new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php',
+            array('action' => 'delete', 'id' => $id, 'userid' => $userid)),
         $redirecturl);
     echo $renderer->footer();
     return;
 
-} elseif ($action == 'delete') {
+} else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
     $success = usersitemanager::delete_usersite($id);
@@ -78,16 +80,16 @@ if ($action == 'confirmdelete') {
     redirect($redirecturl);
 }
 
-// Create the usersite form
+// Create the usersite form.
 $mform = new usersiteform();
 
-// If the cancel button was pressed, we are out of here
+// If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
     exit;
 }
 
-// If we have data, then our job here is to save it and return to the main page
+// If we have data, then our job here is to save it and return to the main page.
 if ($data = $mform->get_data()) {
     require_sesskey();
 

@@ -59,7 +59,7 @@ class renderer extends \plugin_renderer_base {
         return $output;
     }
 
-    public function show_user_summary($selecteduser, $authplugin_user) {
+    public function show_user_summary($selecteduser, $authpluginuser) {
         global $DB;
 
         $output = $this->output->heading(get_string("userheader", "local_ltsauthplugin", $selecteduser), 3);
@@ -84,23 +84,23 @@ class renderer extends \plugin_renderer_base {
         $row = new \html_table_row();
         $row->cells = array();
 
-        $idcell = new \html_table_cell($authplugin_user->id);
+        $idcell = new \html_table_cell($authpluginuser->id);
         $row->cells[] = $idcell;
 
         $usernamecell = new \html_table_cell($selecteduser->username);
         $row->cells[] = $usernamecell;
 
-        $reselleridcell = new \html_table_cell($authplugin_user->resellerid);
+        $reselleridcell = new \html_table_cell($authpluginuser->resellerid);
         $row->cells[] = $reselleridcell;
 
-        $awsaccessidcell = new \html_table_cell($authplugin_user->awsaccessid);
+        $awsaccessidcell = new \html_table_cell($authpluginuser->awsaccessid);
         $row->cells[] = $awsaccessidcell;
 
-        $awsaccesssecretcell = new \html_table_cell($authplugin_user->awsaccesssecret);
+        $awsaccesssecretcell = new \html_table_cell($authpluginuser->awsaccesssecret);
         $row->cells[] = $awsaccesssecretcell;
 
         $actionurl = '/local/ltsauthplugin/usersite/manageusers.php';
-        $editurl = new \moodle_url($actionurl, array('userid' => $authplugin_user->userid));
+        $editurl = new \moodle_url($actionurl, array('userid' => $authpluginuser->userid));
         $editlink = \html_writer::link($editurl, get_string('edititem', 'local_ltsauthplugin'));
         $editcell = new \html_table_cell($editlink);
         $row->cells[] = $editcell;
@@ -130,7 +130,7 @@ class renderer extends \plugin_renderer_base {
      * @param integer $courseid
      * @return string html of table
      */
-    function show_siteitems_list($items) {
+    public function show_siteitems_list($items) {
         global $DB;
 
         if (!$items) {
@@ -169,7 +169,8 @@ class renderer extends \plugin_renderer_base {
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
-            $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid, 'id' => $item->id, 'action' => 'confirmdelete'));
+            $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid,
+                'id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteitem', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);
             $row->cells[] = $itemdeletecell;
@@ -200,7 +201,7 @@ class renderer extends \plugin_renderer_base {
      * @param integer $courseid
      * @return string html of table
      */
-    function show_subsitems_list($items) {
+    public function show_subsitems_list($items) {
         global $DB;
 
         if (!$items) {
@@ -251,7 +252,8 @@ class renderer extends \plugin_renderer_base {
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
-            $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid, 'id' => $item->id, 'action' => 'confirmdelete'));
+            $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid,
+                'id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deletesub', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);
             $row->cells[] = $itemdeletecell;
@@ -284,7 +286,7 @@ class renderer extends \plugin_renderer_base {
      * @param integer $courseid
      * @return string html of table
      */
-    function show_subs_list($items) {
+    public function show_subs_list($items) {
         global $DB;
 
         if (!$items) {
@@ -367,7 +369,7 @@ class renderer extends \plugin_renderer_base {
      * @param array $items
      * @return string html of table
      */
-    function show_apps_list($items) {
+    public function show_apps_list($items) {
         global $DB;
 
         if (!$items) {

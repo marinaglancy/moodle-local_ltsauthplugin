@@ -16,7 +16,8 @@
 
 /**
  * Action for adding/editing a usersite.
- * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst, then iii) usersite eg fbquestion, then iv) create a capability
+ * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst,
+ * then iii) usersite eg fbquestion, then iv) create a capability
  *
  * @package local_ltsauthplugin
  * @copyright  2014 Justin Hunt
@@ -32,9 +33,9 @@ use \local_ltsauthplugin\forms\userform;
 
 global $USER, $DB;
 
-// first get the nfo passed in to set up the page
+// First get the nfo passed in to set up the page.
 $userid = required_param('userid', PARAM_INT);
-$id = optional_param('id', 0, PARAM_INT);         // item id
+$id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
 $url = new moodle_url('/local/ltsauthplugin/usersite/manageusers.php', ['userid' => $userid, 'id' => $id]);
@@ -54,19 +55,19 @@ if ($userid) {
     $edit = false;
 }
 
-// We always head back to the authplugin items page
+// We always head back to the authplugin items page.
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $userid));
 
-// Get create our user form
+// Get create our user form.
 $mform = new userform();
 
-// If the cancel button was pressed, we are out of here
+// If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
     exit;
 }
 
-// If we have data, then our job here is to save it and return to the main page
+// If we have data, then our job here is to save it and return to the main page.
 if ($data = $mform->get_data()) {
     require_sesskey();
 

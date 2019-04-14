@@ -41,16 +41,16 @@ class event_authplugin {
      */
     public static function create_user_handler(user_created $event) {
         // Get the event data.
-        $event_data = $event->get_data();
+        $eventdata = $event->get_data();
 
         try {
             // User data.
             $userid = false;
-            if (array_key_exists('relateduserid', $event_data)) {
-                $userid = $event_data['relateduserid'];
-                $event_data['userid'] = $userid;
-            } elseif (array_key_exists('userid', $event_data)) {
-                $userid = $event_data['userid'];
+            if (array_key_exists('relateduserid', $eventdata)) {
+                $userid = $eventdata['relateduserid'];
+                $eventdata['userid'] = $userid;
+            } else if (array_key_exists('userid', $eventdata)) {
+                $userid = $eventdata['userid'];
             }
             if ($userid) {
                 $exists = usermanager::user_exists($userid);

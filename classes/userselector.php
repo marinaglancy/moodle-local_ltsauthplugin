@@ -18,7 +18,7 @@ namespace local_ltsauthplugin;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__ . '/../../../user/selector/lib.php';
+require_once(__DIR__ . '/../../../user/selector/lib.php');
 
 /*
  * This class displays either all the Moodle users allowed to use a service,
@@ -30,10 +30,6 @@ class userselector extends \user_selector_base {
     protected $multiselect = false;
     /** @var int The height this control should have, in rows. */
     protected $rows = 5;
-
-    public function __construct($name, $options) {
-        parent::__construct($name, $options);
-    }
 
     /**
      * Find allowed or not allowed users of a service (depend of $this->displayallowedusers)

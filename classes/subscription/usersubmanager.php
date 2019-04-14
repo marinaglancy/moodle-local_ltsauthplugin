@@ -112,9 +112,9 @@ class usersubmanager {
     public static function get_authpluginuser_by_username($username) {
         global $DB;
 
-        $authplugin_user = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE .
+        $authpluginuser = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE .
             "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;", array($username));
-        return $authplugin_user;
+        return $authpluginuser;
     }
 
     /**
@@ -123,9 +123,9 @@ class usersubmanager {
     public static function get_usersubs_by_username($username) {
         $ret = false;
 
-        $authplugin_user = self::get_authpluginuser_by_username($username);
-        if ($authplugin_user) {
-            $ret = self::get_usersubs($authplugin_user->userid);
+        $authpluginuser = self::get_authpluginuser_by_username($username);
+        if ($authpluginuser) {
+            $ret = self::get_usersubs($authpluginuser->userid);
         }
         return $ret;
     }

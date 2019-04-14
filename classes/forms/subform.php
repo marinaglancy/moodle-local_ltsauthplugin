@@ -33,7 +33,7 @@ class subform extends baseform {
         $this->_form->setDefault('subscriptionname', '');
 
         // Add apps selector.
-        $this->setAppsField('apps', get_string('apps', 'local_ltsauthplugin'));
+        $this->set_apps_field('apps', get_string('apps', 'local_ltsauthplugin'));
 
         // Add wild card.
         $this->_form->addElement('selectyesno', 'wildcard', get_string('wildcard', 'local_ltsauthplugin'));

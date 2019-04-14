@@ -39,21 +39,21 @@ abstract class baseform extends \moodleform {
     public function custom_definition() {
     }
 
-    public function setUsersField($fieldname, $fieldlabel) {
+    public function set_users_field($fieldname, $fieldlabel) {
         global $DB;
         $users = $DB->get_records_sql_menu('SELECT id,username FROM {user}', array());
         $this->_form->addElement('select', $fieldname, $fieldlabel, $users);
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
-    public function setSubsField($fieldname, $fieldlabel) {
+    public function set_subs_field($fieldname, $fieldlabel) {
         global $DB;
         $subs = $DB->get_records_sql_menu('SELECT subscriptionid, subscriptionname FROM {local_ltsauthplugin_subs}', array());
         $this->_form->addElement('select', $fieldname, $fieldlabel, $subs);
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
-    public function setAppsField($fieldname, $fieldlabel) {
+    public function set_apps_field($fieldname, $fieldlabel) {
         global $DB;
         $apps = $DB->get_records_sql_menu('SELECT appid, appname FROM {local_ltsauthplugin_apps}', array());
         $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $apps);

@@ -16,7 +16,8 @@
 
 /**
  * Action for adding/editing a subscription.
- * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst, then iii) usersite eg fbquestion, then iv) create a capability
+ * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst,
+ * then iii) usersite eg fbquestion, then iv) create a capability
  *
  * @package local_ltsauthplugin
  * @copyright  2014 Justin Hunt
@@ -32,8 +33,8 @@ use \local_ltsauthplugin\forms\subform;
 
 global $USER, $DB;
 
-// first get the nfo passed in to set up the page
-$id = optional_param('id', 0, PARAM_INT);         // item id
+// First get the nfo passed in to set up the page.
+$id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
 $url = new moodle_url('/local/ltsauthplugin/subscriptions/managesubs.php', array('id' => $id));
@@ -53,10 +54,10 @@ if ($id) {
     $edit = false;
 }
 
-// We always head back to the authplugin items page
+// We always head back to the authplugin items page.
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php', array());
 
-// Handle delete actions
+// Handle delete actions.
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('subscriptions', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
@@ -66,7 +67,7 @@ if ($action == 'confirmdelete') {
     echo $renderer->footer();
     return;
 
-} elseif ($action == 'delete') {
+} else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
     $success = submanager::delete_sub($item->subscriptionid);
@@ -77,16 +78,16 @@ if ($action == 'confirmdelete') {
     redirect($redirecturl);
 }
 
-// Create the subscription form
+// Create the subscription form.
 $mform = new subform();
 
-// If the cancel button was pressed, we are out of here
+// If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
     exit;
 }
 
-// If we have data, then our job here is to save it and return to the main page
+// If we have data, then our job here is to save it and return to the main page.
 if ($data = $mform->get_data()) {
     require_sesskey();
 
@@ -112,7 +113,8 @@ if ($data = $mform->get_data()) {
     } else {
         $theitem->id = $id;
         if ($data->subscriptionid != $item->subscriptionid) {
-            print_error("I am sorry but you can not edit the subscription id. Delete and remake it. Nothing will happen to the subscription ids in the users table");
+            print_error("I am sorry but you can not edit the subscription id. Delete and remake it. " .
+                "Nothing will happen to the subscription ids in the users table");
             redirect($redirecturl);
         } else {
             $ret = submanager::update_sub($theitem->subscriptionid, $theitem->subscriptionname, $theitem->apps, $theitem->wildcard);

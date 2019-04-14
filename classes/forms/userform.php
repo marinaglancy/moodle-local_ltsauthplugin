@@ -30,7 +30,7 @@ class userform extends baseform {
      */
     public function custom_definition() {
         // Add user selector.
-        $this->setUsersField('userid', get_string('user'));
+        $this->set_users_field('userid', get_string('user'));
 
         // Reseller id.
         $this->_form->addElement('text', 'resellerid', get_string('resellerid', 'local_ltsauthplugin'));

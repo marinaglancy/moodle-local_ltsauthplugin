@@ -16,7 +16,8 @@
 
 /**
  * Action for adding/editing an app.
- * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst, then iii) usersite eg fbquestion, then iv) create a capability
+ * replace i) local_ltsauthplugin eg MOD_CST, then ii) authplugin eg cst,
+ * then iii) usersite eg fbquestion, then iv) create a capability
  *
  * @package local_ltsauthplugin
  * @copyright  2014 Justin Hunt
@@ -32,8 +33,8 @@ use \local_ltsauthplugin\forms\appform;
 
 global $USER, $DB;
 
-// first get the nfo passed in to set up the page
-$id = optional_param('id', 0, PARAM_INT);         // item id
+// First get the nfo passed in to set up the page.
+$id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
 $url = new moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php', array('id' => $id));
@@ -53,10 +54,10 @@ if ($id) {
     $edit = false;
 }
 
-// We always head back to the authplugin items page
+// We always head back to the authplugin items page.
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php', array());
 
-// Handle delete actions
+// Handle delete actions.
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('apps', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
@@ -66,7 +67,7 @@ if ($action == 'confirmdelete') {
     echo $renderer->footer();
     return;
 
-} elseif ($action == 'delete') {
+} else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
     $success = appmanager::delete_app($item->appid);
@@ -77,16 +78,16 @@ if ($action == 'confirmdelete') {
     redirect($redirecturl);
 }
 
-// Create the app form
+// Create the app form.
 $mform = new appform();
 
-// If the cancel button was pressed, we are out of here
+// If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
     exit;
 }
 
-// If we have data, then our job here is to save it and return to the main page
+// If we have data, then our job here is to save it and return to the main page.
 if ($data = $mform->get_data()) {
     require_sesskey();
 
@@ -106,7 +107,8 @@ if ($data = $mform->get_data()) {
     } else {
         $theitem->id = $id;
         if ($data->appid != $item->appid) {
-            print_error("I am sorry but you can not edit the app id. Delete and remake it. Nothing will happen to the app ids in the subscription table");
+            print_error("I am sorry but you can not edit the app id. Delete and remake it. " .
+                "Nothing will happen to the app ids in the subscription table");
             redirect($redirecturl);
         } else {
             $ret = appmanager::update_app($theitem->appid, $theitem->appname);

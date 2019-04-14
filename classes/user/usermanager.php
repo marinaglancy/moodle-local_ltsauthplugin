@@ -160,12 +160,14 @@ class usermanager {
         global $DB;
         $ret = false;
 
-        $record = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE . "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;", array($username));
+        $record = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE . "
+            } authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?",
+            array($username));
         if ($record) {
             $userid = $record->userid;
-            $authplugin_user_id = $record->id;
+            $authpluginuserid = $record->id;
             $resellerid = $record->resellerid;
-            $ret = self::update_user($authplugin_user_id, $resellerid, $userid, $awsaccessid, $awsaccesssecret);
+            $ret = self::update_user($authpluginuserid, $resellerid, $userid, $awsaccessid, $awsaccesssecret);
         } else {
             $moodleuser = $DB->get_record('user', array('username' => $username));
             if ($moodleuser) {

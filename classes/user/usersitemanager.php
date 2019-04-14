@@ -83,7 +83,8 @@ class usersitemanager {
         global $DB;
         $ret = false;
 
-        $sites = $DB->get_records_sql('SELECT ust.*, u.username FROM {' . constants::USERSITE_TABLE . '} ust INNER JOIN {user} u ON u.id = ust.userid WHERE userid = ?'
+        $sites = $DB->get_records_sql('SELECT ust.*, u.username FROM {' . constants::USERSITE_TABLE .
+            '} ust INNER JOIN {user} u ON u.id = ust.userid WHERE userid = ?'
             , array($userid));
 
         if ($sites) {
@@ -100,9 +101,9 @@ class usersitemanager {
     public static function get_authpluginuser_by_username($username) {
         global $DB;
 
-        $authplugin_user = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE .
+        $authpluginuser = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE .
             "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;", array($username));
-        return $authplugin_user;
+        return $authpluginuser;
     }
 
     /**
@@ -114,9 +115,9 @@ class usersitemanager {
     public static function get_usersites_by_username($username) {
         $ret = false;
 
-        $authplugin_user = self::get_authpluginuser_by_username($username);
-        if ($authplugin_user) {
-            $ret = self::get_usersites($authplugin_user->userid);
+        $authpluginuser = self::get_authpluginuser_by_username($username);
+        if ($authpluginuser) {
+            $ret = self::get_usersites($authpluginuser->userid);
         }
         return $ret;
     }
@@ -162,8 +163,8 @@ class usersitemanager {
         }
 
         // Re-register all the valid looking URLs.
-        $authplugin_user = self::get_authpluginuser_by_username($username);
-        if (!$authplugin_user) {
+        $authpluginuser = self::get_authpluginuser_by_username($username);
+        if (!$authpluginuser) {
             return $ret;
         }
         $urls = array($url1, $url2, $url3, $url4, $url5);
@@ -174,7 +175,7 @@ class usersitemanager {
             $url = trim($url);
             $url = strtolower($url);
             if (strpos($url, 'http') === 0) {
-                self::create_usersite($url, $authplugin_user->userid);
+                self::create_usersite($url, $authpluginuser->userid);
             }
         }
         $ret = true;

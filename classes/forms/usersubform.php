@@ -25,7 +25,7 @@ class usersubform extends baseform {
         $this->_form->setType('userid', PARAM_INT);
 
         // Add subscriptions selector.
-        $this->setSubsField('subscriptionid', get_string('subscription', 'local_ltsauthplugin'));
+        $this->set_subs_field('subscriptionid', get_string('subscription', 'local_ltsauthplugin'));
 
         // Expiredate.
         $dateopts = array(

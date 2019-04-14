@@ -73,7 +73,7 @@ class usersubmanager {
     public static function get_usersubs_apps($userid) {
         global $DB;
 
-        $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname,subs.apps, subs.wildcard FROM {'
+        $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname,subs.apps FROM {'
             . constants::USERSUB_TABLE . '} usb'
             . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.id'
             . ' WHERE userid = ?'
@@ -154,12 +154,12 @@ class usersubmanager {
      * Create a new usersubscription
      *
      * @param int $subid
-     * @param int $transid
+     * @param string $note
      * @param int $expiredate
      * @param bool $userid
      * @return bool|int
      */
-    public static function create_usersub($subid = 0, $transid = 0, $expiredate = 0, $userid = false) {
+    public static function create_usersub($subid = 0, $note = '', $expiredate = 0, $userid = false) {
         global $DB, $USER;
 
         // If the userid was not passed in, then we use the current user
@@ -171,13 +171,13 @@ class usersubmanager {
         // Lets not be creating multiple of the same sub per user. this would be just bad.
         $theusersub = self::get_usersub($userid, $subid);
         if ($theusersub) {
-            return self::update_usersub($subid, $transid, $expiredate, $userid);
+            return self::update_usersub($subid, $note, $expiredate, $userid);
         }
 
         $theusersub = new \stdClass;
         $theusersub->userid = $userid;
         $theusersub->subscriptionid = $subid;
-        $theusersub->transactionid = $transid;
+        $theusersub->note = $note;
         $theusersub->expiredate = $expiredate;
         $theusersub->timemodified = time();
 
@@ -191,12 +191,12 @@ class usersubmanager {
      * update user sub
      *
      * @param int $subscriptionid
-     * @param int $transactionid
+     * @param string $note
      * @param int $expiredate
      * @param int $userid
      * @return bool
      */
-    public static function update_usersub($subscriptionid, $transactionid, $expiredate, $userid) {
+    public static function update_usersub($subscriptionid, $note, $expiredate, $userid) {
         global $DB;
 
         // It should not be possible to not pass in a userid here.
@@ -205,7 +205,7 @@ class usersubmanager {
         }
 
         $thesub = self::get_usersub($userid, $subscriptionid);
-        $thesub->transactionid = $transactionid;
+        $thesub->note = $note;
         $thesub->expiredate = $expiredate;
         $thesub->timemodified = time();
 

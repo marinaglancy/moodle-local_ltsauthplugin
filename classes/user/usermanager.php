@@ -65,11 +65,11 @@ class usermanager {
     /**
      * Create a new CPAPI user
      *
-     * @param int $resellerid
+     * @param string $note
      * @param bool $userid
      * @return bool|int
      */
-    public static function create_user($resellerid = 0, $userid = false) {
+    public static function create_user($note = '', $userid = false) {
         global $DB, $USER;
         $ret = false;
 
@@ -81,7 +81,7 @@ class usermanager {
 
         $theuser = new \stdClass;
         $theuser->userid = $userid;
-        $theuser->resellerid = $resellerid;
+        $theuser->note = $note;
         $theuser->timemodified = time();
 
         $theuser->id = $DB->insert_record(constants::USER_TABLE, $theuser);
@@ -94,11 +94,11 @@ class usermanager {
      * Update existing CPAPI user
      *
      * @param int $id
-     * @param int $resellerid
+     * @param string $note
      * @param bool $userid
      * @return bool
      */
-    public static function update_user($id, $resellerid = 0, $userid = false) {
+    public static function update_user($id, $note = '', $userid = false) {
         global $DB;
 
         // It should not be possible to not pass in a userid here.
@@ -109,7 +109,7 @@ class usermanager {
         $theuser = new \stdClass;
         $theuser->id = $id;
         $theuser->userid = $userid;
-        $theuser->resellerid = $resellerid;
+        $theuser->note = $note;
         $theuser->timemodified = time();
 
         // Execute updaet and return.

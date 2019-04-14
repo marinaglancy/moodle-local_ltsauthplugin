@@ -64,24 +64,6 @@ class usersitemanager {
     }
 
     /**
-     * Create a users sites
-     *
-     * @param int $userid
-     * @return array|bool
-     */
-    public static function get_usersites($userid) {
-        global $DB;
-        $ret = false;
-
-        $sites = $DB->get_records(constants::USERSITE_TABLE, array('userid' => $userid));
-        if ($sites) {
-            return $sites;
-        }
-
-        return $ret;
-    }
-
-    /**
      * Get a list of user sites ready for display
      *
      * @param int $userid
@@ -117,89 +99,14 @@ class usersitemanager {
     }
 
     /**
-     * Create a users sites
-     *
-     * @param string $username
-     * @return array|bool
-     */
-    public static function get_usersites_by_username($username) {
-        $ret = false;
-
-        $authpluginuser = self::get_authpluginuser_by_username($username);
-        if ($authpluginuser) {
-            $ret = self::get_usersites($authpluginuser->userid);
-        }
-        return $ret;
-    }
-
-    /**
-     * Get all a user urls
-     *
-     * @param int $userid
-     * @return array
-     */
-    public static function get_userurls($userid) {
-        $urls = array();
-        $sites = self::get_usersites($userid);
-        if ($sites) {
-            foreach ($sites as $site) {
-                $urls[] = $site->url;
-            }
-        }
-        return $urls;
-    }
-
-    /**
-     * Get all a user urls
-     *
-     * @param string $username
-     * @param string $url1
-     * @param string $url2
-     * @param string $url3
-     * @param string $url4
-     * @param string $url5
-     * @return bool
-     */
-    public static function update_usersites_by_username($username, $url1, $url2, $url3, $url4, $url5) {
-
-        global $DB;
-        $ret = false;
-        // Remove all the sites.
-        $usersites = self::get_usersites_by_username($username);
-        if ($usersites) {
-            foreach ($usersites as $usersite) {
-                self::delete_usersite($usersite->id);
-            }
-        }
-
-        // Re-register all the valid looking URLs.
-        $authpluginuser = self::get_authpluginuser_by_username($username);
-        if (!$authpluginuser) {
-            return $ret;
-        }
-        $urls = array($url1, $url2, $url3, $url4, $url5);
-        foreach ($urls as $url) {
-            if (empty($url)) {
-                continue;
-            }
-            $url = trim($url);
-            $url = strtolower($url);
-            if (strpos($url, 'http') === 0) {
-                self::create_usersite($url, $authpluginuser->userid);
-            }
-        }
-        $ret = true;
-        return $ret;
-    }
-
-    /**
      * Create a new usersite
      *
      * @param string $url
      * @param bool $userid
+     * @param string $note
      * @return bool|int
      */
-    public static function create_usersite($url, $userid = false) {
+    public static function create_usersite($url, $userid = false, $note = '') {
         global $DB, $USER;
         $ret = false;
 
@@ -212,8 +119,7 @@ class usersitemanager {
         $thesite = new \stdClass;
         $thesite->userid = $userid;
         $thesite->url = $url;
-        $thesite->wildcardok = 0;
-        $thesite->expiredate = 0;
+        $thesite->note = $note;
         $thesite->timemodified = time();
 
         $thesite->id = $DB->insert_record(constants::USERSITE_TABLE, $thesite);
@@ -228,9 +134,10 @@ class usersitemanager {
      * @param int $id
      * @param string $url
      * @param int $userid
+     * @param string $note
      * @return bool
      */
-    public static function update_usersite($id, $url, $userid) {
+    public static function update_usersite($id, $url, $userid, $note) {
         global $DB;
 
         // It should not be possible to not pass in a userid here.
@@ -243,8 +150,7 @@ class usersitemanager {
         $thesite->id = $id;
         $thesite->userid = $userid;
         $thesite->url = $url;
-        $thesite->wildcardok = 0;
-        $thesite->expiredate = 0;
+        $thesite->note = $note;
         $thesite->timemodified = time();
 
         // Execute updaet and return.

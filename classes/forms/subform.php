@@ -48,8 +48,8 @@ class subform extends baseform {
         // Add apps selector.
         $this->set_apps_field('apps', get_string('apps', 'local_ltsauthplugin'));
 
-        // Add wild card.
-        $this->_form->addElement('selectyesno', 'wildcard', get_string('wildcard', 'local_ltsauthplugin'));
-        $this->_form->setDefault('wildcard', 0);
+        // Add note.
+        $this->_form->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));
+        $this->_form->setType('note', PARAM_RAW);
     }
 }

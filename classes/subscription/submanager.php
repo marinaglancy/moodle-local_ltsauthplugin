@@ -77,17 +77,17 @@ class submanager {
      * @param int $subid
      * @param string $subname
      * @param mixed $apps
-     * @param mixed $wildcard
+     * @param mixed $note
      * @return bool|int
      */
-    public static function create_sub($subid, $subname, $apps, $wildcard) {
+    public static function create_sub($subid, $subname, $apps, $note) {
         global $DB;
 
         // Add the sub.
         $thesub = new \stdClass;
         $thesub->subscriptionname = $subname;
         $thesub->apps = $apps;
-        $thesub->wildcard = $wildcard;
+        $thesub->note = $note;
         $thesub->timemodified = time();
 
         $thesub->id = $DB->insert_record(constants::SUB_TABLE, $thesub);
@@ -100,11 +100,11 @@ class submanager {
      *
      * @param int $subid
      * @param string $subname
-     * @param array $apps
-     * @param mixed $wildcard
+     * @param string $apps
+     * @param string $note
      * @return bool
      */
-    public static function update_sub($subid, $subname, $apps, $wildcard) {
+    public static function update_sub($subid, $subname, $apps, $note) {
         global $DB;
 
         $thesub = $DB->get_record(constants::SUB_TABLE, array('id' => $subid));
@@ -115,7 +115,7 @@ class submanager {
         // Build siteurl object.
         $thesub->subscriptionname = $subname;
         $thesub->apps = $apps;
-        $thesub->wildcard = $wildcard;
+        $thesub->note = $note;
         $thesub->timemodified = time();
 
         // Execute updaet and return.

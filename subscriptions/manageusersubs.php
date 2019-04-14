@@ -97,14 +97,14 @@ if ($data = $mform->get_data()) {
     $theitem = new stdClass;
     $theitem->userid = $data->userid;
     $theitem->subscriptionid = $data->subscriptionid;
-    $theitem->transactionid = $data->transactionid;
+    $theitem->note = $data->note;
     $theitem->expiredate = $data->expiredate;
     $theitem->timemodified = time();
 
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = usersubmanager::create_usersub($theitem->subscriptionid, $theitem->transactionid,
+        $ret = usersubmanager::create_usersub($theitem->subscriptionid, $theitem->note,
             $theitem->expiredate, $theitem->userid);
         if (!$ret) {
             print_error("Could not insert authplugin item!");
@@ -112,7 +112,7 @@ if ($data = $mform->get_data()) {
         }
     } else {
         $theitem->id = $item->id;
-        $ret = usersubmanager::update_usersub($theitem->subscriptionid, $theitem->transactionid,
+        $ret = usersubmanager::update_usersub($theitem->subscriptionid, $theitem->note,
             $theitem->expiredate, $theitem->userid);
         if (!$ret) {
             print_error("Could not update authplugin item!");

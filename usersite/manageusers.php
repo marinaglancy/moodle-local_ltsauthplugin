@@ -74,7 +74,7 @@ if ($data = $mform->get_data()) {
 
     $theitem = new stdClass;
     $theitem->userid = $data->userid;
-    $theitem->resellerid = $data->resellerid;
+    $theitem->note = $data->note;
     $theitem->timemodified = time();
 
     // First insert a new item if we need to.
@@ -82,7 +82,7 @@ if ($data = $mform->get_data()) {
     if (!$edit) {
 
         $ret = usermanager::create_user(
-            $data->resellerid,
+            $data->note,
             $data->userid);
 
         if (!$ret) {
@@ -92,7 +92,7 @@ if ($data = $mform->get_data()) {
     } else {
 
         $ret = usermanager::update_user($id,
-            $data->resellerid,
+            $data->note,
             $data->userid);
 
         if (!$ret) {

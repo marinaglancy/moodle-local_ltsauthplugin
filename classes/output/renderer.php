@@ -81,12 +81,12 @@ class renderer extends \plugin_renderer_base {
         $table->head = array(
             'ID',
             get_string('username'),
-            get_string('resellerid', 'local_ltsauthplugin'),
+            get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
-        $table->headspan = array(1, 1, 1, 1, 1, 1);
+        $table->headspan = array(1, 1, 1, 1);
         $table->colclasses = array(
-            'id', 'username', 'rid', 'edit'
+            'id', 'username', 'note', 'edit'
         );
 
         $row = new \html_table_row();
@@ -98,8 +98,8 @@ class renderer extends \plugin_renderer_base {
         $usernamecell = new \html_table_cell($selecteduser->username);
         $row->cells[] = $usernamecell;
 
-        $reselleridcell = new \html_table_cell($authpluginuser->resellerid);
-        $row->cells[] = $reselleridcell;
+        $notecell = new \html_table_cell($authpluginuser->note);
+        $row->cells[] = $notecell;
 
         $actionurl = '/local/ltsauthplugin/usersite/manageusers.php';
         $editurl = new \moodle_url($actionurl, array('userid' => $authpluginuser->userid));
@@ -149,15 +149,16 @@ class renderer extends \plugin_renderer_base {
         $table->head = array(
             get_string('itemid', 'local_ltsauthplugin'),
             get_string('itemurl', 'local_ltsauthplugin'),
+            get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
-        $table->headspan = array(1, 1, 2);
+        $table->headspan = array(1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'url', 'edit', 'delete'
+            'id', 'url', 'note', 'edit', 'delete'
         );
 
         // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
+        \core_collator::asort_objects_by_property($items, 'url');
 
         // Loop through the items and add to table.
         foreach ($items as $item) {
@@ -169,6 +170,9 @@ class renderer extends \plugin_renderer_base {
 
             $urlcell = new \html_table_cell($item->url);
             $row->cells[] = $urlcell;
+
+            $notecell = new \html_table_cell($item->note);
+            $row->cells[] = $notecell;
 
             $itemactionurl = '/local/ltsauthplugin/usersite/manageusersites.php';
             $itemediturl = new \moodle_url($itemactionurl, array('userid' => $item->userid, 'id' => $item->id));
@@ -225,17 +229,17 @@ class renderer extends \plugin_renderer_base {
         $table->head = array(
             'ID',
             get_string('subscriptionname', 'local_ltsauthplugin'),
-            get_string('transactionid', 'local_ltsauthplugin'),
+            get_string('note', 'local_ltsauthplugin'),
             get_string('expiredate', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
-        $table->headspan = array(1, 1, 1, 1, 1, 2);
+        $table->headspan = array(1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'subscriptionname', 'transactionid', 'expiredate', 'edit', 'delete'
+            'id', 'subscriptionname', 'note', 'expiredate', 'edit', 'delete'
         );
 
         // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
+        \core_collator::asort_objects_by_property($items, 'subscriptionname');
 
         // Loop through the items and add to table.
         foreach ($items as $item) {
@@ -248,8 +252,8 @@ class renderer extends \plugin_renderer_base {
             $namecell = new \html_table_cell($item->subscriptionname);
             $row->cells[] = $namecell;
 
-            $itemtranscell = new \html_table_cell($item->transactionid);
-            $row->cells[] = $itemtranscell;
+            $notecell = new \html_table_cell($item->note);
+            $row->cells[] = $notecell;
 
             $itemexpiredatecell = new \html_table_cell(($item->expiredate ? date("d/m/Y", $item->expiredate) : '--'));
             $row->cells[] = $itemexpiredatecell;
@@ -306,16 +310,16 @@ class renderer extends \plugin_renderer_base {
             'ID',
             get_string('subscriptionname', 'local_ltsauthplugin'),
             get_string('apps', 'local_ltsauthplugin'),
-            get_string('wildcard', 'local_ltsauthplugin'),
+            get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
         $table->headspan = array(1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'subscriptionname', 'apps', 'wildcard', 'edit', 'delete'
+            'id', 'subscriptionname', 'apps', 'note', 'edit', 'delete'
         );
 
         // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
+        \core_collator::asort_objects_by_property($items, 'subscriptionname');
 
         // Loop through the items and add to table.
         foreach ($items as $item) {
@@ -331,8 +335,8 @@ class renderer extends \plugin_renderer_base {
             $appscell = new \html_table_cell($item->apps);
             $row->cells[] = $appscell;
 
-            $wildcardcell = new \html_table_cell($item->wildcard ? get_string('yes') : get_string('no'));
-            $row->cells[] = $wildcardcell;
+            $notecell = new \html_table_cell($item->note);
+            $row->cells[] = $notecell;
 
             $itemactionurl = '/local/ltsauthplugin/subscriptions/managesubs.php';
             $itemediturl = new \moodle_url($itemactionurl, array('id' => $item->id));
@@ -387,13 +391,13 @@ class renderer extends \plugin_renderer_base {
             get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
-        $table->headspan = array(1, 1, 2);
+        $table->headspan = array(1, 1, 1, 2);
         $table->colclasses = array(
             'id', 'appname', 'note', 'edit', 'delete'
         );
 
         // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
+        \core_collator::asort_objects_by_property($items, 'appname');
 
         // Loop through the items and add to table.
         foreach ($items as $item) {

@@ -57,9 +57,9 @@ class usersubform extends baseform {
         );
         $this->_form->addElement('date_selector', 'expiredate', get_string('expiredate', 'local_ltsauthplugin'), $dateopts);
 
-        // Transaction id.
-        $this->_form->addElement('text', 'transactionid', get_string('transactionid', 'local_ltsauthplugin'));
-        $this->_form->setType('transactionid', PARAM_TEXT);
-        $this->_form->setDefault('transactionid', '');
+        // Note.
+        $this->_form->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));
+        $this->_form->setType('note', PARAM_RAW);
+        $this->_form->setDefault('note', '');
     }
 }

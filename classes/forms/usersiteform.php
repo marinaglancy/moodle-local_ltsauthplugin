@@ -44,5 +44,9 @@ class usersiteform extends baseform {
 
         $this->_form->addElement('text', 'url', get_string('site', 'local_ltsauthplugin'));
         $this->_form->setType('url', PARAM_TEXT);
+
+        // Add note.
+        $this->_form->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));
+        $this->_form->setType('note', PARAM_RAW);
     }
 }

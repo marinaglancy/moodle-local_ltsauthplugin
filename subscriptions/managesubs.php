@@ -94,7 +94,7 @@ if ($data = $mform->get_data()) {
 
     $theitem = new stdClass;
     $theitem->subscriptionname = $data->subscriptionname;
-    $theitem->wildcard = $data->wildcard;
+    $theitem->note = $data->note;
     if (!empty($data->apps)) {
         $theitem->apps = implode(',', $data->apps);
     } else {
@@ -105,14 +105,14 @@ if ($data = $mform->get_data()) {
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = submanager::create_sub(0, $theitem->subscriptionname, $theitem->apps, $theitem->wildcard);
+        $ret = submanager::create_sub(0, $theitem->subscriptionname, $theitem->apps, $theitem->note);
         if (!$ret) {
             print_error("Could not insert authplugin subscription!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
-        $ret = submanager::update_sub($theitem->id, $theitem->subscriptionname, $theitem->apps, $theitem->wildcard);
+        $ret = submanager::update_sub($theitem->id, $theitem->subscriptionname, $theitem->apps, $theitem->note);
         if (!$ret) {
             print_error("Could not update authplugin subscription!");
             redirect($redirecturl);

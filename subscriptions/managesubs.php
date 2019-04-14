@@ -71,7 +71,7 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = submanager::delete_sub($item->subscriptionid);
+    $success = submanager::delete_sub($item->id);
     if (!$success) {
         print_error("Could not delete authplugin subscription!");
         redirect($redirecturl);
@@ -93,7 +93,6 @@ if ($data = $mform->get_data()) {
     require_sesskey();
 
     $theitem = new stdClass;
-    $theitem->subscriptionid = $data->subscriptionid;
     $theitem->subscriptionname = $data->subscriptionname;
     $theitem->wildcard = $data->wildcard;
     if (!empty($data->apps)) {
@@ -106,23 +105,17 @@ if ($data = $mform->get_data()) {
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = submanager::create_sub($theitem->subscriptionid, $theitem->subscriptionname, $theitem->apps, $theitem->wildcard);
+        $ret = submanager::create_sub(0, $theitem->subscriptionname, $theitem->apps, $theitem->wildcard);
         if (!$ret) {
             print_error("Could not insert authplugin subscription!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
-        if ($data->subscriptionid != $item->subscriptionid) {
-            print_error("I am sorry but you can not edit the subscription id. Delete and remake it. " .
-                "Nothing will happen to the subscription ids in the users table");
+        $ret = submanager::update_sub($theitem->id, $theitem->subscriptionname, $theitem->apps, $theitem->wildcard);
+        if (!$ret) {
+            print_error("Could not update authplugin subscription!");
             redirect($redirecturl);
-        } else {
-            $ret = submanager::update_sub($theitem->subscriptionid, $theitem->subscriptionname, $theitem->apps, $theitem->wildcard);
-            if (!$ret) {
-                print_error("Could not update authplugin subscription!");
-                redirect($redirecturl);
-            }
         }
     }
 

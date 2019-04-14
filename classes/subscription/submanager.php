@@ -46,7 +46,7 @@ class submanager {
      */
     public static function delete_sub($subscriptionid) {
         global $DB;
-        $ret = $DB->delete_records(constants::SUB_TABLE, array('subscriptionid' => $subscriptionid));
+        $ret = $DB->delete_records(constants::SUB_TABLE, array('id' => $subscriptionid));
         return $ret;
     }
 
@@ -57,7 +57,7 @@ class submanager {
      */
     public static function get_sub($subscriptionid) {
         global $DB;
-        $sub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid' => $subscriptionid));
+        $sub = $DB->get_record(constants::SUB_TABLE, array('id' => $subscriptionid));
         return $sub;
     }
 
@@ -83,15 +83,8 @@ class submanager {
     public static function create_sub($subid, $subname, $apps, $wildcard) {
         global $DB;
 
-        // Make sure we do not already have this sub. And if so, just update it.
-        $thesub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid' => $subid));
-        if ($thesub) {
-            return self::update_sub($subid, $subname, $apps, $wildcard);
-        }
-
         // Add the sub.
         $thesub = new \stdClass;
-        $thesub->subscriptionid = $subid;
         $thesub->subscriptionname = $subname;
         $thesub->apps = $apps;
         $thesub->wildcard = $wildcard;
@@ -114,7 +107,7 @@ class submanager {
     public static function update_sub($subid, $subname, $apps, $wildcard) {
         global $DB;
 
-        $thesub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid' => $subid));
+        $thesub = $DB->get_record(constants::SUB_TABLE, array('id' => $subid));
         if (!$thesub) {
             return false;
         }

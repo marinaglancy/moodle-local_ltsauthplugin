@@ -38,14 +38,9 @@ class subform extends baseform {
      * Custom definition
      */
     public function custom_definition() {
-        // Add wild card.
         global $DB;
 
-        // Subscription id.
-        $this->_form->addElement('text', 'subscriptionid', get_string('subscriptionid', 'local_ltsauthplugin'));
-        $this->_form->setType('subscriptionid', PARAM_INT);
-        $this->_form->setDefault('subscriptionid', 0);
-        // Transaction id.
+        // Subscription name.
         $this->_form->addElement('text', 'subscriptionname', get_string('subscriptionname', 'local_ltsauthplugin'));
         $this->_form->setType('subscriptionname', PARAM_TEXT);
         $this->_form->setDefault('subscriptionname', '');

@@ -75,7 +75,7 @@ class usersubmanager {
 
         $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname,subs.apps, subs.wildcard FROM {'
             . constants::USERSUB_TABLE . '} usb'
-            . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.subscriptionid'
+            . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.id'
             . ' WHERE userid = ?'
             , array($userid));
 
@@ -111,7 +111,7 @@ class usersubmanager {
 
         $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname, u.username FROM {'
             . constants::USERSUB_TABLE . '} usb INNER JOIN {user} u ON u.id = usb.userid '
-            . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.subscriptionid'
+            . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.id'
             . ' WHERE userid = ?'
             , array($userid));
 
@@ -119,24 +119,6 @@ class usersubmanager {
             return $subs;
         }
 
-        return $ret;
-    }
-
-    /**
-     * Create a users subscriptions
-     *
-     * @param int $userid
-     * @param int $subscriptionid
-     * @return \stdClass|false
-     */
-    public static function get_usersub_by_subscriptionid($userid, $subscriptionid) {
-        global $DB;
-        $ret = false;
-
-        $sub = $DB->get_record(constants::USERSUB_TABLE, array('userid' => $userid, 'subscriptionid' => $subscriptionid));
-        if ($sub) {
-            return $sub;
-        }
         return $ret;
     }
 
@@ -187,7 +169,7 @@ class usersubmanager {
         }
 
         // Lets not be creating multiple of the same sub per user. this would be just bad.
-        $theusersub = self::get_usersub_by_subscriptionid($userid, $subid);
+        $theusersub = self::get_usersub($userid, $subid);
         if ($theusersub) {
             return self::update_usersub($subid, $transid, $expiredate, $userid);
         }
@@ -222,7 +204,7 @@ class usersubmanager {
             return false;
         }
 
-        $thesub = self::get_usersub_by_subscriptionid($userid, $subscriptionid);
+        $thesub = self::get_usersub($userid, $subscriptionid);
         $thesub->transactionid = $transactionid;
         $thesub->expiredate = $expiredate;
         $thesub->timemodified = time();

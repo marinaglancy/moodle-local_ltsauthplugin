@@ -232,7 +232,6 @@ class renderer extends \plugin_renderer_base {
         $table->id = 'local_ltsauthplugin_subsitempanel';
         $table->head = array(
             'ID',
-            get_string('subscriptionid', 'local_ltsauthplugin'),
             get_string('subscriptionname', 'local_ltsauthplugin'),
             get_string('transactionid', 'local_ltsauthplugin'),
             get_string('expiredate', 'local_ltsauthplugin'),
@@ -240,7 +239,7 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'subscriptionid', 'subscriptionname', 'transactionid', 'expiredate', 'edit', 'delete'
+            'id', 'subscriptionname', 'transactionid', 'expiredate', 'edit', 'delete'
         );
 
         // Sort by start date.
@@ -253,9 +252,6 @@ class renderer extends \plugin_renderer_base {
 
             $itemidcell = new \html_table_cell($item->id);
             $row->cells[] = $itemidcell;
-
-            $itemsubidcell = new \html_table_cell($item->subscriptionid);
-            $row->cells[] = $itemsubidcell;
 
             $namecell = new \html_table_cell($item->subscriptionname);
             $row->cells[] = $namecell;
@@ -316,7 +312,6 @@ class renderer extends \plugin_renderer_base {
         $table->id = 'local_ltsauthplugin_subsitempanel';
         $table->head = array(
             'ID',
-            get_string('subscriptionid', 'local_ltsauthplugin'),
             get_string('subscriptionname', 'local_ltsauthplugin'),
             get_string('apps', 'local_ltsauthplugin'),
             get_string('wildcard', 'local_ltsauthplugin'),
@@ -324,7 +319,7 @@ class renderer extends \plugin_renderer_base {
         );
         $table->headspan = array(1, 1, 1, 1, 2);
         $table->colclasses = array(
-            'id', 'subscriptionid', 'subscriptionname', 'apps', 'wildcard', 'edit', 'delete'
+            'id', 'subscriptionname', 'apps', 'wildcard', 'edit', 'delete'
         );
 
         // Sort by start date.
@@ -337,9 +332,6 @@ class renderer extends \plugin_renderer_base {
 
             $itemidcell = new \html_table_cell($item->id);
             $row->cells[] = $itemidcell;
-
-            $itemsubidcell = new \html_table_cell($item->subscriptionid);
-            $row->cells[] = $itemsubidcell;
 
             $namecell = new \html_table_cell($item->subscriptionname);
             $row->cells[] = $namecell;

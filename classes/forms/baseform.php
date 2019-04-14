@@ -24,6 +24,8 @@
 
 namespace local_ltsauthplugin\forms;
 
+use local_ltsauthplugin\constants;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
@@ -65,7 +67,8 @@ abstract class baseform extends \moodleform {
      */
     public function set_subs_field($fieldname, $fieldlabel) {
         global $DB;
-        $subs = $DB->get_records_sql_menu('SELECT subscriptionid, subscriptionname FROM {local_ltsauthplugin_subs}', array());
+        $subs = $DB->get_records_sql_menu('SELECT id, subscriptionname FROM {'.
+            constants::SUB_TABLE . '}', array());
         $this->_form->addElement('select', $fieldname, $fieldlabel, $subs);
         $this->_form->setType($fieldname, PARAM_INT);
     }
@@ -77,7 +80,8 @@ abstract class baseform extends \moodleform {
      */
     public function set_apps_field($fieldname, $fieldlabel) {
         global $DB;
-        $apps = $DB->get_records_sql_menu('SELECT appid, appname FROM {local_ltsauthplugin_apps}', array());
+        $apps = $DB->get_records_sql_menu('SELECT appid, appname FROM {'.
+            constants::APP_TABLE . '}', array());
         $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $apps);
         $this->_form->setType($fieldname, PARAM_TEXT);
         $select->setMultiple($fieldname, PARAM_TEXT);

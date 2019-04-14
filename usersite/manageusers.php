@@ -35,11 +35,10 @@ use \local_ltsauthplugin\forms\userform;
 global $USER, $DB;
 
 // First get the nfo passed in to set up the page.
-$userid = required_param('userid', PARAM_INT);
-$id = optional_param('id', 0, PARAM_INT);
+$userid = required_param('userid', PARAM_INT); // Id in table {user}.
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
-$url = new moodle_url('/local/ltsauthplugin/usersite/manageusers.php', ['userid' => $userid, 'id' => $id]);
+$url = new moodle_url('/local/ltsauthplugin/usersite/manageusers.php', ['userid' => $userid]);
 admin_externalpage_setup('ltsauthplugin/authplugin_user', '', null, $url);
 
 $PAGE->set_title(get_string('addedituser', 'local_ltsauthplugin'));
@@ -49,8 +48,9 @@ $PAGE->set_heading(get_string('addedituser', 'local_ltsauthplugin'));
 if ($userid) {
     $item = $DB->get_record(constants::USER_TABLE, array('userid' => $userid), '*');
     if (!$item) {
-        print_error('could not find authplugin_user entry of id:' . $id);
+        print_error('could not find authplugin_user entry of userid:' . $userid);
     }
+    $id = $item->id;
     $edit = true;
 } else {
     $edit = false;

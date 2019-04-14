@@ -63,7 +63,7 @@ class event_authplugin {
             if ($userid) {
                 $exists = usermanager::user_exists($userid);
                 if (!$exists) {
-                    $success = usermanager::create_user(0, $userid, "", 0);
+                    $success = usermanager::create_user('', $userid);
                 }
             }
 

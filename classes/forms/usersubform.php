@@ -42,8 +42,8 @@ class usersubform extends baseform {
      */
     public function custom_definition() {
 
-        $this->_form->addElement('hidden', 'userid');
-        $this->_form->setType('userid', PARAM_INT);
+        $this->_form->addElement('hidden', 'ltsuserid');
+        $this->_form->setType('ltsuserid', PARAM_INT);
 
         // Add subscriptions selector.
         $this->set_subs_field('subscriptionid', get_string('subscription', 'local_ltsauthplugin'));

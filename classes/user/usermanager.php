@@ -43,7 +43,7 @@ class usermanager {
     /**
      * Check if CPAPI user exists
      *
-     * @param int $userid
+     * @param int $userid id in table {user}
      * @return bool
      */
     public static function user_exists($userid) {
@@ -54,7 +54,7 @@ class usermanager {
     /**
      * Check if CPAPI user exists
      *
-     * @param int $userid
+     * @param int $userid id in table {user}
      * @return mixed
      */
     public static function get_user($userid) {
@@ -66,18 +66,12 @@ class usermanager {
      * Create a new CPAPI user
      *
      * @param string $note
-     * @param bool $userid
+     * @param int $userid id in table {user}
      * @return bool|int
      */
-    public static function create_user($note = '', $userid = false) {
+    public static function create_user($note, $userid) {
         global $DB, $USER;
         $ret = false;
-
-        // If the userid was not passed in, then we use the current user.
-        // This will be when added from webservice.
-        if (!$userid) {
-            $userid = $USER->id;
-        }
 
         $theuser = new \stdClass;
         $theuser->userid = $userid;
@@ -93,12 +87,12 @@ class usermanager {
     /**
      * Update existing CPAPI user
      *
-     * @param int $id
+     * @param int $id id in table constants::USER_TABLE
      * @param string $note
-     * @param bool $userid
+     * @param int $userid id in table {user}
      * @return bool
      */
-    public static function update_user($id, $note = '', $userid = false) {
+    public static function update_user($id, $note, $userid) {
         global $DB;
 
         // It should not be possible to not pass in a userid here.

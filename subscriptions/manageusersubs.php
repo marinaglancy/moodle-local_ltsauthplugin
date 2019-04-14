@@ -35,7 +35,7 @@ use \local_ltsauthplugin\forms\usersubform;
 global $USER, $DB;
 
 // First get the info passed in to set up the page.
-$userid = required_param('userid', PARAM_INT);
+$ltsuserid = required_param('ltsuserid', PARAM_INT);
 $id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
@@ -47,9 +47,9 @@ $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
 // Are we in new or edit mode?
 if ($id) {
-    $item = $DB->get_record(constants::USERSUB_TABLE, array('id' => $id, 'userid' => $userid), '*');
+    $item = $DB->get_record(constants::USERSUB_TABLE, array('id' => $id, 'ltsuserid' => $ltsuserid), '*');
     if (!$item) {
-        print_error('could not find item of id:' . $id . ' userid: ' . $userid);
+        print_error('could not find item of id:' . $id . ' ltsuserid: ' . $ltsuserid);
     }
     $edit = true;
 } else {
@@ -57,7 +57,8 @@ if ($id) {
 }
 
 // We always head back to the authplugin items page.
-$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $userid));
+$authpluginuser = $DB->get_record(constants::USER_TABLE, array('id' => $ltsuserid));
+$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $authpluginuser->userid));
 
 // Handle delete actions.
 if ($action == 'confirmdelete') {
@@ -65,7 +66,7 @@ if ($action == 'confirmdelete') {
     echo $renderer->header('usersubs', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
     echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->subscriptionid),
         new moodle_url('/local/ltsauthplugin/subscriptions/manageusersubs.php',
-            array('action' => 'delete', 'id' => $id, 'subscriptionid' => $item->subscriptionid, 'userid' => $userid)),
+            array('action' => 'delete', 'id' => $id, 'subscriptionid' => $item->subscriptionid, 'ltsuserid' => $ltsuserid)),
         $redirecturl);
     echo $renderer->footer();
     return;
@@ -73,7 +74,7 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = usersubmanager::delete_usersub($item->userid, $item->subscriptionid);
+    $success = usersubmanager::delete_usersub($item->ltsuserid, $item->subscriptionid);
     if (!$success) {
         print_error("Could not delete authplugin user sub!");
         redirect($redirecturl);
@@ -95,7 +96,7 @@ if ($data = $mform->get_data()) {
     require_sesskey();
 
     $theitem = new stdClass;
-    $theitem->userid = $data->userid;
+    $theitem->ltsuserid = $data->ltsuserid;
     $theitem->subscriptionid = $data->subscriptionid;
     $theitem->note = $data->note;
     $theitem->expiredate = $data->expiredate;
@@ -105,7 +106,7 @@ if ($data = $mform->get_data()) {
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
         $ret = usersubmanager::create_usersub($theitem->subscriptionid, $theitem->note,
-            $theitem->expiredate, $theitem->userid);
+            $theitem->expiredate, $theitem->ltsuserid);
         if (!$ret) {
             print_error("Could not insert authplugin item!");
             redirect($redirecturl);
@@ -113,7 +114,7 @@ if ($data = $mform->get_data()) {
     } else {
         $theitem->id = $item->id;
         $ret = usersubmanager::update_usersub($theitem->subscriptionid, $theitem->note,
-            $theitem->expiredate, $theitem->userid);
+            $theitem->expiredate, $theitem->ltsuserid);
         if (!$ret) {
             print_error("Could not update authplugin item!");
             redirect($redirecturl);
@@ -129,11 +130,11 @@ if ($data = $mform->get_data()) {
 if ($edit) {
     $data = $item;
     $data->id = $item->id;
-    $data->userid = $item->userid;
+    $data->ltsuserid = $item->ltsuserid;
 } else {
     $data = new stdClass;
     $data->id = null;
-    $data->userid = $userid;
+    $data->ltsuserid = $ltsuserid;
 }
 
 $mform->set_data($data);

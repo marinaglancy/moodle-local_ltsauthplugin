@@ -42,56 +42,57 @@ class usersubmanager {
     /**
      * Delete a usersubscription
      *
-     * @param int $userid
+     * @param int $ltsuserid
      * @param int $subscriptionid
      * @return bool
      */
-    public static function delete_usersub($userid, $subscriptionid) {
+    public static function delete_usersub($ltsuserid, $subscriptionid) {
         global $DB;
-        $ret = $DB->delete_records(constants::USERSUB_TABLE, array('userid' => $userid, 'subscriptionid' => $subscriptionid));
+        $ret = $DB->delete_records(constants::USERSUB_TABLE, array('ltsuserid' => $ltsuserid, 'subscriptionid' => $subscriptionid));
         return $ret;
     }
 
     /**
      * Create a  particular user subscriptions
      *
-     * @param int $userid
+     * @param int $ltsuserid
      * @param int $subscriptionid
      * @return \stdClass
      */
-    public static function get_usersub($userid, $subscriptionid) {
+    public static function get_usersub($ltsuserid, $subscriptionid) {
         global $DB;
-        $sub = $DB->get_record(constants::USERSUB_TABLE, array('userid' => $userid, 'subscriptionid' => $subscriptionid));
+        $sub = $DB->get_record(constants::USERSUB_TABLE, array('ltsuserid' => $ltsuserid, 'subscriptionid' => $subscriptionid));
         return $sub;
     }
 
     /**
      * Create a  particular user subscriptions
-     * @param int $userid
+     * @param int $ltsuserid
      * @return array
      */
-    public static function get_usersubs_apps($userid) {
+    public static function get_usersubs_apps($ltsuserid) {
         global $DB;
 
         $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname,subs.apps FROM {'
             . constants::USERSUB_TABLE . '} usb'
             . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.id'
-            . ' WHERE userid = ?'
-            , array($userid));
+            . ' WHERE ltsuserid = ?'
+            , array($ltsuserid));
 
         return $subs;
     }
 
     /**
      * Create a users subscriptions
-     * @param int $userid
+     *
+     * @param int $ltsuserid
      * @return array|false
      */
-    public static function get_usersubs($userid) {
+    public static function get_usersubs($ltsuserid) {
         global $DB;
         $ret = false;
 
-        $subs = $DB->get_records(constants::USERSUB_TABLE, array('userid' => $userid));
+        $subs = $DB->get_records(constants::USERSUB_TABLE, array('ltsuserid' => $ltsuserid));
         if ($subs) {
             return $subs;
         }
@@ -102,18 +103,20 @@ class usersubmanager {
     /**
      * get usersubs for display
      *
-     * @param int $userid
+     * @param int $ltsuserid
      * @return array|bool
      */
-    public static function get_usersubs_fordisplay($userid) {
+    public static function get_usersubs_fordisplay($ltsuserid) {
         global $DB;
         $ret = false;
 
-        $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname, u.username FROM {'
-            . constants::USERSUB_TABLE . '} usb INNER JOIN {user} u ON u.id = usb.userid '
+        $subs = $DB->get_records_sql('SELECT usb.*,subs.subscriptionname, u.username '
+            . ' FROM {' . constants::USERSUB_TABLE . '} usb '
             . ' INNER JOIN {' . constants::SUB_TABLE . '} subs ON usb.subscriptionid = subs.id'
-            . ' WHERE userid = ?'
-            , array($userid));
+            . ' INNER JOIN {' . constants::USER_TABLE . '} ut ON ut.id = usb.ltsuserid'
+            . ' INNER JOIN {user} u ON u.id = ut.userid '
+            . ' WHERE usb.ltsuserid = ?'
+            , array($ltsuserid));
 
         if ($subs) {
             return $subs;
@@ -123,59 +126,25 @@ class usersubmanager {
     }
 
     /**
-     * get auth plugin user by username
-     * @param string $username
-     * @return mixed
-     */
-    public static function get_authpluginuser_by_username($username) {
-        global $DB;
-
-        $authpluginuser = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE .
-            "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;", array($username));
-        return $authpluginuser;
-    }
-
-    /**
-     * Create a users subscriptions
-     *
-     * @param string $username
-     */
-    public static function get_usersubs_by_username($username) {
-        $ret = false;
-
-        $authpluginuser = self::get_authpluginuser_by_username($username);
-        if ($authpluginuser) {
-            $ret = self::get_usersubs($authpluginuser->userid);
-        }
-        return $ret;
-    }
-
-    /**
      * Create a new usersubscription
      *
      * @param int $subid
      * @param string $note
      * @param int $expiredate
-     * @param bool $userid
+     * @param int $ltsuserid
      * @return bool|int
      */
-    public static function create_usersub($subid = 0, $note = '', $expiredate = 0, $userid = false) {
+    public static function create_usersub($subid, $note, $expiredate, $ltsuserid) {
         global $DB, $USER;
 
-        // If the userid was not passed in, then we use the current user
-        // this will be when added from webservice.
-        if (!$userid) {
-            $userid = $USER->id;
-        }
-
         // Lets not be creating multiple of the same sub per user. this would be just bad.
-        $theusersub = self::get_usersub($userid, $subid);
+        $theusersub = self::get_usersub($ltsuserid, $subid);
         if ($theusersub) {
-            return self::update_usersub($subid, $note, $expiredate, $userid);
+            return self::update_usersub($subid, $note, $expiredate, $ltsuserid);
         }
 
         $theusersub = new \stdClass;
-        $theusersub->userid = $userid;
+        $theusersub->ltsuserid = $ltsuserid;
         $theusersub->subscriptionid = $subid;
         $theusersub->note = $note;
         $theusersub->expiredate = $expiredate;
@@ -193,18 +162,18 @@ class usersubmanager {
      * @param int $subscriptionid
      * @param string $note
      * @param int $expiredate
-     * @param int $userid
+     * @param int $ltsuserid
      * @return bool
      */
-    public static function update_usersub($subscriptionid, $note, $expiredate, $userid) {
+    public static function update_usersub($subscriptionid, $note, $expiredate, $ltsuserid) {
         global $DB;
 
         // It should not be possible to not pass in a userid here.
-        if (!$userid) {
+        if (!$ltsuserid) {
             return false;
         }
 
-        $thesub = self::get_usersub($userid, $subscriptionid);
+        $thesub = self::get_usersub($ltsuserid, $subscriptionid);
         $thesub->note = $note;
         $thesub->expiredate = $expiredate;
         $thesub->timemodified = time();

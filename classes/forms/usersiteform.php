@@ -39,8 +39,8 @@ class usersiteform extends baseform {
      * Custom definition
      */
     public function custom_definition() {
-        $this->_form->addElement('hidden', 'userid');
-        $this->_form->setType('userid', PARAM_INT);
+        $this->_form->addElement('hidden', 'ltsuserid');
+        $this->_form->setType('ltsuserid', PARAM_INT);
 
         $this->_form->addElement('text', 'url', get_string('site', 'local_ltsauthplugin'));
         $this->_form->setType('url', PARAM_TEXT);

@@ -48,20 +48,20 @@ if ($selecteduser) {
     global $DB;
     $authpluginuser = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
     if (!$authpluginuser) {
-        usermanager::create_user(0, $selecteduser->id, "", 0);
+        usermanager::create_user('', $selecteduser->id);
         $authpluginuser = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
         exit;
     }
     if ($authpluginuser) {
 
-        $siteitems = usersitemanager::get_usersites_fordisplay($selecteduser->id);
-        $subsitems = usersubmanager::get_usersubs_fordisplay($selecteduser->id);
+        $siteitems = usersitemanager::get_usersites_fordisplay($authpluginuser->id);
+        $subsitems = usersubmanager::get_usersubs_fordisplay($authpluginuser->id);
 
         echo $renderer->show_user_summary($selecteduser, $authpluginuser);
-        echo $renderer->add_siteitem_link($selecteduser);
-        echo $renderer->show_siteitems_list($siteitems, $selecteduser);
-        echo $renderer->add_subsitem_link($selecteduser);
-        echo $renderer->show_subsitems_list($subsitems, $selecteduser);
+        echo $renderer->add_siteitem_link($selecteduser, $authpluginuser);
+        echo $renderer->show_siteitems_list($siteitems);
+        echo $renderer->add_subsitem_link($selecteduser, $authpluginuser);
+        echo $renderer->show_subsitems_list($subsitems);
     }
 } else {
     echo $renderer->heading(get_string('nouserselected', 'local_ltsauthplugin'), 3, 'main');

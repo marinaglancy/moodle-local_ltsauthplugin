@@ -35,11 +35,11 @@ use \local_ltsauthplugin\forms\usersiteform;
 global $USER, $DB;
 
 // First get the nfo passed in to set up the page.
-$userid = required_param('userid', PARAM_INT);
+$ltsuserid = required_param('ltsuserid', PARAM_INT);
 $id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', 'edit', PARAM_TEXT);
 
-$url = new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php', ['userid' => $userid, 'id' => $id]);
+$url = new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php', ['ltsuserid' => $ltsuserid, 'id' => $id]);
 admin_externalpage_setup('ltsauthplugin/authplugin_user', '', null, $url);
 
 $PAGE->set_title(get_string('addedititem', 'local_ltsauthplugin'));
@@ -47,7 +47,7 @@ $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
 // Are we in new or edit mode?
 if ($id) {
-    $item = $DB->get_record(constants::USERSITE_TABLE, array('id' => $id), '*');
+    $item = $DB->get_record(constants::USERSITE_TABLE, array('id' => $id, 'ltsuserid' => $ltsuserid), '*');
     if (!$item) {
         print_error('could not find item of id:' . $id);
     }
@@ -57,15 +57,16 @@ if ($id) {
 }
 
 // We always head back to the authplugin items page.
-$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $userid));
+$authpluginuser = $DB->get_record(constants::USER_TABLE, array('id' => $ltsuserid), '*', MUST_EXIST);
+$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $authpluginuser->userid));
 
 // Handle delete actions.
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
-    echo $renderer->header('usersites', null, get_string('confirmitemdeletetitle', 'authplugin'));
+    echo $renderer->header('usersites', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
     echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->url),
         new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php',
-            array('action' => 'delete', 'id' => $id, 'userid' => $userid)),
+            array('action' => 'delete', 'id' => $id, 'ltsuserid' => $ltsuserid)),
         $redirecturl);
     echo $renderer->footer();
     return;
@@ -95,7 +96,7 @@ if ($data = $mform->get_data()) {
     require_sesskey();
 
     $theitem = new stdClass;
-    $theitem->userid = $data->userid;
+    $theitem->ltsuserid = $data->ltsuserid;
     $theitem->url = $data->url;
     $theitem->note = $data->note;
     $theitem->timemodified = time();
@@ -103,14 +104,14 @@ if ($data = $mform->get_data()) {
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = usersitemanager::create_usersite($data->url, $data->userid, $data->note);
+        $ret = usersitemanager::create_usersite($data->url, $data->ltsuserid, $data->note);
         if (!$ret) {
             print_error("Could not insert authplugin item!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
-        $ret = usersitemanager::update_usersite($theitem->id, $data->url, $data->userid, $data->note);
+        $ret = usersitemanager::update_usersite($theitem->id, $data->url, $data->ltsuserid, $data->note);
         if (!$ret) {
             print_error("Could not update authplugin item!");
             redirect($redirecturl);
@@ -126,11 +127,11 @@ if ($data = $mform->get_data()) {
 if ($edit) {
     $data = $item;
     $data->id = $item->id;
-    $data->userid = $item->userid;
+    $data->ltsuserid = $item->ltsuserid;
 } else {
     $data = new stdClass;
     $data->id = null;
-    $data->userid = $userid;
+    $data->ltsuserid = $ltsuserid;
 }
 
 $mform->set_data($data);

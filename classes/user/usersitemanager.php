@@ -66,58 +66,29 @@ class usersitemanager {
     /**
      * Get a list of user sites ready for display
      *
-     * @param int $userid
-     * @return array|bool
+     * @param int $ltsuserid
+     * @return array
      */
-    public static function get_usersites_fordisplay($userid) {
+    public static function get_usersites_fordisplay($ltsuserid) {
         global $DB;
-        $ret = false;
-
-        $sites = $DB->get_records_sql('SELECT ust.*, u.username FROM {' . constants::USERSITE_TABLE .
-            '} ust INNER JOIN {user} u ON u.id = ust.userid WHERE userid = ?'
-            , array($userid));
-
-        if ($sites) {
-            return $sites;
-        }
-
-        return $ret;
-    }
-
-    /**
-     * get user by username
-     *
-     * @param string $username
-     * @return mixed
-     */
-    public static function get_authpluginuser_by_username($username) {
-        global $DB;
-
-        $authpluginuser = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE .
-            "} authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?;", array($username));
-        return $authpluginuser;
+         return $DB->get_records_sql('SELECT ust.*
+            FROM {' . constants::USERSITE_TABLE . '} ust
+            WHERE ltsuserid = ?', array($ltsuserid));
     }
 
     /**
      * Create a new usersite
      *
      * @param string $url
-     * @param bool $userid
+     * @param int $ltsuserid
      * @param string $note
      * @return bool|int
      */
-    public static function create_usersite($url, $userid = false, $note = '') {
+    public static function create_usersite($url, $ltsuserid, $note) {
         global $DB, $USER;
-        $ret = false;
-
-        // If the userid was not passed in, then we use the current user.
-        // This will be when added from webservice.
-        if (!$userid) {
-            $userid = $USER->id;
-        }
 
         $thesite = new \stdClass;
-        $thesite->userid = $userid;
+        $thesite->ltsuserid = $ltsuserid;
         $thesite->url = $url;
         $thesite->note = $note;
         $thesite->timemodified = time();
@@ -133,22 +104,17 @@ class usersitemanager {
      *
      * @param int $id
      * @param string $url
-     * @param int $userid
+     * @param int $ltsuserid
      * @param string $note
      * @return bool
      */
-    public static function update_usersite($id, $url, $userid, $note) {
+    public static function update_usersite($id, $url, $ltsuserid, $note) {
         global $DB;
-
-        // It should not be possible to not pass in a userid here.
-        if (!$userid) {
-            return false;
-        }
 
         // Build siteurl object.
         $thesite = new \stdClass;
         $thesite->id = $id;
-        $thesite->userid = $userid;
+        $thesite->ltsuserid = $ltsuserid;
         $thesite->url = $url;
         $thesite->note = $note;
         $thesite->timemodified = time();

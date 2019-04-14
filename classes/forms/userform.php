@@ -43,7 +43,7 @@ class userform extends baseform {
         // Add user selector.
         $this->set_users_field('userid', get_string('user'));
 
-        // Reseller id.
+        // Note.
         $this->_form->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));
         $this->_form->setType('note', PARAM_RAW);
         $this->_form->setDefault('note', '');

@@ -116,16 +116,17 @@ class renderer extends \plugin_renderer_base {
      * add siteitem link
      *
      * @param \stdClass $selecteduser
+     * @param \stdClass $authpluginuser
      * @return string
      */
-    public function add_siteitem_link($selecteduser) {
+    public function add_siteitem_link($selecteduser, $authpluginuser) {
         global $CFG;
 
         $output = $this->output->heading(get_string("showitemsfor", "local_ltsauthplugin", $selecteduser), 4);
         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/usersite/manageusersites.php',
-            array('userid' => $selecteduser->id));
+            array('ltsuserid' => $authpluginuser->id));
         $links[] = \html_writer::link($additemurl, get_string('addnewitem', 'local_ltsauthplugin'));
 
         return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
@@ -175,12 +176,12 @@ class renderer extends \plugin_renderer_base {
             $row->cells[] = $notecell;
 
             $itemactionurl = '/local/ltsauthplugin/usersite/manageusersites.php';
-            $itemediturl = new \moodle_url($itemactionurl, array('userid' => $item->userid, 'id' => $item->id));
+            $itemediturl = new \moodle_url($itemactionurl, array('ltsuserid' => $item->ltsuserid, 'id' => $item->id));
             $itemeditlink = \html_writer::link($itemediturl, get_string('edititem', 'local_ltsauthplugin'));
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
-            $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid,
+            $itemdeleteurl = new \moodle_url($itemactionurl, array('ltsuserid' => $item->ltsuserid,
                 'id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteitem', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);
@@ -196,16 +197,17 @@ class renderer extends \plugin_renderer_base {
      * add subs item link
      *
      * @param \stdClass $selecteduser
+     * @param \stdClass $authpluginuser
      * @return string
      */
-    public function add_subsitem_link($selecteduser) {
+    public function add_subsitem_link($selecteduser, $authpluginuser) {
         global $CFG;
 
         $output = $this->output->heading(get_string("showsubsfor", "local_ltsauthplugin", $selecteduser), 4);
         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageusersubs.php',
-            array('userid' => $selecteduser->id));
+            array('ltsuserid' => $authpluginuser->id));
         $links[] = \html_writer::link($additemurl, get_string('addnewsub', 'local_ltsauthplugin'));
 
         return $this->output->box($output . '<p>' . implode('</p><p>', $links) . '</p>', 'generalbox firstpageoptions');
@@ -259,12 +261,12 @@ class renderer extends \plugin_renderer_base {
             $row->cells[] = $itemexpiredatecell;
 
             $itemactionurl = '/local/ltsauthplugin/subscriptions/manageusersubs.php';
-            $itemediturl = new \moodle_url($itemactionurl, array('userid' => $item->userid, 'id' => $item->id));
+            $itemediturl = new \moodle_url($itemactionurl, array('ltsuserid' => $item->ltsuserid, 'id' => $item->id));
             $itemeditlink = \html_writer::link($itemediturl, get_string('editsub', 'local_ltsauthplugin'));
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
-            $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid,
+            $itemdeleteurl = new \moodle_url($itemactionurl, array('ltsuserid' => $item->ltsuserid,
                 'id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deletesub', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);

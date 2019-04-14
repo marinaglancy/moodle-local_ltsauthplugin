@@ -38,23 +38,23 @@ use \local_ltsauthplugin\constants;
  */
 class appmanager {
     /**
-     * Delete a usersite
-     * @param int $appid
+     * Delete an app
+     * @param string $appname
      */
-    public static function delete_app($appid) {
+    public static function delete_app($appname) {
         global $DB;
-        $ret = $DB->delete_records(constants::APP_TABLE, array('appid' => $appid));
+        $ret = $DB->delete_records(constants::APP_TABLE, ['appname' => $appname]);
         return $ret;
     }
 
     /**
      * Get a  particular app
      *
-     * @param int $appid
+     * @param string $appname
      */
-    public static function get_app($appid) {
+    public static function get_app($appname) {
         global $DB;
-        $app = $DB->get_record(constants::APP_TABLE, array('appid' => $appid));
+        $app = $DB->get_record(constants::APP_TABLE, ['appname' => $appname]);
         return $app;
     }
 
@@ -69,22 +69,22 @@ class appmanager {
 
     /**
      * Create a new app
-     * @param int $appid
      * @param string $appname
+     * @param string $note
      */
-    public static function create_app($appid, $appname) {
+    public static function create_app($appname, $note) {
         global $DB;
 
         // Make sure we do not already have this app. And if so, just update it.
-        $theapp = $DB->get_record(constants::APP_TABLE, array('appid' => $appid));
+        $theapp = $DB->get_record(constants::APP_TABLE, ['appname' => $appname]);
         if ($theapp) {
-            return self::update_app($appid, $appname);
+            throw new \moodle_exception('App with this name already exists');
         }
 
         // Add the app.
         $theapp = new \stdClass;
-        $theapp->appid = $appid;
         $theapp->appname = $appname;
+        $theapp->note = $note;
         $theapp->timemodified = time();
 
         $theapp->id = $DB->insert_record(constants::APP_TABLE, $theapp);
@@ -95,20 +95,20 @@ class appmanager {
     /**
      * Update app
      *
-     * @param int $appid
      * @param string $appname
+     * @param string $note
      * @return bool
      */
-    public static function update_app($appid, $appname) {
+    public static function update_app($appname, $note) {
         global $DB;
 
-        $theapp = $DB->get_record(constants::APP_TABLE, array('appid' => $appid));
+        $theapp = $DB->get_record(constants::APP_TABLE, ['appname' => $appname]);
         if (!$theapp) {
             return false;
         }
 
         // Build siteurl object.
-        $theapp->appname = $appname;
+        $theapp->note = $note;
         $theapp->timemodified = time();
 
         // Execute updaet and return.

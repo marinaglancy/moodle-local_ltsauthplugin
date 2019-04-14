@@ -40,13 +40,13 @@ class appform extends baseform {
      * Custom definition
      */
     public function custom_definition() {
-        // Subscription id.
-        $this->_form->addElement('text', 'appid', get_string('appid', 'local_ltsauthplugin'));
-        $this->_form->setType('appid', PARAM_TEXT);
-        $this->_form->setDefault('appid', '');
-        // Transaction id.
+        // App.
         $this->_form->addElement('text', 'appname', get_string('appname', 'local_ltsauthplugin'));
         $this->_form->setType('appname', PARAM_TEXT);
         $this->_form->setDefault('appname', '');
+        // Notes.
+        $this->_form->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));
+        $this->_form->setType('note', PARAM_RAW);
+        $this->_form->setDefault('note', '');
     }
 }

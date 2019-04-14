@@ -80,7 +80,7 @@ abstract class baseform extends \moodleform {
      */
     public function set_apps_field($fieldname, $fieldlabel) {
         global $DB;
-        $apps = $DB->get_records_sql_menu('SELECT appid, appname FROM {'.
+        $apps = $DB->get_records_sql_menu('SELECT appname AS kkk, appname AS vvv FROM {'.
             constants::APP_TABLE . '}', array());
         $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $apps);
         $this->_form->setType($fieldname, PARAM_TEXT);

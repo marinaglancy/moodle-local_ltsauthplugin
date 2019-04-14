@@ -71,7 +71,7 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = appmanager::delete_app($item->appid);
+    $success = appmanager::delete_app($item->appname);
     if (!$success) {
         print_error("Could not delete authplugin app!");
         redirect($redirecturl);
@@ -93,26 +93,25 @@ if ($data = $mform->get_data()) {
     require_sesskey();
 
     $theitem = new stdClass;
-    $theitem->appid = $data->appid;
     $theitem->appname = $data->appname;
+    $theitem->note = $data->note;
     $theitem->timemodified = time();
 
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = appmanager::create_app($theitem->appid, $theitem->appname);
+        $ret = appmanager::create_app($theitem->appname, $theitem->note);
         if (!$ret) {
             print_error("Could not insert authplugin app!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
-        if ($data->appid != $item->appid) {
-            print_error("I am sorry but you can not edit the app id. Delete and remake it. " .
-                "Nothing will happen to the app ids in the subscription table");
+        if ($data->appname != $item->appname) {
+            print_error("I am sorry but you can not edit the app name. Delete and remake it. ");
             redirect($redirecturl);
         } else {
-            $ret = appmanager::update_app($theitem->appid, $theitem->appname);
+            $ret = appmanager::update_app($theitem->appname, $theitem->note);
             if (!$ret) {
                 print_error("Could not update authplugin app!");
                 redirect($redirecturl);

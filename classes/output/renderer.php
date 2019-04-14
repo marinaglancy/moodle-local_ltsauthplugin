@@ -383,13 +383,13 @@ class renderer extends \plugin_renderer_base {
         $table->id = 'local_ltsauthplugin_appsitempanel';
         $table->head = array(
             'ID',
-            get_string('appid', 'local_ltsauthplugin'),
             get_string('appname', 'local_ltsauthplugin'),
+            get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
         $table->headspan = array(1, 1, 2);
         $table->colclasses = array(
-            'id', 'appid', 'appname', 'edit', 'delete'
+            'id', 'appname', 'note', 'edit', 'delete'
         );
 
         // Sort by start date.
@@ -403,11 +403,11 @@ class renderer extends \plugin_renderer_base {
             $itemidcell = new \html_table_cell($item->id);
             $row->cells[] = $itemidcell;
 
-            $itemsubidcell = new \html_table_cell($item->appid);
-            $row->cells[] = $itemsubidcell;
-
             $namecell = new \html_table_cell($item->appname);
             $row->cells[] = $namecell;
+
+            $notecell = new \html_table_cell($item->note);
+            $row->cells[] = $notecell;
 
             $itemactionurl = '/local/ltsauthplugin/subscriptions/manageapps.php';
             $itemediturl = new \moodle_url($itemactionurl, array('id' => $item->id));

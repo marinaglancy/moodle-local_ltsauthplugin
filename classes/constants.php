@@ -46,8 +46,4 @@ class constants {
     const APP_TABLE = 'local_ltsauthplugin_apps';
     /** @var string */
     const USERSUB_TABLE = 'local_ltsauthplugin_usersubs';
-    /** @var string */
-    const AWSACCESSID_NONE = 'noaccessid';
-    /** @var string */
-    const AWSACCESSSECRET_NONE = 'noaccesssecret';
 }

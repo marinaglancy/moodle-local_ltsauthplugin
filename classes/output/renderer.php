@@ -82,13 +82,11 @@ class renderer extends \plugin_renderer_base {
             'ID',
             get_string('username'),
             get_string('resellerid', 'local_ltsauthplugin'),
-            get_string('awsaccessid', 'local_ltsauthplugin'),
-            get_string('awsaccesssecret', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
         $table->headspan = array(1, 1, 1, 1, 1, 1);
         $table->colclasses = array(
-            'id', 'username', 'rid', 'awsaccessid', 'awsaccesssecret', 'edit'
+            'id', 'username', 'rid', 'edit'
         );
 
         $row = new \html_table_row();
@@ -102,12 +100,6 @@ class renderer extends \plugin_renderer_base {
 
         $reselleridcell = new \html_table_cell($authpluginuser->resellerid);
         $row->cells[] = $reselleridcell;
-
-        $awsaccessidcell = new \html_table_cell($authpluginuser->awsaccessid);
-        $row->cells[] = $awsaccessidcell;
-
-        $awsaccesssecretcell = new \html_table_cell($authpluginuser->awsaccesssecret);
-        $row->cells[] = $awsaccesssecretcell;
 
         $actionurl = '/local/ltsauthplugin/usersite/manageusers.php';
         $editurl = new \moodle_url($actionurl, array('userid' => $authpluginuser->userid));

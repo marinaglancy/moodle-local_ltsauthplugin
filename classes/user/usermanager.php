@@ -67,11 +67,9 @@ class usermanager {
      *
      * @param int $resellerid
      * @param bool $userid
-     * @param bool $awsaccessid
-     * @param bool $awsaccesssecret
      * @return bool|int
      */
-    public static function create_user($resellerid = 0, $userid = false, $awsaccessid = false, $awsaccesssecret = false) {
+    public static function create_user($resellerid = 0, $userid = false) {
         global $DB, $USER;
         $ret = false;
 
@@ -86,15 +84,6 @@ class usermanager {
         $theuser->resellerid = $resellerid;
         $theuser->timemodified = time();
 
-        // Awsaccess credentials are a Poodll specific thing.
-        // You can remove them unless you are interested in assigning an Amazon IAM user to each of your clients.
-        if ($awsaccessid) {
-            $theuser->awsaccessid = $awsaccessid;
-        }
-        if ($awsaccesssecret) {
-            $theuser->awsaccesssecret = $awsaccesssecret;
-        }
-
         $theuser->id = $DB->insert_record(constants::USER_TABLE, $theuser);
         $ret = $theuser->id;
 
@@ -107,12 +96,9 @@ class usermanager {
      * @param int $id
      * @param int $resellerid
      * @param bool $userid
-     * @param bool $awsaccessid
-     * @param bool $awsaccesssecret
      * @return bool
      */
-    public static function update_user($id, $resellerid = 0, $userid = false,
-                                       $awsaccessid = false, $awsaccesssecret = false) {
+    public static function update_user($id, $resellerid = 0, $userid = false) {
         global $DB;
 
         // It should not be possible to not pass in a userid here.
@@ -126,46 +112,8 @@ class usermanager {
         $theuser->resellerid = $resellerid;
         $theuser->timemodified = time();
 
-        // Awsaccess credentials are a Poodll specific thing.
-        // You can remove them unless you are interested in assigning an Amazon IAM user to each of your clients.
-        if ($awsaccessid) {
-            $theuser->awsaccessid = $awsaccessid;
-        }
-        if ($awsaccesssecret) {
-            $theuser->awsaccesssecret = $awsaccesssecret;
-        }
-
         // Execute updaet and return.
         $ret = $DB->update_record(constants::USER_TABLE, $theuser);
-        return $ret;
-    }
-
-    /**
-     * Update existing Auth Plugin user, by username
-     *
-     * @param string $username
-     * @param string $awsaccessid
-     * @param string $awsaccesssecret
-     * @return bool|int
-     */
-    public static function update_authpluginuser_by_username($username, $awsaccessid, $awsaccesssecret) {
-        global $DB;
-        $ret = false;
-
-        $record = $DB->get_record_sql("SELECT authplugin.* FROM {" . constants::USER_TABLE . "
-            } authplugin INNER JOIN {user} u ON u.id = authplugin.userid WHERE u.username = ?",
-            array($username));
-        if ($record) {
-            $userid = $record->userid;
-            $authpluginuserid = $record->id;
-            $resellerid = $record->resellerid;
-            $ret = self::update_user($authpluginuserid, $resellerid, $userid, $awsaccessid, $awsaccesssecret);
-        } else {
-            $moodleuser = $DB->get_record('user', array('username' => $username));
-            if ($moodleuser) {
-                $ret = self::create_user(0, $moodleuser->id, $awsaccessid, $awsaccesssecret);
-            }
-        }
         return $ret;
     }
 
@@ -234,20 +182,5 @@ class usermanager {
             $pieces [] = $keyspace[random_int(0, $max)];
         }
         return implode('', $pieces);
-    }
-
-    /**
-     * Fetch the AWS creds for a user
-     * @param int $moodleuserid
-     */
-    public static function fetch_awscreds($moodleuserid) {
-        $ret = false;
-        $user = self::get_user($moodleuserid);
-        if ($user->awsaccessid && $user->awsaccesssecret) {
-            $ret = new \stdClass();
-            $ret->awsaccessid = $user->awsaccessid;
-            $ret->awsaccesssecret = $user->awsaccesssecret;
-        }
-        return $ret;
     }
 }

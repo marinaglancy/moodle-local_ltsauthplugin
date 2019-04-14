@@ -47,15 +47,5 @@ class userform extends baseform {
         $this->_form->addElement('text', 'resellerid', get_string('resellerid', 'local_ltsauthplugin'));
         $this->_form->setType('resellerid', PARAM_INT);
         $this->_form->setDefault('resellerid', 0);
-
-        // AWS Access ID.
-        $this->_form->addElement('text', 'awsaccessid', get_string('awsaccessid', 'local_ltsauthplugin'));
-        $this->_form->setType('awsaccessid', PARAM_TEXT);
-        $this->_form->setDefault('awsaccessid', '');
-
-        // AWS Access Secret.
-        $this->_form->addElement('text', 'awsaccesssecret', get_string('awsaccesssecret', 'local_ltsauthplugin'));
-        $this->_form->setType('awsaccesssecret', PARAM_TEXT);
-        $this->_form->setDefault('awsaccesssecret', '');
     }
 }

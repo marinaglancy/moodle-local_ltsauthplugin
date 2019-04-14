@@ -75,8 +75,6 @@ if ($data = $mform->get_data()) {
     $theitem = new stdClass;
     $theitem->userid = $data->userid;
     $theitem->resellerid = $data->resellerid;
-    $theitem->awsaccessid = $data->awsaccessid;
-    $theitem->awsaccesssecret = $data->awsaccesssecret;
     $theitem->timemodified = time();
 
     // First insert a new item if we need to.
@@ -85,9 +83,7 @@ if ($data = $mform->get_data()) {
 
         $ret = usermanager::create_user(
             $data->resellerid,
-            $data->userid,
-            $data->awsaccessid,
-            $data->awsaccesssecret);
+            $data->userid);
 
         if (!$ret) {
             print_error("Could not insert authplugin user!");
@@ -97,9 +93,7 @@ if ($data = $mform->get_data()) {
 
         $ret = usermanager::update_user($id,
             $data->resellerid,
-            $data->userid,
-            $data->awsaccessid,
-            $data->awsaccesssecret);
+            $data->userid);
 
         if (!$ret) {
             print_error("Could not update authplugin user!");

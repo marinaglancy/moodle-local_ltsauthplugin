@@ -24,10 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$config = get_config('local_ltsauthplugin');
-$observers = array();
-$observers[] = array(
-    'eventname' => '\core\event\user_created',
-    'callback' => '\local_ltsauthplugin\event_authplugin::create_user_handler',
-    'internal' => false
-);
+$observers = [
+    [
+        'eventname' => '\core\event\user_created',
+        'callback' => '\local_ltsauthplugin\event_authplugin::create_user_handler',
+    ],
+];

@@ -18,6 +18,7 @@ namespace local_ltsauthplugin;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core\event\user_created;
 use local_ltsauthplugin\user\usermanager;
 
 /**
@@ -31,13 +32,14 @@ use local_ltsauthplugin\user\usermanager;
 class event_authplugin {
 
     /**
-     * authplugin the event
+     * Observer for user_created event
+     *
      * Here we create a authplugin user table entry, when we get an event that a Moodle user has been created
      * The authplugin user table contains info about a users subscription
      *
-     *
+     * @param user_created $event
      */
-    public static function create_user_handler($event) {
+    public static function create_user_handler(user_created $event) {
         //get the event data.
         $event_data = $event->get_data();
 

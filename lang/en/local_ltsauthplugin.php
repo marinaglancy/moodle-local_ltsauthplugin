@@ -78,6 +78,7 @@ $string['pluginname'] = 'LTS Auth Plugin API';
 $string['plugins'] = 'Plugins';
 $string['previewitem'] = 'Preview item';
 $string['privacy:metadata'] = 'The local_ltsauthplugin plugin does not store any user data locally. It does act as a conduit to send event data to 3rd party services as determined by the site administrator.';
+$string['requests'] = 'Requests';
 $string['saveitem'] = 'Save item';
 $string['settingheading'] = 'Auth Plugin API: ';
 $string['showitemsfor'] = '{$a->firstname} {$a->lastname} registered URLs';

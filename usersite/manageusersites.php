@@ -63,7 +63,7 @@ $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array(
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('usersites', null, get_string('confirmitemdeletetitle', 'authplugin'));
-    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->url1),
+    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->url),
         new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php',
             array('action' => 'delete', 'id' => $id, 'userid' => $userid)),
         $redirecturl);
@@ -96,7 +96,7 @@ if ($data = $mform->get_data()) {
 
     $theitem = new stdClass;
     $theitem->userid = $data->userid;
-    $theitem->url1 = $data->url1;
+    $theitem->url = $data->url;
     $theitem->wildcardok = 0;
     $theitem->expiredate = 0;
     $theitem->timemodified = time();
@@ -104,14 +104,14 @@ if ($data = $mform->get_data()) {
     // First insert a new item if we need to.
     // That will give us a itemid, we need that for saving files.
     if (!$edit) {
-        $ret = usersitemanager::create_usersite($data->url1, $data->userid);
+        $ret = usersitemanager::create_usersite($data->url, $data->userid);
         if (!$ret) {
             print_error("Could not insert authplugin item!");
             redirect($redirecturl);
         }
     } else {
         $theitem->id = $id;
-        $ret = usersitemanager::update_usersite($theitem->id, $data->url1, $data->userid);
+        $ret = usersitemanager::update_usersite($theitem->id, $data->url, $data->userid);
         if (!$ret) {
             print_error("Could not update authplugin item!");
             redirect($redirecturl);

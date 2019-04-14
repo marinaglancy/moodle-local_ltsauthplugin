@@ -143,7 +143,7 @@ class usersitemanager {
         $sites = self::get_usersites($userid);
         if ($sites) {
             foreach ($sites as $site) {
-                $urls[] = $site->url1;
+                $urls[] = $site->url;
             }
         }
         return $urls;
@@ -211,7 +211,7 @@ class usersitemanager {
 
         $thesite = new \stdClass;
         $thesite->userid = $userid;
-        $thesite->url1 = $url;
+        $thesite->url = $url;
         $thesite->wildcardok = 0;
         $thesite->expiredate = 0;
         $thesite->timemodified = time();
@@ -242,7 +242,7 @@ class usersitemanager {
         $thesite = new \stdClass;
         $thesite->id = $id;
         $thesite->userid = $userid;
-        $thesite->url1 = $url;
+        $thesite->url = $url;
         $thesite->wildcardok = 0;
         $thesite->expiredate = 0;
         $thesite->timemodified = time();

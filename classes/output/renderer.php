@@ -175,7 +175,7 @@ class renderer extends \plugin_renderer_base {
             $itemidcell = new \html_table_cell($item->id);
             $row->cells[] = $itemidcell;
 
-            $urlcell = new \html_table_cell($item->url1);
+            $urlcell = new \html_table_cell($item->url);
             $row->cells[] = $urlcell;
 
             $itemactionurl = '/local/ltsauthplugin/usersite/manageusersites.php';

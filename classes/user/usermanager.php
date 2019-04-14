@@ -18,6 +18,7 @@ namespace local_ltsauthplugin\user;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/user/lib.php');
 
 use \local_ltsauthplugin\constants;
@@ -46,7 +47,7 @@ class usermanager {
     /**
      * Check if CPAPI user exists
      *
-     * @param $userid
+     * @param int $userid
      * @return mixed
      */
     public static function get_user($userid) {
@@ -67,8 +68,8 @@ class usermanager {
         global $DB, $USER;
         $ret = false;
 
-        //if the userid was not passed in, then we use the current user
-        //this will be when added from webservice
+        // If the userid was not passed in, then we use the current user.
+        // This will be when added from webservice.
         if (!$userid) {
             $userid = $USER->id;
         }
@@ -78,16 +79,16 @@ class usermanager {
         $theuser->resellerid = $resellerid;
         $theuser->timemodified = time();
 
-        //legacy and currently unused fields BEGIN
-        //now store this info in seperate tables
+        // Legacy and currently unused fields BEGIN.
+        // Now store this info in seperate tables.
         $theuser->wildcardok = 0;
         $theuser->expiredate = 0;
         $theuser->transactionid = 0;
         $theuser->subscriptionid = 0;
-        //legacy unused fields END
+        // Legacy unused fields END.
 
-        //awsaccess credentials are a Poodll specific thing.
-        //you can remove them unless you are interested in assigning an Amazon IAM user to each of your clients
+        // Awsaccess credentials are a Poodll specific thing.
+        // You can remove them unless you are interested in assigning an Amazon IAM user to each of your clients.
         if ($awsaccessid) {
             $theuser->awsaccessid = $awsaccessid;
         }
@@ -104,7 +105,7 @@ class usermanager {
     /**
      * Update existing CPAPI user
      *
-     * @param $id
+     * @param int $id
      * @param int $resellerid
      * @param bool $userid
      * @param bool $awsaccessid
@@ -115,7 +116,7 @@ class usermanager {
                                        $awsaccessid = false, $awsaccesssecret = false) {
         global $DB;
 
-        //It should not be possible to not pass in a userid here
+        // It should not be possible to not pass in a userid here.
         if (!$userid) {
             return false;
         }
@@ -126,15 +127,15 @@ class usermanager {
         $theuser->resellerid = $resellerid;
         $theuser->timemodified = time();
 
-        //legacy and currently unused fields BEGIN
+        // Legacy and currently unused fields BEGIN.
         $theuser->wildcardok = 0;
         $theuser->expiredate = 0;
         $theuser->transactionid = 0;
         $theuser->subscriptionid = 0;
-        //legacy unused fields END
+        // Legacy unused fields END.
 
-        //awsaccess credentials are a Poodll specific thing.
-        //you can remove them unless you are interested in assigning an Amazon IAM user to each of your clients
+        // Awsaccess credentials are a Poodll specific thing.
+        // You can remove them unless you are interested in assigning an Amazon IAM user to each of your clients.
         if ($awsaccessid) {
             $theuser->awsaccessid = $awsaccessid;
         }
@@ -142,7 +143,7 @@ class usermanager {
             $theuser->awsaccesssecret = $awsaccesssecret;
         }
 
-        //execute updaet and return
+        // Execute updaet and return.
         $ret = $DB->update_record(constants::USER_TABLE, $theuser);
         return $ret;
     }
@@ -150,9 +151,9 @@ class usermanager {
     /**
      * Update existing Auth Plugin user, by username
      *
-     * @param $username
-     * @param $awsaccessid
-     * @param $awsaccesssecret
+     * @param string $username
+     * @param string $awsaccessid
+     * @param string $awsaccesssecret
      * @return bool|int
      */
     public static function update_authpluginuser_by_username($username, $awsaccessid, $awsaccesssecret) {
@@ -177,10 +178,10 @@ class usermanager {
     /**
      * Update standard user by username
      *
-     * @param $username
-     * @param $firstname
-     * @param $lastname
-     * @param $email
+     * @param string $username
+     * @param string $firstname
+     * @param string $lastname
+     * @param string $email
      * @return bool
      */
     public static function update_standarduser_by_username($username, $firstname, $lastname, $email) {
@@ -204,8 +205,8 @@ class usermanager {
     /**
      * Reset the user's secret (standard user)
      *
-     * @param $username
-     * @param $currentsecret
+     * @param string $username
+     * @param string $currentsecret
      * @return bool|string
      */
     public static function reset_user_secret($username, $currentsecret) {
@@ -228,7 +229,7 @@ class usermanager {
     /**
      * Create a new secret (standard user password)
      *
-     * @param $length
+     * @param int $length
      * @return string
      */
     public static function create_secret($length) {
@@ -243,6 +244,7 @@ class usermanager {
 
     /**
      * Fetch the AWS creds for a user
+     * @param int $moodleuserid
      */
     public static function fetch_awscreds($moodleuserid) {
         $ret = false;

@@ -54,7 +54,6 @@ class renderer extends \plugin_renderer_base {
                 'class' => 'actionbutton')
         );
 
-
         $output .= \html_writer::end_tag('form');
         \html_writer::start_div('userselector');
         return $output;
@@ -115,7 +114,6 @@ class renderer extends \plugin_renderer_base {
         global $CFG;
 
         $output = $this->output->heading(get_string("showitemsfor", "local_ltsauthplugin", $selecteduser), 4);
-        // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/usersite/manageusersites.php',
@@ -151,10 +149,10 @@ class renderer extends \plugin_renderer_base {
             'id', 'url', 'edit', 'delete'
         );
 
-        //sort by start date
+        // Sort by start date.
         \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
 
-        //loop through the items and add to table
+        // Loop through the items and add to table.
         foreach ($items as $item) {
             $row = new \html_table_row();
             $row->cells = array();
@@ -171,7 +169,6 @@ class renderer extends \plugin_renderer_base {
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
-
             $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid, 'id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteitem', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);
@@ -181,13 +178,12 @@ class renderer extends \plugin_renderer_base {
         }
 
         return \html_writer::table($table);
-    } //end of function
+    }
 
     public function add_subsitem_link($selecteduser) {
         global $CFG;
 
         $output = $this->output->heading(get_string("showsubsfor", "local_ltsauthplugin", $selecteduser), 4);
-        // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageusersubs.php',
@@ -226,10 +222,10 @@ class renderer extends \plugin_renderer_base {
             'id', 'subscriptionid', 'subscriptionname', 'transactionid', 'expiredate', 'edit', 'delete'
         );
 
-        //sort by start date
+        // Sort by start date.
         \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
 
-        //loop through the items and add to table
+        // Loop through the items and add to table.
         foreach ($items as $item) {
             $row = new \html_table_row();
             $row->cells = array();
@@ -255,7 +251,6 @@ class renderer extends \plugin_renderer_base {
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
-
             $itemdeleteurl = new \moodle_url($itemactionurl, array('userid' => $item->userid, 'id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deletesub', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);
@@ -274,7 +269,6 @@ class renderer extends \plugin_renderer_base {
         global $CFG;
 
         $output = $this->output->heading(get_string("showsubs", "local_ltsauthplugin"), 4);
-        // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/managesubs.php', array());
@@ -312,10 +306,10 @@ class renderer extends \plugin_renderer_base {
             'id', 'subscriptionid', 'subscriptionname', 'apps', 'wildcard', 'edit', 'delete'
         );
 
-        //sort by start date
+        // Sort by start date.
         \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
 
-        //loop through the items and add to table
+        // Loop through the items and add to table.
         foreach ($items as $item) {
             $row = new \html_table_row();
             $row->cells = array();
@@ -341,7 +335,6 @@ class renderer extends \plugin_renderer_base {
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
 
-
             $itemdeleteurl = new \moodle_url($itemactionurl, array('id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deletesub', 'local_ltsauthplugin'));
             $itemdeletecell = new \html_table_cell($itemdeletelink);
@@ -360,8 +353,7 @@ class renderer extends \plugin_renderer_base {
         global $CFG;
 
         $output = $this->output->heading(get_string("showapps", "local_ltsauthplugin"), 4);
-        // $output .= $this->output->heading(get_string("whatdonow", "local_ltsauthplugin"), 4);
-        $links = array();
+         $links = array();
 
         $additemurl = new \moodle_url('/local/ltsauthplugin/subscriptions/manageapps.php', array());
         $links[] = \html_writer::link($additemurl, get_string('addnewapp', 'local_ltsauthplugin'));
@@ -372,8 +364,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of subscriptions
      *
-     * @param array app objects
-     * @param integer $courseid
+     * @param array $items
      * @return string html of table
      */
     function show_apps_list($items) {
@@ -396,10 +387,10 @@ class renderer extends \plugin_renderer_base {
             'id', 'appid', 'appname', 'edit', 'delete'
         );
 
-        //sort by start date
+        // Sort by start date.
         \core_collator::asort_objects_by_property($items, 'timemodified', \core_collator::SORT_NUMERIC);
 
-        //loop through the items and add to table
+        // Loop through the items and add to table.
         foreach ($items as $item) {
             $row = new \html_table_row();
             $row->cells = array();
@@ -418,7 +409,6 @@ class renderer extends \plugin_renderer_base {
             $itemeditlink = \html_writer::link($itemediturl, get_string('editapp', 'local_ltsauthplugin'));
             $itemeditcell = new \html_table_cell($itemeditlink);
             $row->cells[] = $itemeditcell;
-
 
             $itemdeleteurl = new \moodle_url($itemactionurl, array('id' => $item->id, 'action' => 'confirmdelete'));
             $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteapp', 'local_ltsauthplugin'));

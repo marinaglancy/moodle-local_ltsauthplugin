@@ -25,11 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// Ensure the configurations for this site are set
+// Ensure the configurations for this site are set.
 if ($hassiteconfig ) {
 
     // Create the new settings page.
-    $settings = new admin_settingpage('local_ltsauthplugin',get_string('authpluginsettings', 'local_ltsauthplugin'));
+    $settings = new admin_settingpage('local_ltsauthplugin', get_string('authpluginsettings', 'local_ltsauthplugin'));
     $ADMIN->add('localplugins', $settings );
 
     $ADMIN->add('root', new admin_category('ltsauthplugin', new lang_string('pluginname', 'local_ltsauthplugin')));

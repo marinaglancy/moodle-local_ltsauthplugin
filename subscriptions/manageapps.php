@@ -42,7 +42,7 @@ admin_externalpage_setup('ltsauthplugin/authplugin_subscription', '', null, $url
 $PAGE->set_title(get_string('addedititem', 'local_ltsauthplugin'));
 $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
-//are we in new or edit mode?
+// Are we in new or edit mode?
 if ($id) {
     $item = $DB->get_record(constants::APP_TABLE, array('id' => $id), '*');
     if (!$item) {
@@ -53,10 +53,10 @@ if ($id) {
     $edit = false;
 }
 
-//we always head back to the authplugin items page
+// We always head back to the authplugin items page
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php', array());
 
-//handle delete actions
+// Handle delete actions
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('apps', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
@@ -66,8 +66,8 @@ if ($action == 'confirmdelete') {
     echo $renderer->footer();
     return;
 
-    /////// Delete item NOW////////
 } elseif ($action == 'delete') {
+    // Delete item now.
     require_sesskey();
     $success = appmanager::delete_app($item->appid);
     if (!$success) {
@@ -77,16 +77,16 @@ if ($action == 'confirmdelete') {
     redirect($redirecturl);
 }
 
-//create the app form
+// Create the app form
 $mform = new appform();
 
-//if the cancel button was pressed, we are out of here
+// If the cancel button was pressed, we are out of here
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
     exit;
 }
 
-//if we have data, then our job here is to save it and return to the quiz edit page
+// If we have data, then our job here is to save it and return to the main page
 if ($data = $mform->get_data()) {
     require_sesskey();
 
@@ -95,8 +95,8 @@ if ($data = $mform->get_data()) {
     $theitem->appname = $data->appname;
     $theitem->timemodified = time();
 
-    //first insert a new item if we need to
-    //that will give us a itemid, we need that for saving files
+    // First insert a new item if we need to.
+    // That will give us a itemid, we need that for saving files.
     if (!$edit) {
         $ret = appmanager::create_app($theitem->appid, $theitem->appname);
         if (!$ret) {
@@ -117,13 +117,12 @@ if ($data = $mform->get_data()) {
         }
     }
 
-    //go back to edit quiz page
+    // Go back to main page.
     redirect($redirecturl);
 }
 
-
-//if  we got here, there was no cancel, and no form data, so we are showing the form
-//if edit mode load up the item into a data object
+// If  we got here, there was no cancel, and no form data, so we are showing the form.
+// If edit mode load up the item into a data object.
 if ($edit) {
     $data = $item;
     $data->id = $item->id;

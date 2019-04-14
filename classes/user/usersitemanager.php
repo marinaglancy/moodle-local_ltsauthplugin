@@ -153,7 +153,7 @@ class usersitemanager {
 
         global $DB;
         $ret = false;
-        //remove all the sites
+        // Remove all the sites.
         $usersites = self::get_usersites_by_username($username);
         if ($usersites) {
             foreach ($usersites as $usersite) {
@@ -161,7 +161,7 @@ class usersitemanager {
             }
         }
 
-        //Re-register all the valid looking URLs
+        // Re-register all the valid looking URLs.
         $authplugin_user = self::get_authpluginuser_by_username($username);
         if (!$authplugin_user) {
             return $ret;
@@ -192,8 +192,8 @@ class usersitemanager {
         global $DB, $USER;
         $ret = false;
 
-        //if the userid was not passed in, then we use the current user
-        //this will be when added from webservice
+        // If the userid was not passed in, then we use the current user.
+        // This will be when added from webservice.
         if (!$userid) {
             $userid = $USER->id;
         }
@@ -214,12 +214,12 @@ class usersitemanager {
     public static function update_usersite($id, $url, $userid) {
         global $DB;
 
-        //It should not be possible to not pass in a userid here
+        // It should not be possible to not pass in a userid here.
         if (!$userid) {
             return false;
         }
 
-        //build siteurl object
+        // Build siteurl object.
         $thesite = new \stdClass;
         $thesite->id = $id;
         $thesite->userid = $userid;
@@ -228,7 +228,7 @@ class usersitemanager {
         $thesite->expiredate = 0;
         $thesite->timemodified = time();
 
-        //execute updaet and return
+        // Execute updaet and return.
         $ret = $DB->update_record(constants::USERSITE_TABLE, $thesite);
         return $ret;
     }

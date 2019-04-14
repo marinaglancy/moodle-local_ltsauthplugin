@@ -46,19 +46,18 @@ echo $renderer->user_selection_form($userselector);
 
 if ($selecteduser) {
     global $DB;
-    $authplugin_user = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
-    if (!$authplugin_user) {
+    $authpluginuser = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
+    if (!$authpluginuser) {
         usermanager::create_user(0, $selecteduser->id, "", 0);
-        $authplugin_user = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
-        print_object($authplugin_user);
+        $authpluginuser = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
         exit;
     }
-    if ($authplugin_user) {
+    if ($authpluginuser) {
 
         $siteitems = usersitemanager::get_usersites_fordisplay($selecteduser->id);
         $subsitems = usersubmanager::get_usersubs_fordisplay($selecteduser->id);
 
-        echo $renderer->show_user_summary($selecteduser, $authplugin_user);
+        echo $renderer->show_user_summary($selecteduser, $authpluginuser);
         echo $renderer->add_siteitem_link($selecteduser);
         echo $renderer->show_siteitems_list($siteitems, $selecteduser);
         echo $renderer->add_subsitem_link($selecteduser);

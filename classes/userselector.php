@@ -44,15 +44,14 @@ class userselector extends \user_selector_base {
      */
     public function find_users($search) {
         global $DB;
-        //by default wherecondition retrieves all users except the deleted, not
-        //confirmed and guest
+        // By default wherecondition retrieves all users except the deleted, not.
+        // Confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $fields = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
         $sql = " FROM {user} u
                  WHERE $wherecondition
                        AND u.deleted = 0 AND NOT (u.auth='webservice') ";
-
 
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
         $order = ' ORDER BY ' . $sort;
@@ -81,9 +80,8 @@ class userselector extends \user_selector_base {
     protected function get_options() {
         global $CFG;
         $options = parent::get_options();
-        $options['file'] = '/local/ltsauthplugin/classes/userselector.php'; //need to be set, otherwise
-        // the /user/selector/search.php
-        //will fail to find this user_selector class
+        $options['file'] = '/local/ltsauthplugin/classes/userselector.php';
+        // Need to be set, otherwise the /user/selector/search.php will fail to find this user_selector class.
         return $options;
     }
 }

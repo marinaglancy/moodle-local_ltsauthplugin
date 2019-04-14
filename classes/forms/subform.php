@@ -18,25 +18,24 @@ namespace local_ltsauthplugin\forms;
 
 defined('MOODLE_INTERNAL') || die();
 
-
 class subform extends baseform {
     public function custom_definition() {
-        //add wild card
+        // Add wild card.
         global $DB;
 
-        //subscription id
+        // Subscription id.
         $this->_form->addElement('text', 'subscriptionid', get_string('subscriptionid', 'local_ltsauthplugin'));
         $this->_form->setType('subscriptionid', PARAM_INT);
         $this->_form->setDefault('subscriptionid', 0);
-        //transaction id
+        // Transaction id.
         $this->_form->addElement('text', 'subscriptionname', get_string('subscriptionname', 'local_ltsauthplugin'));
         $this->_form->setType('subscriptionname', PARAM_TEXT);
         $this->_form->setDefault('subscriptionname', '');
 
-        //add apps selector
+        // Add apps selector.
         $this->setAppsField('apps', get_string('apps', 'local_ltsauthplugin'));
 
-        //add wild card
+        // Add wild card.
         $this->_form->addElement('selectyesno', 'wildcard', get_string('wildcard', 'local_ltsauthplugin'));
         $this->_form->setDefault('wildcard', 0);
     }

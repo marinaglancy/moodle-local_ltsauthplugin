@@ -65,13 +65,13 @@ class appmanager {
     public static function create_app($appid, $appname) {
         global $DB;
 
-        //make sure we do not already have this app. And if so, just update it.
+        // Make sure we do not already have this app. And if so, just update it.
         $theapp = $DB->get_record(constants::APP_TABLE, array('appid' => $appid));
         if ($theapp) {
             return self::update_app($appid, $appname);
         }
 
-        //add the app
+        // Add the app.
         $theapp = new \stdClass;
         $theapp->appid = $appid;
         $theapp->appname = $appname;
@@ -82,6 +82,13 @@ class appmanager {
         return $ret;
     }
 
+    /**
+     * Update app
+     *
+     * @param int $appid
+     * @param string $appname
+     * @return bool
+     */
     public static function update_app($appid, $appname) {
         global $DB;
 
@@ -90,11 +97,11 @@ class appmanager {
             return false;
         }
 
-        //build siteurl object
+        // Build siteurl object.
         $theapp->appname = $appname;
         $theapp->timemodified = time();
 
-        //execute updaet and return
+        // Execute updaet and return.
         $ret = $DB->update_record(constants::APP_TABLE, $theapp);
         return $ret;
     }

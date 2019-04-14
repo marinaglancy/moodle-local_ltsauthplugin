@@ -43,7 +43,7 @@ admin_externalpage_setup('ltsauthplugin/authplugin_user', '', null, $url);
 $PAGE->set_title(get_string('addedituser', 'local_ltsauthplugin'));
 $PAGE->set_heading(get_string('addedituser', 'local_ltsauthplugin'));
 
-//are we in new or edit mode?
+// Are we in new or edit mode?
 if ($userid) {
     $item = $DB->get_record(constants::USER_TABLE, array('userid' => $userid), '*');
     if (!$item) {
@@ -54,19 +54,19 @@ if ($userid) {
     $edit = false;
 }
 
-//we always head back to the authplugin items page
+// We always head back to the authplugin items page
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $userid));
 
-//get create our user form
+// Get create our user form
 $mform = new userform();
 
-//if the cancel button was pressed, we are out of here
+// If the cancel button was pressed, we are out of here
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
     exit;
 }
 
-//if we have data, then our job here is to save it and return to the quiz edit page
+// If we have data, then our job here is to save it and return to the main page
 if ($data = $mform->get_data()) {
     require_sesskey();
 
@@ -77,8 +77,8 @@ if ($data = $mform->get_data()) {
     $theitem->awsaccesssecret = $data->awsaccesssecret;
     $theitem->timemodified = time();
 
-    //first insert a new item if we need to
-    //that will give us a itemid, we need that for saving files
+    // First insert a new item if we need to.
+    // That will give us a itemid, we need that for saving files.
     if (!$edit) {
 
         $ret = usermanager::create_user(
@@ -105,13 +105,12 @@ if ($data = $mform->get_data()) {
         }
     }
 
-    //go back to edit quiz page
+    // Go back to main page.
     redirect($redirecturl);
 }
 
-
-//if  we got here, there was no cancel, and no form data, so we are showing the form
-//if edit mode load up the item into a data object
+// If  we got here, there was no cancel, and no form data, so we are showing the form.
+// If edit mode load up the item into a data object.
 if ($edit) {
     $data = $item;
     $data->id = $item->id;

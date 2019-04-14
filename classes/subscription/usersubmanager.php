@@ -136,13 +136,13 @@ class usersubmanager {
     public static function create_usersub($subid = 0, $transid = 0, $expiredate = 0, $userid = false) {
         global $DB, $USER;
 
-        //if the userid was not passed in, then we use the current user
-        //this will be when added from webservice
+        // If the userid was not passed in, then we use the current user
+        // this will be when added from webservice.
         if (!$userid) {
             $userid = $USER->id;
         }
 
-        //lets not be creating multiple of the same sub per user. this would be just bad
+        // Lets not be creating multiple of the same sub per user. this would be just bad.
         $theusersub = self::get_usersub_by_subscriptionid($userid, $subid);
         if ($theusersub) {
             return self::update_usersub($subid, $transid, $expiredate, $userid);
@@ -164,7 +164,7 @@ class usersubmanager {
     public static function update_usersub($subscriptionid, $transactionid, $expiredate, $userid) {
         global $DB;
 
-        //It should not be possible to not pass in a userid here
+        // It should not be possible to not pass in a userid here.
         if (!$userid) {
             return false;
         }
@@ -174,7 +174,7 @@ class usersubmanager {
         $thesub->expiredate = $expiredate;
         $thesub->timemodified = time();
 
-        //execute updaet and return
+        // Execute updaet and return.
         $ret = $DB->update_record(constants::USERSUB_TABLE, $thesub);
         return $ret;
     }

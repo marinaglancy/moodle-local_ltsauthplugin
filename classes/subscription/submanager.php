@@ -63,13 +63,13 @@ class submanager {
     public static function create_sub($subid, $subname, $apps, $wildcard) {
         global $DB;
 
-        //make sure we do not already have this sub. And if so, just update it.
+        // Make sure we do not already have this sub. And if so, just update it.
         $thesub = $DB->get_record(constants::SUB_TABLE, array('subscriptionid' => $subid));
         if ($thesub) {
             return self::update_sub($subid, $subname, $apps, $wildcard);
         }
 
-        //add the sub
+        // Add the sub.
         $thesub = new \stdClass;
         $thesub->subscriptionid = $subid;
         $thesub->subscriptionname = $subname;
@@ -90,13 +90,13 @@ class submanager {
             return false;
         }
 
-        //build siteurl object
+        // Build siteurl object.
         $thesub->subscriptionname = $subname;
         $thesub->apps = $apps;
         $thesub->wildcard = $wildcard;
         $thesub->timemodified = time();
 
-        //execute updaet and return
+        // Execute updaet and return.
         $ret = $DB->update_record(constants::SUB_TABLE, $thesub);
         return $ret;
     }

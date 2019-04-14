@@ -31,6 +31,8 @@ require_once($CFG->libdir . '/formslib.php');
  */
 abstract class baseform extends \moodleform {
     /**
+     * Custom definition
+     *
      * Each item type can and should override this to add any custom elements to
      * the basic form that they want
      */
@@ -69,13 +71,12 @@ abstract class baseform extends \moodleform {
         global $DB;
         $mform = $this->_form;
 
-
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
         $this->custom_definition();
 
-        //add the action buttons
+        // Add the action buttons.
         $this->add_action_buttons(get_string('cancel'), get_string('saveitem', 'local_ltsauthplugin'));
     }
 

@@ -18,22 +18,31 @@ namespace local_ltsauthplugin\forms;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Class userform
+ *
+ * @package local_ltsauthplugin\forms
+ */
 class userform extends baseform {
+
+    /**
+     * Custom definition
+     */
     public function custom_definition() {
-        //add user selector
+        // Add user selector.
         $this->setUsersField('userid', get_string('user'));
 
-        //reseller id
+        // Reseller id.
         $this->_form->addElement('text', 'resellerid', get_string('resellerid', 'local_ltsauthplugin'));
         $this->_form->setType('resellerid', PARAM_INT);
         $this->_form->setDefault('resellerid', 0);
 
-        //AWS Access ID
+        // AWS Access ID.
         $this->_form->addElement('text', 'awsaccessid', get_string('awsaccessid', 'local_ltsauthplugin'));
         $this->_form->setType('awsaccessid', PARAM_TEXT);
         $this->_form->setDefault('awsaccessid', '');
 
-        //AWS Access Secret
+        // AWS Access Secret.
         $this->_form->addElement('text', 'awsaccesssecret', get_string('awsaccesssecret', 'local_ltsauthplugin'));
         $this->_form->setType('awsaccesssecret', PARAM_TEXT);
         $this->_form->setDefault('awsaccesssecret', '');

@@ -40,11 +40,11 @@ class event_authplugin {
      * @param user_created $event
      */
     public static function create_user_handler(user_created $event) {
-        //get the event data.
+        // Get the event data.
         $event_data = $event->get_data();
 
         try {
-            //user data
+            // User data.
             $userid = false;
             if (array_key_exists('relateduserid', $event_data)) {
                 $userid = $event_data['relateduserid'];

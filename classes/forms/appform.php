@@ -24,12 +24,16 @@ defined('MOODLE_INTERNAL') || die();
  * @package local_ltsauthplugin
  */
 class appform extends baseform {
+
+    /**
+     * Custom definition
+     */
     public function custom_definition() {
-        //subscription id
+        // Subscription id.
         $this->_form->addElement('text', 'appid', get_string('appid', 'local_ltsauthplugin'));
         $this->_form->setType('appid', PARAM_TEXT);
         $this->_form->setDefault('appid', '');
-        //transaction id
+        // Transaction id.
         $this->_form->addElement('text', 'appname', get_string('appname', 'local_ltsauthplugin'));
         $this->_form->setType('appname', PARAM_TEXT);
         $this->_form->setDefault('appname', '');

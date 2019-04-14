@@ -24,10 +24,10 @@ class usersubform extends baseform {
         $this->_form->addElement('hidden', 'userid');
         $this->_form->setType('userid', PARAM_INT);
 
-        //add subscriptions selector
+        // Add subscriptions selector.
         $this->setSubsField('subscriptionid', get_string('subscription', 'local_ltsauthplugin'));
 
-        //expiredate
+        // Expiredate.
         $dateopts = array(
             'startyear' => 2018,
             'stopyear' => 2030,
@@ -36,7 +36,7 @@ class usersubform extends baseform {
         );
         $this->_form->addElement('date_selector', 'expiredate', get_string('expiredate', 'local_ltsauthplugin'), $dateopts);
 
-        //transaction id
+        // Transaction id.
         $this->_form->addElement('text', 'transactionid', get_string('transactionid', 'local_ltsauthplugin'));
         $this->_form->setType('transactionid', PARAM_TEXT);
         $this->_form->setDefault('transactionid', '');

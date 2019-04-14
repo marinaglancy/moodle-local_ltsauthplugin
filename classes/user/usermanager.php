@@ -86,14 +86,6 @@ class usermanager {
         $theuser->resellerid = $resellerid;
         $theuser->timemodified = time();
 
-        // Legacy and currently unused fields BEGIN.
-        // Now store this info in seperate tables.
-        $theuser->wildcardok = 0;
-        $theuser->expiredate = 0;
-        $theuser->transactionid = 0;
-        $theuser->subscriptionid = 0;
-        // Legacy unused fields END.
-
         // Awsaccess credentials are a Poodll specific thing.
         // You can remove them unless you are interested in assigning an Amazon IAM user to each of your clients.
         if ($awsaccessid) {
@@ -133,13 +125,6 @@ class usermanager {
         $theuser->userid = $userid;
         $theuser->resellerid = $resellerid;
         $theuser->timemodified = time();
-
-        // Legacy and currently unused fields BEGIN.
-        $theuser->wildcardok = 0;
-        $theuser->expiredate = 0;
-        $theuser->transactionid = 0;
-        $theuser->subscriptionid = 0;
-        // Legacy unused fields END.
 
         // Awsaccess credentials are a Poodll specific thing.
         // You can remove them unless you are interested in assigning an Amazon IAM user to each of your clients.

@@ -24,11 +24,10 @@
 
 namespace local_ltsauthplugin\output;
 
-use core\external\persistent_exporter;
-use local_ltsauthplugin\persistent\sub;
-use local_ltsauthplugin\persistent\user_sub;
-
 defined('MOODLE_INTERNAL') || die();
+
+use core\external\persistent_exporter;
+use local_ltsauthplugin\persistent\user_sub;
 
 /**
  * Class user_sub_exporter

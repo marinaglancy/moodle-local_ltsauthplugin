@@ -25,11 +25,6 @@
 require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-use \local_ltsauthplugin\constants;
-use \local_ltsauthplugin\subscription\usersubmanager;
-use \local_ltsauthplugin\user\usersitemanager;
-use \local_ltsauthplugin\user\usermanager;
-
 admin_externalpage_setup('ltsauthplugin/authplugin_requests');
 $PAGE->set_title(get_string('requests', 'local_ltsauthplugin'));
 $PAGE->set_heading(get_string('requests', 'local_ltsauthplugin'));

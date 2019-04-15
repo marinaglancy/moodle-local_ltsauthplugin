@@ -24,10 +24,6 @@
 
 namespace local_ltsauthplugin\output;
 
-use local_ltsauthplugin\persistent\plugin;
-use local_ltsauthplugin\persistent\sub;
-use local_ltsauthplugin\persistent\user_site;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**

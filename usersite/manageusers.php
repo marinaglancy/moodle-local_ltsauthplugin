@@ -28,9 +28,7 @@
 require_once("../../../config.php");
 require_once($CFG->libdir . '/adminlib.php');
 
-use \local_ltsauthplugin\constants;
 use \local_ltsauthplugin\user\usermanager;
-use \local_ltsauthplugin\forms\userform;
 
 global $USER, $DB;
 

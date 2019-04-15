@@ -29,7 +29,6 @@ require_once("../../../config.php");
 require_once($CFG->libdir . '/adminlib.php');
 
 use \local_ltsauthplugin\subscription\submanager;
-use \local_ltsauthplugin\forms\subform;
 
 global $USER, $DB;
 

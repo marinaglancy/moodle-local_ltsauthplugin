@@ -26,7 +26,6 @@ namespace local_ltsauthplugin\user;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \local_ltsauthplugin\constants;
 use local_ltsauthplugin\output\user_site_exporter;
 use local_ltsauthplugin\persistent\user_site;
 

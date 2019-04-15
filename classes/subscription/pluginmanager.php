@@ -26,7 +26,6 @@ namespace local_ltsauthplugin\subscription;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \local_ltsauthplugin\constants;
 use local_ltsauthplugin\output\plugin_exporter;
 use local_ltsauthplugin\persistent\plugin;
 

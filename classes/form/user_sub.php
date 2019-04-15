@@ -56,6 +56,11 @@ class user_sub extends persistent {
         // Add subscriptions selector.
         $options = $this->get_options_for_sub();
         $this->_form->addElement('select', 'subscriptionid', get_string('subscription', 'local_ltsauthplugin'), $options);
+        if ($this->get_persistent()->get('id')) {
+            $mform->freeze('subscriptionid');
+        } else {
+            $mform->addRule('subscriptionid', null, 'required', null, 'client');
+        }
 
         // Expiredate.
         $dateopts = array(

@@ -24,7 +24,6 @@
 
 namespace local_ltsauthplugin\form;
 
-use core\persistent;
 use local_ltsauthplugin\subscription\pluginmanager;
 
 defined('MOODLE_INTERNAL') || die();

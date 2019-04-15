@@ -24,9 +24,9 @@
 
 namespace local_ltsauthplugin\persistent;
 
-use core\persistent;
-
 defined('MOODLE_INTERNAL') || die();
+
+use core\persistent;
 
 /**
  * Class log_plugin

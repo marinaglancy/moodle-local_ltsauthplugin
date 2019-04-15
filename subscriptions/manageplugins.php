@@ -67,9 +67,8 @@ if ($action == 'confirmdelete') {
     redirect($redirecturl);
 }
 
-// Create the app form.
-$mform = new pluginform();
-$mform->set_data($item->to_record());
+// Create the plugin form.
+$mform = new \local_ltsauthplugin\form\plugin(null, ['persistent' => $item]);
 
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {

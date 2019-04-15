@@ -58,7 +58,7 @@ if ($userid) {
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $userid));
 
 // Get create our user form.
-$mform = new userform();
+$mform = new \local_ltsauthplugin\form\user(null, ['persistent' => $item]);
 
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
@@ -75,7 +75,6 @@ if ($data = $mform->get_data()) {
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
 if ($item->get('id')) {
-    $mform->set_data($item->to_record());
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));
     $mform->display();

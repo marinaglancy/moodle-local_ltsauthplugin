@@ -69,12 +69,12 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = usersubmanager::delete($item);
+    usersubmanager::delete($item);
     redirect($redirecturl);
 }
 
 // Create the usersite form.
-$mform = new usersubform();
+$mform = new \local_ltsauthplugin\form\user_sub(null, ['persistent' => $item]);
 
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {

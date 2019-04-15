@@ -73,7 +73,7 @@ if ($action == 'confirmdelete') {
 }
 
 // Create the usersite form.
-$mform = new usersiteform();
+$mform = new \local_ltsauthplugin\form\user_site(null, ['persistent' => $item]);
 
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
@@ -86,7 +86,6 @@ if ($mform->is_cancelled()) {
 
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
-$mform->set_data($item->to_record());
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 $mode = 'usersites';
 echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));

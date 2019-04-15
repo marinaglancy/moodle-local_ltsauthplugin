@@ -64,4 +64,11 @@ class sub extends persistent {
     public function get_plugins_list() : array {
         return preg_split('|,|', $this->get('plugins'), -1, PREG_SPLIT_NO_EMPTY);
     }
+
+    protected function set_plugins($value) {
+        if (is_array($value)) {
+            $value = join(',', $value);
+        }
+        $this->raw_set('plugins', $value);
+    }
 }

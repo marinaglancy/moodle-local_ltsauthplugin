@@ -65,7 +65,7 @@ if ($action == 'confirmdelete') {
 }
 
 // Create the subscription form.
-$mform = new subform();
+$mform = new \local_ltsauthplugin\form\sub(null, ['persistent' => $item]);
 
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
@@ -80,7 +80,6 @@ if ($mform->is_cancelled()) {
 
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
-$mform->set_data(submanager::prepare_data_for_form($item));
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 $mode = 'usersites';
 echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));

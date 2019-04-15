@@ -55,20 +55,9 @@ class submanager {
      */
     public static function save(sub $subscription, \stdClass $data) {
         $subscription->set('name', $data->name);
-        $subscription->set('plugins', join(',', $data->plugins));
+        $subscription->set('plugins', $data->plugins);
         $subscription->set('note', $data->note);
         $subscription->save();
-    }
-
-    /**
-     * prepare for set_data
-     * @param sub $subscription
-     * @return \stdClass
-     */
-    public static function prepare_data_for_form(sub $subscription) {
-        $data = $subscription->to_record();
-        $data->plugins = preg_split('/,/', $data->plugins, -1, PREG_SPLIT_NO_EMPTY);
-        return $data;
     }
 
     /**

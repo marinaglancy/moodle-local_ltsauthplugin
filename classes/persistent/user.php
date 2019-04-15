@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
 class user extends persistent {
 
     /** @var string Table name this persistent is mapped to. */
-    const TABLE = 'local_ltsauthplugin_usersub';
+    const TABLE = 'local_ltsauthplugin_user';
 
     /**
      * Properties definitions

@@ -46,14 +46,12 @@ $PAGE->set_heading(get_string('addedituser', 'local_ltsauthplugin'));
 
 // Are we in new or edit mode?
 if ($userid) {
-    $item = $DB->get_record(constants::USER_TABLE, array('userid' => $userid), '*');
+    $item = \local_ltsauthplugin\persistent\user::get_record(['userid' => $userid]);
     if (!$item) {
         print_error('could not find authplugin_user entry of userid:' . $userid);
     }
-    $id = $item->id;
-    $edit = true;
 } else {
-    $edit = false;
+    $item = new \local_ltsauthplugin\persistent\user();
 }
 
 // We always head back to the authplugin items page.
@@ -70,49 +68,14 @@ if ($mform->is_cancelled()) {
 
 // If we have data, then our job here is to save it and return to the main page.
 if ($data = $mform->get_data()) {
-    require_sesskey();
-
-    $theitem = new stdClass;
-    $theitem->userid = $data->userid;
-    $theitem->note = $data->note;
-    $theitem->timemodified = time();
-
-    // First insert a new item if we need to.
-    // That will give us a itemid, we need that for saving files.
-    if (!$edit) {
-
-        $ret = usermanager::create_user(
-            $data->note,
-            $data->userid);
-
-        if (!$ret) {
-            print_error("Could not insert authplugin user!");
-            redirect($redirecturl);
-        }
-    } else {
-
-        $ret = usermanager::update_user($id,
-            $data->note,
-            $data->userid);
-
-        if (!$ret) {
-            print_error("Could not update authplugin user!");
-            redirect($redirecturl);
-        }
-    }
-
-    // Go back to main page.
+    usermanager::save($item, $data);
     redirect($redirecturl);
 }
 
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
-if ($edit) {
-    $data = $item;
-    $data->id = $item->id;
-    $data->userid = $userid;
-
-    $mform->set_data($data);
+if ($item->get('id')) {
+    $mform->set_data($item->to_record());
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));
     $mform->display();

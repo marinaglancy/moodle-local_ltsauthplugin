@@ -27,6 +27,8 @@ namespace local_ltsauthplugin\user;
 defined('MOODLE_INTERNAL') || die();
 
 use \local_ltsauthplugin\constants;
+use local_ltsauthplugin\output\user_site_exporter;
+use local_ltsauthplugin\persistent\user_site;
 
 /**
  *
@@ -42,85 +44,32 @@ class usersitemanager {
     /**
      * Delete a usersite
      *
-     * @param int $siteid
-     * @return bool
+     * @param user_site $usersite
      */
-    public static function delete_usersite($siteid) {
-        global $DB;
-        $ret = $DB->delete_records(constants::USERSITE_TABLE, array('id' => $siteid));
-        return $ret;
-    }
-
-    /**
-     * Create a  particular user sites
-     *
-     * @param int $id
-     * @return mixed
-     */
-    public static function get_usersite($id) {
-        global $DB;
-        $site = $DB->get_record(constants::USERSITE_TABLE, array('id' => $id));
-        return $site;
+    public static function delete(user_site $usersite) {
+        $usersite->delete();
     }
 
     /**
      * Get a list of user sites ready for display
      *
      * @param int $ltsuserid
-     * @return array
+     * @return user_site_exporter[]
      */
-    public static function get_usersites_fordisplay($ltsuserid) {
-        global $DB;
-         return $DB->get_records_sql('SELECT ust.*
-            FROM {' . constants::USERSITE_TABLE . '} ust
-            WHERE ltsuserid = ?', array($ltsuserid));
+    public static function get_user_sites_for_display($ltsuserid) {
+        return array_map(function(user_site $p) {
+            return new user_site_exporter($p);
+        }, user_site::get_records(['ltsuserid' => $ltsuserid], 'url'));
     }
 
     /**
-     * Create a new usersite
-     *
-     * @param string $url
-     * @param int $ltsuserid
-     * @param string $note
-     * @return bool|int
+     * Create/update user site
+     * @param user_site $usersite
+     * @param \stdClass $data
      */
-    public static function create_usersite($url, $ltsuserid, $note) {
-        global $DB, $USER;
-
-        $thesite = new \stdClass;
-        $thesite->ltsuserid = $ltsuserid;
-        $thesite->url = $url;
-        $thesite->note = $note;
-        $thesite->timemodified = time();
-
-        $thesite->id = $DB->insert_record(constants::USERSITE_TABLE, $thesite);
-        $ret = $thesite->id;
-
-        return $ret;
-    }
-
-    /**
-     * update usersite
-     *
-     * @param int $id
-     * @param string $url
-     * @param int $ltsuserid
-     * @param string $note
-     * @return bool
-     */
-    public static function update_usersite($id, $url, $ltsuserid, $note) {
-        global $DB;
-
-        // Build siteurl object.
-        $thesite = new \stdClass;
-        $thesite->id = $id;
-        $thesite->ltsuserid = $ltsuserid;
-        $thesite->url = $url;
-        $thesite->note = $note;
-        $thesite->timemodified = time();
-
-        // Execute updaet and return.
-        $ret = $DB->update_record(constants::USERSITE_TABLE, $thesite);
-        return $ret;
+    public static function save(user_site $usersite, \stdClass $data) {
+        $usersite->set('url', $data->url);
+        $usersite->set('note', $data->note);
+        $usersite->save();
     }
 }

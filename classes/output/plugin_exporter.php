@@ -15,56 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class plugin
+ * Class plugin_exporter
  *
  * @package     local_ltsauthplugin
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_ltsauthplugin\persistent;
+namespace local_ltsauthplugin\output;
 
-use core\persistent;
+use core\external\persistent_exporter;
+use local_ltsauthplugin\persistent\plugin;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class plugin
+ * Class plugin_exporter
  *
  * @package     local_ltsauthplugin
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin extends persistent {
-
-    /** @var string Table name this persistent is mapped to. */
-    const TABLE = 'local_ltsauthplugin_plugin';
+class plugin_exporter extends persistent_exporter {
 
     /**
-     * Properties definitions
+     * Defines the persistent class.
      *
-     * @return array
+     * @return string
      */
-    public static function define_properties() {
-        return [
-            'name' => [
-                'type' => PARAM_RAW,
-            ],
-            'note' => [
-                'type' => PARAM_RAW,
-                'default' => null,
-                'null' => NULL_ALLOWED,
-            ],
-        ];
+    protected static function define_class() {
+        return plugin::class;
     }
 
-    /**
-     * Find plugin by name
-     * @param string $name
-     * @return plugin
-     */
-    public static function find_by_name(string $name): ?plugin {
-        $record = self::get_record(['name' => $name]);
-        return $record ?: null;
-    }
 }

@@ -27,6 +27,8 @@ namespace local_ltsauthplugin\subscription;
 defined('MOODLE_INTERNAL') || die();
 
 use \local_ltsauthplugin\constants;
+use local_ltsauthplugin\output\plugin_exporter;
+use local_ltsauthplugin\persistent\plugin;
 
 /**
  * This is a class containing functions for storing info about plugins
@@ -40,78 +42,37 @@ class pluginmanager {
     /**
      * Delete a plugin
      *
-     * @param string $pluginname
+     * @param plugin $plugin
      */
-    public static function delete_plugin($pluginname) {
-        global $DB;
-        return $DB->delete_records(constants::PLUGIN_TABLE, ['name' => $pluginname]);
+    public static function delete(plugin $plugin) {
+        $plugin->delete();
     }
 
     /**
-     * Get a  particular plugin
+     * Get plugins
+     * @return plugin_exporter[]
+     */
+    public static function get_plugins_for_display() : array {
+        return array_map(function(plugin $p) {
+            return new plugin_exporter($p);
+        }, plugin::get_records([], 'name'));
+    }
+
+    /**
+     * Creates/updates a plugin
      *
-     * @param string $pluginname
+     * @param plugin $theplugin
+     * @param \stdClass $data
+     * @throws \moodle_exception
      */
-    public static function get_plugin($pluginname) {
-        global $DB;
-        return $DB->get_record(constants::PLUGIN_TABLE, ['name' => $pluginname]);
-    }
-
-    /**
-     * Get a  particular plugin
-     */
-    public static function get_plugins() {
-        global $DB;
-        return $DB->get_records(constants::PLUGIN_TABLE, array());
-    }
-
-    /**
-     * Create a new plugin
-     *
-     * @param string $pluginname
-     * @param string $note
-     */
-    public static function create_plugin($pluginname, $note) {
-        global $DB;
-
-        // Make sure we do not already have this plugin. And if so, just update it.
-        $theplugin = $DB->get_record(constants::PLUGIN_TABLE, ['name' => $pluginname]);
-        if ($theplugin) {
+    public static function save(plugin $theplugin, \stdClass $data) {
+        if ($theplugin->get('id')) {
+            $theplugin->set('note', $data->note);
+        } else if ($theplugin = plugin::find_by_name($data->name)) {
             throw new \moodle_exception('Plugin with this name already exists');
+        } else {
+            $theplugin = new plugin(0, (object)['name' => $data->name, 'note' => $data->note]);
         }
-
-        // Add the plugin.
-        $theplugin = new \stdClass;
-        $theplugin->name = $pluginname;
-        $theplugin->note = $note;
-        $theplugin->timemodified = time();
-
-        $theplugin->id = $DB->insert_record(constants::PLUGIN_TABLE, $theplugin);
-        $ret = $theplugin->id;
-        return $ret;
-    }
-
-    /**
-     * Update plugin
-     *
-     * @param string $pluginname
-     * @param string $note
-     * @return bool
-     */
-    public static function update_plugin($pluginname, $note) {
-        global $DB;
-
-        $theplugin = $DB->get_record(constants::PLUGIN_TABLE, ['name' => $pluginname]);
-        if (!$theplugin) {
-            return false;
-        }
-
-        // Build siteurl object.
-        $theplugin->note = $note;
-        $theplugin->timemodified = time();
-
-        // Execute updaet and return.
-        $ret = $DB->update_record(constants::PLUGIN_TABLE, $theplugin);
-        return $ret;
+        $theplugin->save();
     }
 }

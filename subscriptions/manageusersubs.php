@@ -46,27 +46,22 @@ $PAGE->set_title(get_string('addedititem', 'local_ltsauthplugin'));
 $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
 // Are we in new or edit mode?
-if ($id) {
-    $item = $DB->get_record(constants::USERSUB_TABLE, array('id' => $id, 'ltsuserid' => $ltsuserid), '*');
-    if (!$item) {
-        print_error('could not find item of id:' . $id . ' ltsuserid: ' . $ltsuserid);
-    }
-    $edit = true;
-} else {
-    $edit = false;
+$item = new \local_ltsauthplugin\persistent\user_sub($id);
+if (!$id) {
+    $item->set('ltsuserid', $ltsuserid);
 }
 
 // We always head back to the authplugin items page.
-$authpluginuser = $DB->get_record(constants::USER_TABLE, array('id' => $ltsuserid));
-$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $authpluginuser->userid));
+$ltsuser = new \local_ltsauthplugin\persistent\user($item->get('ltsuserid'));
+$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $ltsuser->get('userid')));
 
 // Handle delete actions.
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('usersubs', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
-    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->subscriptionid),
+    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->get('subscriptionid')),
         new moodle_url('/local/ltsauthplugin/subscriptions/manageusersubs.php',
-            array('action' => 'delete', 'id' => $id, 'subscriptionid' => $item->subscriptionid, 'ltsuserid' => $ltsuserid)),
+            array('action' => 'delete', 'id' => $id, 'subscriptionid' => $item->get('subscriptionid'), 'ltsuserid' => $ltsuserid)),
         $redirecturl);
     echo $renderer->footer();
     return;
@@ -74,11 +69,7 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = usersubmanager::delete_usersub($item->ltsuserid, $item->subscriptionid);
-    if (!$success) {
-        print_error("Could not delete authplugin user sub!");
-        redirect($redirecturl);
-    }
+    $success = usersubmanager::delete($item);
     redirect($redirecturl);
 }
 
@@ -88,56 +79,14 @@ $mform = new usersubform();
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
-    exit;
-}
-
-// If we have data, then our job here is to save it and return to the edit page.
-if ($data = $mform->get_data()) {
-    require_sesskey();
-
-    $theitem = new stdClass;
-    $theitem->ltsuserid = $data->ltsuserid;
-    $theitem->subscriptionid = $data->subscriptionid;
-    $theitem->note = $data->note;
-    $theitem->expiredate = $data->expiredate;
-    $theitem->timemodified = time();
-
-    // First insert a new item if we need to.
-    // That will give us a itemid, we need that for saving files.
-    if (!$edit) {
-        $ret = usersubmanager::create_usersub($theitem->subscriptionid, $theitem->note,
-            $theitem->expiredate, $theitem->ltsuserid);
-        if (!$ret) {
-            print_error("Could not insert authplugin item!");
-            redirect($redirecturl);
-        }
-    } else {
-        $theitem->id = $item->id;
-        $ret = usersubmanager::update_usersub($theitem->subscriptionid, $theitem->note,
-            $theitem->expiredate, $theitem->ltsuserid);
-        if (!$ret) {
-            print_error("Could not update authplugin item!");
-            redirect($redirecturl);
-        }
-    }
-
-    // Go back to main page.
+} if ($data = $mform->get_data()) {
+    usersubmanager::save($item, $data);
     redirect($redirecturl);
 }
 
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
-if ($edit) {
-    $data = $item;
-    $data->id = $item->id;
-    $data->ltsuserid = $item->ltsuserid;
-} else {
-    $data = new stdClass;
-    $data->id = null;
-    $data->ltsuserid = $ltsuserid;
-}
-
-$mform->set_data($data);
+$mform->set_data($item->to_record());
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 $mode = 'usersites';
 echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));

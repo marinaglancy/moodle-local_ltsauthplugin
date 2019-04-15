@@ -37,8 +37,8 @@ $PAGE->set_heading(get_string('authplugin_subscription', 'local_ltsauthplugin'))
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 echo $renderer->header(get_string('authplugin_subscription', 'local_ltsauthplugin'), 2);
 
-$subs = submanager::get_subs();
-$plugins = pluginmanager::get_plugins();
+$subs = submanager::get_subs_for_display();
+$plugins = pluginmanager::get_plugins_for_display();
 echo $renderer->add_sub_link();
 echo $renderer->show_subs_list($subs);
 echo $renderer->add_plugin_link();

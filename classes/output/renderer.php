@@ -24,6 +24,10 @@
 
 namespace local_ltsauthplugin\output;
 
+use local_ltsauthplugin\persistent\plugin;
+use local_ltsauthplugin\persistent\sub;
+use local_ltsauthplugin\persistent\user_site;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -135,13 +139,13 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of homeworks for a group  / course
      *
-     * @param array $items
+     * @param user_site_exporter[] $sites
      * @return string html of table
      */
-    public function show_siteitems_list($items) {
+    public function show_siteitems_list($sites) {
         global $DB;
 
-        if (!$items) {
+        if (!$sites) {
             return $this->output->heading(get_string('noitems', 'local_ltsauthplugin'), 3, 'main');
         }
 
@@ -158,11 +162,9 @@ class renderer extends \plugin_renderer_base {
             'id', 'url', 'note', 'edit', 'delete'
         );
 
-        // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'url');
-
         // Loop through the items and add to table.
-        foreach ($items as $item) {
+        foreach ($sites as $site) {
+            $item = $site->export($this->output);
             $row = new \html_table_row();
             $row->cells = array();
 
@@ -216,13 +218,13 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of subscriptions for a user
      *
-     * @param array $items
+     * @param user_sub_exporter[] $usersubs
      * @return string html of table
      */
-    public function show_subsitems_list($items) {
+    public function show_subsitems_list($usersubs) {
         global $DB;
 
-        if (!$items) {
+        if (!$usersubs) {
             return $this->output->heading(get_string('nosubs', 'local_ltsauthplugin'), 3, 'main');
         }
 
@@ -239,6 +241,11 @@ class renderer extends \plugin_renderer_base {
         $table->colclasses = array(
             'id', 'name', 'note', 'expiredate', 'edit', 'delete'
         );
+
+        $items = [];
+        foreach ($usersubs as $usersub) {
+            $items[] = $usersub->export($this->output);
+        }
 
         // Sort by start date.
         \core_collator::asort_objects_by_property($items, 'name');
@@ -296,13 +303,13 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of subscriptions
      *
-     * @param array $items
+     * @param sub_exporter[] $subs
      * @return string html of table
      */
-    public function show_subs_list($items) {
+    public function show_subs_list($subs) {
         global $DB;
 
-        if (!$items) {
+        if (!$subs) {
             return $this->output->heading(get_string('nosubs', 'local_ltsauthplugin'), 3, 'main');
         }
 
@@ -320,11 +327,10 @@ class renderer extends \plugin_renderer_base {
             'id', 'name', 'plugins', 'note', 'edit', 'delete'
         );
 
-        // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'name');
-
         // Loop through the items and add to table.
-        foreach ($items as $item) {
+        foreach ($subs as $sub) {
+            $item = $sub->export($this->output);
+
             $row = new \html_table_row();
             $row->cells = array();
 
@@ -375,13 +381,13 @@ class renderer extends \plugin_renderer_base {
     /**
      * Return the html table of plugins
      *
-     * @param array $items
+     * @param plugin_exporter[] $plugins
      * @return string html of table
      */
-    public function show_plugins_list($items) {
+    public function show_plugins_list($plugins) {
         global $DB;
 
-        if (!$items) {
+        if (!$plugins) {
             return $this->output->heading(get_string('noplugins', 'local_ltsauthplugin'), 3, 'main');
         }
 
@@ -398,11 +404,9 @@ class renderer extends \plugin_renderer_base {
             'id', 'name', 'note', 'edit', 'delete'
         );
 
-        // Sort by start date.
-        \core_collator::asort_objects_by_property($items, 'name');
-
         // Loop through the items and add to table.
-        foreach ($items as $item) {
+        foreach ($plugins as $plugin) {
+            $item = $plugin->export($this->output);
             $row = new \html_table_row();
             $row->cells = array();
 

@@ -27,7 +27,8 @@ namespace local_ltsauthplugin\subscription;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \local_ltsauthplugin\constants;
+use local_ltsauthplugin\output\sub_exporter;
+use local_ltsauthplugin\persistent\sub;
 
 /**
  * This is a class containing functions for storing info about subs
@@ -41,86 +42,43 @@ class submanager {
 
     /**
      * Delete sub
-     * @param int $subscriptionid
-     * @return array
+     * @param sub $subscription
+      */
+    public static function delete(sub $subscription) {
+        $subscription->delete();
+    }
+
+    /**
+     * save subscription
+     * @param sub $subscription
+     * @param \stdClass $data
      */
-    public static function delete_sub($subscriptionid) {
-        global $DB;
-        $ret = $DB->delete_records(constants::SUB_TABLE, array('id' => $subscriptionid));
-        return $ret;
+    public static function save(sub $subscription, \stdClass $data) {
+        $subscription->set('name', $data->name);
+        $subscription->set('plugins', join(',', $data->plugins));
+        $subscription->set('note', $data->note);
+        $subscription->save();
+    }
+
+    /**
+     * prepare for set_data
+     * @param sub $subscription
+     * @return \stdClass
+     */
+    public static function prepare_data_for_form(sub $subscription) {
+        $data = $subscription->to_record();
+        $data->plugins = preg_split('/,/', $data->plugins, -1, PREG_SPLIT_NO_EMPTY);
+        return $data;
     }
 
     /**
      * Get a  particular subscription
-     * @param int $subscriptionid
-     * @return array
+     * @return sub_exporter[]
      */
-    public static function get_sub($subscriptionid) {
-        global $DB;
-        $sub = $DB->get_record(constants::SUB_TABLE, array('id' => $subscriptionid));
-        return $sub;
-    }
-
-    /**
-     * Get a  particular subscription
-     * @return array
-     */
-    public static function get_subs() {
-        global $DB;
-        $sub = $DB->get_records(constants::SUB_TABLE, array());
-        return $sub;
-    }
-
-    /**
-     * Create a new subscription
-     *
-     * @param int $subid
-     * @param string $subname
-     * @param mixed $plugins
-     * @param mixed $note
-     * @return bool|int
-     */
-    public static function create_sub($subid, $subname, $plugins, $note) {
-        global $DB;
-
-        // Add the sub.
-        $thesub = new \stdClass;
-        $thesub->name = $subname;
-        $thesub->plugins = $plugins;
-        $thesub->note = $note;
-        $thesub->timemodified = time();
-
-        $thesub->id = $DB->insert_record(constants::SUB_TABLE, $thesub);
-        $ret = $thesub->id;
-        return $ret;
-    }
-
-    /**
-     * update sub
-     *
-     * @param int $subid
-     * @param string $subname
-     * @param string $plugins
-     * @param string $note
-     * @return bool
-     */
-    public static function update_sub($subid, $subname, $plugins, $note) {
-        global $DB;
-
-        $thesub = $DB->get_record(constants::SUB_TABLE, array('id' => $subid));
-        if (!$thesub) {
-            return false;
-        }
-
-        // Build siteurl object.
-        $thesub->name = $subname;
-        $thesub->plugins = $plugins;
-        $thesub->note = $note;
-        $thesub->timemodified = time();
-
-        // Execute updaet and return.
-        $ret = $DB->update_record(constants::SUB_TABLE, $thesub);
-        return $ret;
+    public static function get_subs_for_display(): array {
+        return array_map(function(sub $p) {
+            return new sub_exporter($p);
+        }, sub::get_records([], 'name'));
     }
 
 }

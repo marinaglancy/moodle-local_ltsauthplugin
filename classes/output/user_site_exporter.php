@@ -15,18 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Local authplugin plugin event handler definition.
+ * Class user_site_exporter
  *
- * @package local_ltsauthplugin
- * @copyright 2017 Justin Hunt {@link https://poodll.com}
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     local_ltsauthplugin
+ * @copyright   2019 Marina Glancy
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_ltsauthplugin\output;
+
+use core\external\persistent_exporter;
+use local_ltsauthplugin\persistent\user_site;
 
 defined('MOODLE_INTERNAL') || die();
 
-$observers = [
-    [
-        'eventname' => '\core\event\user_created',
-        'callback' => '\local_ltsauthplugin\event_authplugin::create_user_handler',
-    ],
-];
+/**
+ * Class user_site_exporter
+ *
+ * @package     local_ltsauthplugin
+ * @copyright   2019 Marina Glancy
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class user_site_exporter extends persistent_exporter {
+
+    /**
+     * Defines the persistent class.
+     *
+     * @return string
+     */
+    protected static function define_class() {
+        return user_site::class;
+    }
+
+}

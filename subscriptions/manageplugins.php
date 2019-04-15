@@ -44,16 +44,8 @@ admin_externalpage_setup('ltsauthplugin/authplugin_subscription', '', null, $url
 $PAGE->set_title(get_string('addedititem', 'local_ltsauthplugin'));
 $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
-// Are we in new or edit mode?
-if ($id) {
-    $item = $DB->get_record(constants::PLUGIN_TABLE, array('id' => $id), '*');
-    if (!$item) {
-        print_error('could not find item of plugin id:' . $id);
-    }
-    $edit = true;
-} else {
-    $edit = false;
-}
+// Retrieve or instantiate the plugin.
+$item = new \local_ltsauthplugin\persistent\plugin($id);
 
 // We always head back to the authplugin items page.
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php', array());
@@ -62,7 +54,7 @@ $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php'
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('plugins', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
-    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->name),
+    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->get('name')),
         new moodle_url('/local/ltsauthplugin/subscriptions/manageplugins.php', array('action' => 'delete', 'id' => $id)),
         $redirecturl);
     echo $renderer->footer();
@@ -71,69 +63,24 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = pluginmanager::delete_plugin($item->name);
-    if (!$success) {
-        print_error("Could not delete authplugin plugin!");
-        redirect($redirecturl);
-    }
+    pluginmanager::delete($item);
     redirect($redirecturl);
 }
 
 // Create the app form.
 $mform = new pluginform();
+$mform->set_data($item->to_record());
 
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
-    exit;
-}
-
-// If we have data, then our job here is to save it and return to the main page.
-if ($data = $mform->get_data()) {
-    require_sesskey();
-
-    $theitem = new stdClass;
-    $theitem->name = $data->name;
-    $theitem->note = $data->note;
-    $theitem->timemodified = time();
-
-    // First insert a new item if we need to.
-    // That will give us a itemid, we need that for saving files.
-    if (!$edit) {
-        $ret = pluginmanager::create_plugin($theitem->name, $theitem->note);
-        if (!$ret) {
-            print_error("Could not insert authplugin plugin!");
-            redirect($redirecturl);
-        }
-    } else {
-        $theitem->id = $id;
-        if ($data->name != $item->name) {
-            print_error("I am sorry but you can not edit the plugin name. Delete and remake it. ");
-            redirect($redirecturl);
-        } else {
-            $ret = pluginmanager::update_plugin($theitem->name, $theitem->note);
-            if (!$ret) {
-                print_error("Could not update authplugin plugin!");
-                redirect($redirecturl);
-            }
-        }
-    }
-
-    // Go back to main page.
+} else if ($data = $mform->get_data()) {
+    pluginmanager::save($item, $data);
     redirect($redirecturl);
 }
 
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
-if ($edit) {
-    $data = $item;
-    $data->id = $item->id;
-} else {
-    $data = new stdClass;
-    $data->id = null;
-}
-
-$mform->set_data($data);
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));
 $mform->display();

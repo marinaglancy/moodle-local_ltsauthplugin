@@ -25,6 +25,11 @@
 namespace local_ltsauthplugin\forms;
 
 use local_ltsauthplugin\constants;
+use local_ltsauthplugin\output\plugin_exporter;
+use local_ltsauthplugin\output\sub_exporter;
+use local_ltsauthplugin\persistent\sub;
+use local_ltsauthplugin\subscription\pluginmanager;
+use local_ltsauthplugin\subscription\submanager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -66,10 +71,14 @@ abstract class baseform extends \moodleform {
      * @param string $fieldlabel
      */
     public function set_subs_field($fieldname, $fieldlabel) {
-        global $DB;
-        $subs = $DB->get_records_sql_menu('SELECT id, name FROM {'.
-            constants::SUB_TABLE . '}', array());
-        $this->_form->addElement('select', $fieldname, $fieldlabel, $subs);
+        global $OUTPUT;
+        $subs = submanager::get_subs_for_display();
+        $options = ['' => ''];
+        foreach ($subs as $sub) {
+            $data = $sub->export($OUTPUT);
+            $options[$data->id] = $data->name;
+        }
+        $this->_form->addElement('select', $fieldname, $fieldlabel, $options);
         $this->_form->setType($fieldname, PARAM_INT);
     }
 
@@ -79,10 +88,14 @@ abstract class baseform extends \moodleform {
      * @param string $fieldlabel
      */
     public function set_plugins_field($fieldname, $fieldlabel) {
-        global $DB;
-        $plugins = $DB->get_records_sql_menu('SELECT name AS kkk, name AS vvv FROM {'.
-            constants::PLUGIN_TABLE . '}', array());
-        $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $plugins);
+        global $OUTPUT;
+        $plugins = pluginmanager::get_plugins_for_display();
+        $options = [];
+        foreach ($plugins as $p) {
+            $data = $p->export($OUTPUT);
+            $options[$data->name] = $data->name;
+        }
+        $select = $this->_form->addElement('select', $fieldname, $fieldlabel, $options);
         $this->_form->setType($fieldname, PARAM_TEXT);
         $select->setMultiple($fieldname, PARAM_TEXT);
     }

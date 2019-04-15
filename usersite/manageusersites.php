@@ -45,26 +45,20 @@ admin_externalpage_setup('ltsauthplugin/authplugin_user', '', null, $url);
 $PAGE->set_title(get_string('addedititem', 'local_ltsauthplugin'));
 $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
-// Are we in new or edit mode?
-if ($id) {
-    $item = $DB->get_record(constants::USERSITE_TABLE, array('id' => $id, 'ltsuserid' => $ltsuserid), '*');
-    if (!$item) {
-        print_error('could not find item of id:' . $id);
-    }
-    $edit = true;
-} else {
-    $edit = false;
+$item = new \local_ltsauthplugin\persistent\user_site($id);
+if (!$id) {
+    $item->set('ltsuserid', $ltsuserid);
 }
 
 // We always head back to the authplugin items page.
-$authpluginuser = $DB->get_record(constants::USER_TABLE, array('id' => $ltsuserid), '*', MUST_EXIST);
-$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $authpluginuser->userid));
+$ltsuser = new \local_ltsauthplugin\persistent\user($item->get('ltsuserid'));
+$redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_user.php', array('selecteduser' => $ltsuser->get('userid')));
 
 // Handle delete actions.
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('usersites', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
-    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->url),
+    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->get('url')),
         new moodle_url('/local/ltsauthplugin/usersite/manageusersites.php',
             array('action' => 'delete', 'id' => $id, 'ltsuserid' => $ltsuserid)),
         $redirecturl);
@@ -74,11 +68,7 @@ if ($action == 'confirmdelete') {
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = usersitemanager::delete_usersite($id);
-    if (!$success) {
-        print_error("Could not delete authplugin site!");
-        redirect($redirecturl);
-    }
+    usersitemanager::delete($item);
     redirect($redirecturl);
 }
 
@@ -88,53 +78,15 @@ $mform = new usersiteform();
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
-    exit;
-}
-
-// If we have data, then our job here is to save it and return to the main page.
-if ($data = $mform->get_data()) {
+} else if ($data = $mform->get_data()) {
     require_sesskey();
-
-    $theitem = new stdClass;
-    $theitem->ltsuserid = $data->ltsuserid;
-    $theitem->url = $data->url;
-    $theitem->note = $data->note;
-    $theitem->timemodified = time();
-
-    // First insert a new item if we need to.
-    // That will give us a itemid, we need that for saving files.
-    if (!$edit) {
-        $ret = usersitemanager::create_usersite($data->url, $data->ltsuserid, $data->note);
-        if (!$ret) {
-            print_error("Could not insert authplugin item!");
-            redirect($redirecturl);
-        }
-    } else {
-        $theitem->id = $id;
-        $ret = usersitemanager::update_usersite($theitem->id, $data->url, $data->ltsuserid, $data->note);
-        if (!$ret) {
-            print_error("Could not update authplugin item!");
-            redirect($redirecturl);
-        }
-    }
-
-    // Go back to main page.
+    usersitemanager::save($item, $data);
     redirect($redirecturl);
 }
 
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
-if ($edit) {
-    $data = $item;
-    $data->id = $item->id;
-    $data->ltsuserid = $item->ltsuserid;
-} else {
-    $data = new stdClass;
-    $data->id = null;
-    $data->ltsuserid = $ltsuserid;
-}
-
-$mform->set_data($data);
+$mform->set_data($item->to_record());
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 $mode = 'usersites';
 echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));

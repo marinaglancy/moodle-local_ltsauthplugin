@@ -46,16 +46,17 @@ echo $renderer->user_selection_form($userselector);
 
 if ($selecteduser) {
     global $DB;
-    $authpluginuser = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
-    if (!$authpluginuser) {
-        usermanager::create_user('', $selecteduser->id);
-        $authpluginuser = $DB->get_record(constants::USER_TABLE, array('userid' => $selecteduser->id));
-        exit;
+    /** @var \local_ltsauthplugin\persistent\user $ltsuser */
+    $ltsuser = \local_ltsauthplugin\persistent\user::get_record(['userid' => $selecteduser->id]);
+    if (!$ltsuser) {
+        $ltsuser = new \local_ltsauthplugin\persistent\user();
+        usermanager::save($ltsuser, (object)['userid' => $selecteduser->id]);
     }
-    if ($authpluginuser) {
+    if ($ltsuser) {
+        $authpluginuser = $ltsuser->to_record();
 
-        $siteitems = usersitemanager::get_usersites_fordisplay($authpluginuser->id);
-        $subsitems = usersubmanager::get_usersubs_fordisplay($authpluginuser->id);
+        $siteitems = usersitemanager::get_user_sites_for_display($authpluginuser->id);
+        $subsitems = usersubmanager::get_user_subs_for_display($authpluginuser->id);
 
         echo $renderer->show_user_summary($selecteduser, $authpluginuser);
         echo $renderer->add_siteitem_link($selecteduser, $authpluginuser);

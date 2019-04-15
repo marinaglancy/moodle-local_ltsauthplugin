@@ -28,7 +28,6 @@
 require_once("../../../config.php");
 require_once($CFG->libdir . '/adminlib.php');
 
-use \local_ltsauthplugin\constants;
 use \local_ltsauthplugin\subscription\submanager;
 use \local_ltsauthplugin\forms\subform;
 
@@ -44,16 +43,7 @@ admin_externalpage_setup('ltsauthplugin/authplugin_subscription', '', null, $url
 $PAGE->set_title(get_string('addedititem', 'local_ltsauthplugin'));
 $PAGE->set_heading(get_string('addedititem', 'local_ltsauthplugin'));
 
-// Are we in new or edit mode?
-if ($id) {
-    $item = $DB->get_record(constants::SUB_TABLE, array('id' => $id), '*');
-    if (!$item) {
-        print_error('could not find item of sub id:' . $id);
-    }
-    $edit = true;
-} else {
-    $edit = false;
-}
+$item = new \local_ltsauthplugin\persistent\sub($id);
 
 // We always head back to the authplugin items page.
 $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php', array());
@@ -62,20 +52,15 @@ $redirecturl = new moodle_url('/local/ltsauthplugin/authplugin_subscription.php'
 if ($action == 'confirmdelete') {
     $renderer = $PAGE->get_renderer('local_ltsauthplugin');
     echo $renderer->header('subscriptions', null, get_string('confirmitemdeletetitle', 'local_ltsauthplugin'));
-    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->name),
+    echo $renderer->confirm(get_string("confirmitemdelete", "local_ltsauthplugin", $item->get('name')),
         new moodle_url('/local/ltsauthplugin/subscriptions/managesubs.php', array('action' => 'delete', 'id' => $id)),
         $redirecturl);
     echo $renderer->footer();
-    return;
-
+    exit;
 } else if ($action == 'delete') {
     // Delete item now.
     require_sesskey();
-    $success = submanager::delete_sub($item->id);
-    if (!$success) {
-        print_error("Could not delete authplugin subscription!");
-        redirect($redirecturl);
-    }
+    submanager::delete($item);
     redirect($redirecturl);
 }
 
@@ -85,56 +70,17 @@ $mform = new subform();
 // If the cancel button was pressed, we are out of here.
 if ($mform->is_cancelled()) {
     redirect($redirecturl);
-    exit;
-}
-
-// If we have data, then our job here is to save it and return to the main page.
-if ($data = $mform->get_data()) {
-    require_sesskey();
-
-    $theitem = new stdClass;
-    $theitem->name = $data->name;
-    $theitem->note = $data->note;
-    if (!empty($data->plugins)) {
-        $theitem->plugins = implode(',', $data->plugins);
-    } else {
-        $theitem->plugins = '';
+} else if ($data = $mform->get_data()) {
+    if (!isset($data->plugins)) {
+        $data->plugins = [];
     }
-    $theitem->timemodified = time();
-
-    // First insert a new item if we need to.
-    // That will give us a itemid, we need that for saving files.
-    if (!$edit) {
-        $ret = submanager::create_sub(0, $theitem->name, $theitem->plugins, $theitem->note);
-        if (!$ret) {
-            print_error("Could not insert authplugin subscription!");
-            redirect($redirecturl);
-        }
-    } else {
-        $theitem->id = $id;
-        $ret = submanager::update_sub($theitem->id, $theitem->name, $theitem->plugins, $theitem->note);
-        if (!$ret) {
-            print_error("Could not update authplugin subscription!");
-            redirect($redirecturl);
-        }
-    }
-
-    // Go back to main page.
+    submanager::save($item, $data);
     redirect($redirecturl);
 }
 
 // If  we got here, there was no cancel, and no form data, so we are showing the form.
 // If edit mode load up the item into a data object.
-if ($edit) {
-    $data = $item;
-    $data->id = $item->id;
-    $data->plugins = explode(',', $item->plugins);
-} else {
-    $data = new stdClass;
-    $data->id = null;
-}
-
-$mform->set_data($data);
+$mform->set_data(submanager::prepare_data_for_form($item));
 $renderer = $PAGE->get_renderer('local_ltsauthplugin');
 $mode = 'usersites';
 echo $renderer->header(get_string('edit', 'local_ltsauthplugin'));

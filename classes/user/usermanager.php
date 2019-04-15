@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/user/lib.php');
 
-use \local_ltsauthplugin\constants;
+use local_ltsauthplugin\persistent\user;
 
 /**
  * This is a class containing functions for sending authplugins
@@ -40,141 +40,19 @@ use \local_ltsauthplugin\constants;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class usermanager {
-    /**
-     * Check if CPAPI user exists
-     *
-     * @param int $userid id in table {user}
-     * @return bool
-     */
-    public static function user_exists($userid) {
-        global $DB;
-        return $DB->record_exists(constants::USER_TABLE, array('userid' => $userid));
-    }
 
     /**
-     * Check if CPAPI user exists
-     *
-     * @param int $userid id in table {user}
-     * @return mixed
+     * Creates/updates user
+     * @param user $ltsuser
+     * @param \stdClass|null $data
      */
-    public static function get_user($userid) {
-        global $DB;
-        return $DB->get_record(constants::USER_TABLE, array('userid' => $userid));
-    }
-
-    /**
-     * Create a new CPAPI user
-     *
-     * @param string $note
-     * @param int $userid id in table {user}
-     * @return bool|int
-     */
-    public static function create_user($note, $userid) {
-        global $DB, $USER;
-        $ret = false;
-
-        $theuser = new \stdClass;
-        $theuser->userid = $userid;
-        $theuser->note = $note;
-        $theuser->timemodified = time();
-
-        $theuser->id = $DB->insert_record(constants::USER_TABLE, $theuser);
-        $ret = $theuser->id;
-
-        return $ret;
-    }
-
-    /**
-     * Update existing CPAPI user
-     *
-     * @param int $id id in table constants::USER_TABLE
-     * @param string $note
-     * @param int $userid id in table {user}
-     * @return bool
-     */
-    public static function update_user($id, $note, $userid) {
-        global $DB;
-
-        // It should not be possible to not pass in a userid here.
-        if (!$userid) {
-            return false;
+    public static function save(user $ltsuser, \stdClass $data = null) {
+        if (isset($data->userid)) {
+            $ltsuser->set('userid', $data->userid);
         }
-
-        $theuser = new \stdClass;
-        $theuser->id = $id;
-        $theuser->userid = $userid;
-        $theuser->note = $note;
-        $theuser->timemodified = time();
-
-        // Execute updaet and return.
-        $ret = $DB->update_record(constants::USER_TABLE, $theuser);
-        return $ret;
-    }
-
-    /**
-     * Update standard user by username
-     *
-     * @param string $username
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $email
-     * @return bool
-     */
-    public static function update_standarduser_by_username($username, $firstname, $lastname, $email) {
-        global $DB;
-        $ret = false;
-
-        $record = $DB->get_record('user', array('username' => $username));
-
-        if ($record) {
-            $user = new \stdClass();
-            $user->id = $record->id;
-            $user->firstname = $firstname;
-            $user->lastname = $lastname;
-            $user->email = $email;
-            user_update_user($user);
-            $ret = true;
+        if (isset($data->note)) {
+            $ltsuser->set('note', $data->note);
         }
-        return $ret;
-    }
-
-    /**
-     * Reset the user's secret (standard user)
-     *
-     * @param string $username
-     * @param string $currentsecret
-     * @return bool|string
-     */
-    public static function reset_user_secret($username, $currentsecret) {
-        global $DB;
-        $ret = false;
-
-        $record = $DB->get_record('user', array('username' => $username));
-
-        if ($record) {
-            $newpassword = self::create_secret(16);
-            $user = new \stdClass();
-            $user->id = $record->id;
-            $user->password = $newpassword;
-            user_update_user($user);
-            $ret = $newpassword;
-        }
-        return $ret;
-    }
-
-    /**
-     * Create a new secret (standard user password)
-     *
-     * @param int $length
-     * @return string
-     */
-    public static function create_secret($length) {
-        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $pieces = [];
-        $max = mb_strlen($keyspace, '8bit') - 1;
-        for ($i = 0; $i < $length; ++$i) {
-            $pieces [] = $keyspace[random_int(0, $max)];
-        }
-        return implode('', $pieces);
+        $ltsuser->save();
     }
 }

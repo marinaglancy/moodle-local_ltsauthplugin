@@ -58,11 +58,11 @@ class requests_table extends \table_sql {
         $this->sortable(true, 'timecreated', SORT_DESC);
 
         $this->define_columns([
-            'timecreated', 'url', 'ltsuserid', 'status', 'addinfo'
+            'recalc', 'timecreated', 'url', 'ltsuserid', 'status', 'addinfo'
         ]);
         // TODO use strings.
         $this->define_headers([
-            'timecreated', 'url', 'ltsuserid', 'status', 'addinfo'
+            '', 'timecreated', 'URL', 'ltsuserid', 'status', 'plugins'
         ]);
     }
 
@@ -99,6 +99,18 @@ class requests_table extends \table_sql {
      * @return string
      */
     public function col_addinfo($data) {
-        return s($data->addinfo);
+        $addinfo = @json_decode($data->addinfo, true) + ['plugins' => ''];
+        return s(preg_replace('/,/', ', ', $addinfo['plugins']));
+    }
+
+    /**
+     * Formatter for first column
+     * @param $data
+     * @return string
+     */
+    public function col_recalc($data) {
+        global $OUTPUT;
+        $url = new \moodle_url('/');
+        return \html_writer::link($url, $OUTPUT->pix_icon('i/reload', 'Re-match')); // TODO string.
     }
 }

@@ -17,7 +17,7 @@
 /**
  * Class plugin
  *
- * @package     local_ltsauthplugin\form
+ * @package     local_ltsauthplugin
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class plugin
  *
- * @package     local_ltsauthplugin\form
+ * @package     local_ltsauthplugin
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

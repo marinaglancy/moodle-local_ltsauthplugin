@@ -43,10 +43,15 @@ defined('MOODLE_INTERNAL') || die();
  */
 class log_manager {
 
+    /** @var int */
     const STATUS_URL_UNKNOWN = 1;
+    /** @var int */
     const STATUS_SUB_EXPIRED = 2;
+    /** @var int */
     const STATUS_SUB_ACTIVE = 4;
+    /** @var int */
     const STATUS_SUB_MISSING = 8;
+    /** @var int */
     const STATUS_PLUGIN_UNKNOWN = 16;
 
     /**
@@ -237,11 +242,11 @@ class log_manager {
     public static function parse_statuses(int $status) {
         // TODO use strings.
         $allstatuses = [
-            self::STATUS_URL_UNKNOWN => 'url unknown',
-            self::STATUS_PLUGIN_UNKNOWN => 'plugin unknown',
-            self::STATUS_SUB_ACTIVE => 'sub active',
-            self::STATUS_SUB_MISSING => 'sub missing',
-            self::STATUS_SUB_EXPIRED => 'sub expired'
+            self::STATUS_URL_UNKNOWN => 'URL unknown',
+            self::STATUS_PLUGIN_UNKNOWN => 'Plugin unknown',
+            self::STATUS_SUB_ACTIVE => 'Sub active',
+            self::STATUS_SUB_MISSING => 'Sub missing',
+            self::STATUS_SUB_EXPIRED => 'Sub expired'
         ];
         $rv = [];
         foreach ($allstatuses as $key => $value) {

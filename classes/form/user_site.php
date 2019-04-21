@@ -83,7 +83,7 @@ class user_site extends persistent {
         $sites = \local_ltsauthplugin\persistent\user_site::get_records_select('url = :url AND id <> :id',
             ['url' => $data->url, 'id' => $data->id]);
         if ($sites) {
-            $errors['url'] = 'This URL is already registered for the same or another user'; // TODO string.
+            $errors['url'] = get_string('urlinuse', 'local_ltsauthplugin');
         }
     }
 

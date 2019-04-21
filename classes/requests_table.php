@@ -60,9 +60,13 @@ class requests_table extends \table_sql {
         $this->define_columns([
             'recalc', 'timecreated', 'url', 'username', 'status', 'addinfo'
         ]);
-        // TODO use strings.
         $this->define_headers([
-            '', 'timecreated', 'URL', 'user', 'status', 'plugins'
+            '',
+            get_string('timecreated', 'local_ltsauthplugin'),
+            get_string('itemurl', 'local_ltsauthplugin'),
+            get_string('user'),
+            get_string('status'),
+            get_string('plugins', 'local_ltsauthplugin')
         ]);
     }
 
@@ -116,7 +120,7 @@ class requests_table extends \table_sql {
             $params['page'] = $page;
         }
         $url = new \moodle_url($this->baseurl, $params);
-        return \html_writer::link($url, $OUTPUT->pix_icon('i/reload', 'Re-match')); // TODO string.
+        return \html_writer::link($url, $OUTPUT->pix_icon('i/reload', get_string('rematch', 'local_ltsauthplugin')));
     }
 
     /**

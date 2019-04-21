@@ -240,13 +240,12 @@ class log_manager {
      * @return array
      */
     public static function parse_statuses(int $status) {
-        // TODO use strings.
         $allstatuses = [
-            self::STATUS_URL_UNKNOWN => 'URL unknown',
-            self::STATUS_PLUGIN_UNKNOWN => 'Plugin unknown',
-            self::STATUS_SUB_ACTIVE => 'OK',
-            self::STATUS_SUB_MISSING => 'Sub missing',
-            self::STATUS_SUB_EXPIRED => 'Sub expired'
+            self::STATUS_URL_UNKNOWN => get_string('statusurlunknown', 'local_ltsauthplugin'),
+            self::STATUS_PLUGIN_UNKNOWN => get_string('statuspluginunknown', 'local_ltsauthplugin'),
+            self::STATUS_SUB_ACTIVE => get_string('statusok', 'local_ltsauthplugin'),
+            self::STATUS_SUB_MISSING => get_string('statussubmissing', 'local_ltsauthplugin'),
+            self::STATUS_SUB_EXPIRED => get_string('statussubexpired', 'local_ltsauthplugin')
         ];
         $rv = [];
         foreach ($allstatuses as $key => $value) {

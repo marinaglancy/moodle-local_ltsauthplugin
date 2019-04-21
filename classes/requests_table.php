@@ -25,6 +25,7 @@
 namespace local_ltsauthplugin;
 
 use local_ltsauthplugin\persistent\log;
+use local_ltsauthplugin\persistent\log_plugin;
 use local_ltsauthplugin\persistent\user;
 
 defined('MOODLE_INTERNAL') || die();
@@ -49,16 +50,20 @@ class requests_table extends \table_sql {
 
         $this->define_baseurl(helper::get_tab_url('requests'));
         $this->set_sql(
-            'l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id as userid, u.name as username',
-            '{' . log::TABLE . '} l LEFT JOIN {'.user::TABLE.'} u ON l.ltsuserid = u.id',
-            '1=1',
+            'l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id as userid, u.name as username, ' .
+            helper::group_concat('p.status,\':\',p.pluginname,\':\',p.pluginversion','|||') . ' AS plugins',
+            '{' . log::TABLE . '} l '.
+            'LEFT JOIN {'.user::TABLE.'} u ON l.ltsuserid = u.id '.
+            'LEFT JOIN {'.log_plugin::TABLE.'} p ON p.logid = l.id ',
+            '1=1 GROUP BY l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id, u.name',
             []
         );
+        $this->set_count_sql('SELECT COUNT(*) FROM {' . log::TABLE . '}');
 
         $this->sortable(true, 'timecreated', SORT_DESC);
 
         $this->define_columns([
-            'recalc', 'timecreated', 'url', 'username', 'status', 'addinfo'
+            'recalc', 'timecreated', 'url', 'username', 'status', 'plugins', 'addinfo'
         ]);
         $this->define_headers([
             '',
@@ -66,7 +71,8 @@ class requests_table extends \table_sql {
             get_string('itemurl', 'local_ltsauthplugin'),
             get_string('user'),
             get_string('status'),
-            get_string('plugins', 'local_ltsauthplugin')
+            get_string('plugins', 'local_ltsauthplugin'),
+            get_string('addinfo', 'local_ltsauthplugin')
         ]);
     }
 
@@ -98,13 +104,31 @@ class requests_table extends \table_sql {
     }
 
     /**
+     * Formatter for column plugins
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_plugins($data) {
+        $plugins = preg_split('/'.preg_quote('|||') . '/', $data->plugins, -1, PREG_SPLIT_NO_EMPTY);
+        $rv = [];
+        foreach ($plugins as $plugin) {
+            $parts = preg_split('/:/', $plugin, 3);
+            $status = (int)array_shift($parts);
+            $pluginname = array_shift($parts);
+            $pluginversion = array_shift($parts);
+            $rv[] = $pluginname . ' (' . $pluginversion . ') ' .
+                join('', log_manager::parse_statuses($status));
+        }
+        return join('<br>', $rv);
+    }
+
+    /**
      * Formatter for column
      * @param \stdClass $data
      * @return string
      */
     public function col_addinfo($data) {
-        $addinfo = @json_decode($data->addinfo, true) + ['plugins' => ''];
-        return s(preg_replace('/,/', ', ', $addinfo['plugins']));
+        return s($data->addinfo);
     }
 
     /**

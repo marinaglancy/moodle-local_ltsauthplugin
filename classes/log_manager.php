@@ -58,10 +58,10 @@ class log_manager {
      * Add to log
      *
      * @param string $url
-     * @param array $plugins
+     * @param string $pluginsstr
      * @param array $addinfo
      */
-    public static function add_to_log(string $url, array $plugins, ?array $addinfo = null) {
+    public static function add_to_log(string $url, string $pluginsstr, ?array $addinfo = null) {
         $knownurls = self::get_known_urls_map();
 
         $log = new log();
@@ -77,11 +77,17 @@ class log_manager {
         $log->save();
 
         $logplugins = [];
+        $plugins = preg_split('/,/', $pluginsstr);
         foreach ($plugins as $pluginname) {
-            $pluginname = strtolower($pluginname);
+            $parts = preg_split('/:/', strtolower(trim($pluginname)), 2);
+            $pluginname = $parts[0];
+            if (!strlen($pluginname)) {
+                continue;
+            }
             $logplugin = new log_plugin();
             $logplugin->set('logid', $log->get('id'));
             $logplugin->set('pluginname', $pluginname);
+            $logplugin->set('pluginversion', isset($parts[1]) ? $parts[1] : '');
             $logplugin->save();
             $logplugins[$logplugin->get('id')] = $logplugin;
         }

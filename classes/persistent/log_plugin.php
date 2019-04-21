@@ -53,6 +53,10 @@ class log_plugin extends persistent {
             'pluginname' => [
                 'type' => PARAM_RAW,
             ],
+            'pluginversion' => [
+                'type' => PARAM_RAW,
+                'default' => '',
+            ],
             'status' => [
                 'type' => PARAM_INT,
                 'default' => 0,

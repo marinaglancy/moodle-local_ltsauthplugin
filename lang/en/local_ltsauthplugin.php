@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['actions'] = 'Actions';
 $string['addedititem'] = 'Add/edit item';
 $string['addedituser'] = 'Add / edit user';
+$string['addinfo'] = 'Additional information';
 $string['addingitem'] = 'Adding a New item';
 $string['addingsub'] = 'Adding a New subscription';
 $string['addnewitem'] = 'Add a New item';

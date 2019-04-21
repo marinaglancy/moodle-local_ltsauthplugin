@@ -207,7 +207,7 @@ class log_manager {
         }
 
         $ids = array_map(function(persistent $p) {
-            return $p->get('id');
+            return $p->get('subscriptionid');
         }, $usersubs);
 
         list($sql, $params) = $DB->get_in_or_equal($ids);
@@ -244,16 +244,33 @@ class log_manager {
         $allstatuses = [
             self::STATUS_URL_UNKNOWN => 'URL unknown',
             self::STATUS_PLUGIN_UNKNOWN => 'Plugin unknown',
-            self::STATUS_SUB_ACTIVE => 'Sub active',
+            self::STATUS_SUB_ACTIVE => 'OK',
             self::STATUS_SUB_MISSING => 'Sub missing',
             self::STATUS_SUB_EXPIRED => 'Sub expired'
         ];
         $rv = [];
         foreach ($allstatuses as $key => $value) {
             if ($status & $key) {
-                $rv[] = $value;
+                $rv[] = \html_writer::span($value, self::get_status_class($key));
             }
         }
         return $rv;
+    }
+
+    /**
+     * CSS classes for statuses
+     * @param int $status
+     * @return string
+     */
+    public static function get_status_class(int $status): string {
+        if ($status == self::STATUS_SUB_EXPIRED) {
+            return 'badge-warning tag';
+        } else if ($status == self::STATUS_URL_UNKNOWN || $status == self::STATUS_PLUGIN_UNKNOWN) {
+            return 'badge-secondary tag';
+        } else if ($status == self::STATUS_SUB_MISSING) {
+            return 'badge-danger tag';
+        } else if ($status == self::STATUS_SUB_ACTIVE) {
+            return '';
+        }
     }
 }

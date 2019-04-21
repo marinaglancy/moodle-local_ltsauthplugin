@@ -40,11 +40,18 @@ class plugin extends persistent {
     /** @var string The fully qualified classname. */
     protected static $persistentclass = \local_ltsauthplugin\persistent\plugin::class;
 
+    /** @var array Fields to remove from the persistent validation. */
+    protected static $foreignfields = ['action'];
+
     /**
      * form definition
      */
     public function definition() {
         $mform = $this->_form;
+
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ALPHANUMEXT);
+        $mform->setDefault('action', 'editplugin');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

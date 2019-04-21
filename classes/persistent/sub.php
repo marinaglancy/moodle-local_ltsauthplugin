@@ -61,10 +61,18 @@ class sub extends persistent {
         ];
     }
 
+    /**
+     * plugins list
+     * @return array
+     */
     public function get_plugins_list() : array {
         return preg_split('|,|', $this->get('plugins'), -1, PREG_SPLIT_NO_EMPTY);
     }
 
+    /**
+     * Setter for plugins
+     * @param mixed $value
+     */
     protected function set_plugins($value) {
         if (is_array($value)) {
             $value = join(',', $value);

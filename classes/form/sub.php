@@ -43,6 +43,10 @@ class sub extends \moodleform {
     public function definition() {
         $mform = $this->_form;
 
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ALPHANUMEXT);
+        $mform->setDefault('action', 'editsub');
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 

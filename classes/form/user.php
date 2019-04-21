@@ -40,18 +40,26 @@ class user extends persistent {
     /** @var string The fully qualified classname. */
     protected static $persistentclass = \local_ltsauthplugin\persistent\user::class;
 
+    /** @var array Fields to remove from the persistent validation. */
+    protected static $foreignfields = ['action'];
+
     /**
      * form definition
      */
     public function definition() {
         $mform = $this->_form;
 
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ALPHANUMEXT);
+        $mform->setDefault('action', 'edituser');
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
-        // Add user selector.
-        $options = $this->get_user_id_options();
-        $mform->addElement('select', 'userid', get_string('user'), $options);
+        // Name.
+        $mform->addElement('text', 'name', get_string('name'));
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
         // Note.
         $mform->addElement('textarea', 'note', get_string('note', 'local_ltsauthplugin'));
@@ -59,13 +67,5 @@ class user extends persistent {
         $mform->setDefault('note', '');
 
         $this->add_action_buttons();
-    }
-
-    /**
-     * set user field
-     */
-    protected function get_user_id_options() {
-        global $DB;
-        return $DB->get_records_sql_menu('SELECT id,username FROM {user}', array());
     }
 }

@@ -47,9 +47,9 @@ class requests_table extends \table_sql {
     public function __construct(string $uniqueid) {
         parent::__construct($uniqueid);
 
-        $this->define_baseurl(new \moodle_url('/local/ltsauthplugin/requests.php'));
+        $this->define_baseurl(helper::get_tab_url('requests'));
         $this->set_sql(
-            'l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo',
+            'l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id as userid, u.name as username',
             '{' . log::TABLE . '} l LEFT JOIN {'.user::TABLE.'} u ON l.ltsuserid = u.id',
             '1=1',
             []
@@ -58,11 +58,11 @@ class requests_table extends \table_sql {
         $this->sortable(true, 'timecreated', SORT_DESC);
 
         $this->define_columns([
-            'recalc', 'timecreated', 'url', 'ltsuserid', 'status', 'addinfo'
+            'recalc', 'timecreated', 'url', 'username', 'status', 'addinfo'
         ]);
         // TODO use strings.
         $this->define_headers([
-            '', 'timecreated', 'URL', 'ltsuserid', 'status', 'plugins'
+            '', 'timecreated', 'URL', 'user', 'status', 'plugins'
         ]);
     }
 
@@ -105,12 +105,40 @@ class requests_table extends \table_sql {
 
     /**
      * Formatter for first column
-     * @param $data
+     * @param \stdClass $data
      * @return string
      */
     public function col_recalc($data) {
         global $OUTPUT;
-        $url = new \moodle_url('/');
+        $page = optional_param('page', null, PARAM_INT);
+        $params = ['id' => $data->id, 'action' => 'rematch'];
+        if ($page) {
+            $params['page'] = $page;
+        }
+        $url = new \moodle_url($this->baseurl, $params);
         return \html_writer::link($url, $OUTPUT->pix_icon('i/reload', 'Re-match')); // TODO string.
+    }
+
+    /**
+     * Formatter for username
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_username($data) {
+        return $data->userid ?
+            \html_writer::link(helper::get_tab_url('users', ['id' => $data->userid]), $data->username) :
+            '';
+    }
+
+    /**
+     * render table
+     * @return string
+     */
+    public function render() {
+        ob_start();
+        $this->out(50, false);
+        $out = ob_get_contents();
+        ob_end_clean();
+        return $out;
     }
 }

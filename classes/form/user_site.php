@@ -40,11 +40,19 @@ class user_site extends persistent {
     /** @var string The fully qualified classname. */
     protected static $persistentclass = \local_ltsauthplugin\persistent\user_site::class;
 
+    /** @var array Fields to remove from the persistent validation. */
+    protected static $foreignfields = ['action'];
+
+
     /**
      * form definition
      */
     public function definition() {
         $mform = $this->_form;
+
+        $mform->addElement('hidden', 'action');
+        $mform->setType('action', PARAM_ALPHANUMEXT);
+        $mform->setDefault('action', 'editusersite');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -72,7 +80,11 @@ class user_site extends persistent {
      */
     public function extra_validation($data, $files, array &$errors) {
         parent::extra_validation($data, $files, $errors);
-        // TODO validate url is unique.
+        $sites = \local_ltsauthplugin\persistent\user_site::get_records_select('url = :url AND id <> :id',
+            ['url' => $data->url, 'id' => $data->id]);
+        if ($sites) {
+            $errors['url'] = 'This URL is already registered for the same or another user'; // TODO string.
+        }
     }
 
 }

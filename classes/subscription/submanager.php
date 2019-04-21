@@ -27,6 +27,7 @@ namespace local_ltsauthplugin\subscription;
 
 defined('MOODLE_INTERNAL') || die();
 
+use local_ltsauthplugin\persistent\user_sub;
 use local_ltsauthplugin\output\sub_exporter;
 use local_ltsauthplugin\persistent\sub;
 
@@ -43,8 +44,13 @@ class submanager {
     /**
      * Delete sub
      * @param sub $subscription
-      */
+     */
     public static function delete(sub $subscription) {
+        /** @var user_sub[] $subs */
+        $subs = user_sub::get_records(['subscriptionid' => $subscription->get('id')]);
+        foreach ($subs as $sub) {
+            usersubmanager::delete($sub);
+        }
         $subscription->delete();
     }
 

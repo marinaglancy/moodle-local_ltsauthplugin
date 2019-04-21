@@ -47,8 +47,8 @@ class user extends persistent {
      */
     public static function define_properties() {
         return [
-            'userid' => [
-                'type' => PARAM_INT,
+            'name' => [
+                'type' => PARAM_TEXT,
             ],
             'note' => [
                 'type' => PARAM_RAW,

@@ -37,31 +37,22 @@ class local_ltsauthplugin_plugin_testcase extends advanced_testcase {
     /**
      * Test for user created observer
      */
-    public function test_observer() {
+    public function test_simple() {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/user/lib.php');
 
         $this->resetAfterTest();
-
-        $user = array(
-            'username' => 'usernametest1',
-            'password' => 'Moodle2012!',
-            'idnumber' => 'idnumbertest1',
-            'firstname' => 'First Name User Test 1',
-            'lastname' => 'Last Name User Test 1',
-            'middlename' => 'Middle Name User Test 1',
-            'lastnamephonetic' => '最後のお名前のテスト一号',
-            'firstnamephonetic' => 'お名前のテスト一号',
-            'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usertest1@example.com',
-            'description' => 'This is a description for user 1',
-            'city' => 'Perth',
-            'country' => 'AU'
-        );
-
-        $userid = user_create_user((object)$user);
-
-        $authuser = $DB->get_record(\local_ltsauthplugin\constants::USER_TABLE, ['userid' => $userid]);
-        $this->assertEquals($userid, $authuser->userid);
+        $plugin = new \local_ltsauthplugin\persistent\plugin(0, (object)['name' => 'p1']);
+        $plugin->save();
+        $sub = new \local_ltsauthplugin\persistent\sub(0, (object)['name' => 's1', 'plugins' => 'p1']);
+        $sub->save();
+        $u = new \local_ltsauthplugin\persistent\user(0, (object)['name' => 'u1']);
+        $u->save();
+        $usite = new \local_ltsauthplugin\persistent\user_site(0,
+            (object)['url' => 'url1', 'ltsuserid' => $u->get('id')]);
+        $usite->save();
+        $usub = new \local_ltsauthplugin\persistent\user_sub(0,
+            (object)['ltsuserid' => $u->get('id'), 'subscriptionid' => $sub->get('id')]);
+        $usub->save();
     }
 }

@@ -28,18 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 // Ensure the configurations for this site are set.
 if ($hassiteconfig ) {
 
-    // Create the new settings page.
-    $settings = new admin_settingpage('local_ltsauthplugin', get_string('authpluginsettings', 'local_ltsauthplugin'));
-    $ADMIN->add('localplugins', $settings );
-
-    $ADMIN->add('root', new admin_category('ltsauthplugin', new lang_string('pluginname', 'local_ltsauthplugin')));
-    $ADMIN->add('ltsauthplugin', new admin_externalpage('ltsauthplugin/authplugin_user',
-        new lang_string('authplugin_user', 'local_ltsauthplugin'),
-        new moodle_url('/local/ltsauthplugin/authplugin_user.php')));
-    $ADMIN->add('ltsauthplugin', new admin_externalpage('ltsauthplugin/authplugin_subscription',
-        new lang_string('authplugin_subscription', 'local_ltsauthplugin'),
-        new moodle_url('/local/ltsauthplugin/authplugin_subscription.php')));
-    $ADMIN->add('ltsauthplugin', new admin_externalpage('ltsauthplugin/authplugin_requests',
-        new lang_string('requests', 'local_ltsauthplugin'),
-        new moodle_url('/local/ltsauthplugin/requests.php')));
+    $ADMIN->add('root', new admin_externalpage('local_ltsauthplugin',
+        new lang_string('pluginname', 'local_ltsauthplugin'),
+        new moodle_url('/local/ltsauthplugin/index.php')));
 }

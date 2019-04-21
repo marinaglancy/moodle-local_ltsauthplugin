@@ -34,29 +34,5 @@ function xmldb_local_ltsauthplugin_upgrade($oldversion) {
     global $CFG, $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2019011902) {
-
-        // Define field name to be added to local_ltsauthplugin_user.
-        $table = new xmldb_table('local_ltsauthplugin_user');
-        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'id');
-
-        // Conditionally launch add field name.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field userid to be dropped from local_ltsauthplugin_user.
-        $table = new xmldb_table('local_ltsauthplugin_user');
-        $field = new xmldb_field('userid');
-
-        // Conditionally launch drop field userid.
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->drop_field($table, $field);
-        }
-
-        // Ltsauthplugin savepoint reached.
-        upgrade_plugin_savepoint(true, 2019011902, 'local', 'ltsauthplugin');
-    }
-
     return true;
 }

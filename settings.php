@@ -30,5 +30,6 @@ if ($hassiteconfig ) {
 
     $ADMIN->add('root', new admin_externalpage('local_ltsauthplugin',
         new lang_string('pluginname', 'local_ltsauthplugin'),
-        new moodle_url('/local/ltsauthplugin/index.php')));
+        new moodle_url('/local/ltsauthplugin/index.php'),
+        'local/ltsauthplugin:manage'));
 }

@@ -26,17 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
-    'local/ltsauthplugin:use' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'coursecreator' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'student' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )),
-
     'local/ltsauthplugin:manage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

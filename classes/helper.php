@@ -54,6 +54,7 @@ class helper {
             'users' => get_string('authplugin_user', 'local_ltsauthplugin'),
             'subs' => get_string('authplugin_subscription', 'local_ltsauthplugin'),
             'requests' => get_string('requests', 'local_ltsauthplugin'),
+            'stats' => get_string('stats', 'local_ltsauthplugin'),
         ];
     }
 
@@ -64,7 +65,7 @@ class helper {
     public static function get_current_tab(): string {
         $currenttab = optional_param('tab', null, PARAM_ALPHANUMEXT);
         $action = optional_param('action', null, PARAM_ALPHANUMEXT);
-        if (!in_array($currenttab, ['users', 'subs', 'requests'])) {
+        if (!array_key_exists($currenttab, self::get_tabs())) {
             if (in_array($action, ['editplugin', 'deleteplugin', 'editsub', 'deletesub'])) {
                 $currenttab = 'subs';
             } else {
@@ -197,6 +198,8 @@ class helper {
             return static::display_tab_subs($renderer);
         } else if ($currenttab === 'requests') {
             return static::display_tab_requests($renderer);
+        } else if ($currenttab === 'stats') {
+            return static::display_tab_stats($renderer);
         }
         return '';
     }
@@ -300,14 +303,14 @@ class helper {
             // In this case id - userid.
             $user = new user($id);
             $authpluginuser = $user->to_record();
-            $siteitems = usersitemanager::get_user_sites_for_display($authpluginuser->id);
-            $subsitems = usersubmanager::get_user_subs_for_display($authpluginuser->id);
+            $siteitems = usersitemanager::get_user_sites_for_display($user);
+            $subsitems = usersubmanager::get_user_subs_for_display($user);
 
             $rv .= $renderer->show_user_summary($authpluginuser);
             $rv .= $renderer->add_siteitem_link($authpluginuser);
-            $rv .= $renderer->show_siteitems_list($siteitems);
+            $rv .= $renderer->show_user_sites_list($siteitems);
             $rv .= $renderer->add_subsitem_link($authpluginuser);
-            $rv .= $renderer->show_subsitems_list($subsitems);
+            $rv .= $renderer->show_user_subs_list($subsitems);
         } else {
             // Display list of users.
             $rv .= \html_writer::div(\html_writer::link(self::get_tab_url('users', ['action' => 'edituser']),
@@ -433,5 +436,30 @@ class helper {
                 return "GROUP_CONCAT($field)";
                 break;
         }
+    }
+
+    /**
+     * Display the statistics
+     * @param renderer $renderer
+     * @return string
+     */
+    protected static function display_tab_stats(renderer $renderer) {
+        $rv = '';
+        // Expired in the last 24 hours.
+        if ($expiredsubs = usersubmanager::get_expired(DAYSECS)) {
+            $rv .= \html_writer::tag('h3', 'Expired in the last 24 hours');
+            $rv .= $renderer->show_user_subs_list($expiredsubs, true);
+        }
+        // Expired in the last week.
+        if ($expiredsubs = usersubmanager::get_expired(7 * DAYSECS)) {
+            $rv .= \html_writer::tag('h3', 'Expired in the last week');
+            $rv .= $renderer->show_user_subs_list($expiredsubs, true);
+        }
+        // No call home.
+        if ($usersites = usersitemanager::get_user_sites_without_logs(3 * DAYSECS)) {
+            $rv .= \html_writer::tag('h3', 'Sites that did not call home for 3 days');
+            $rv .= $renderer->show_user_sites_list($usersites, true);
+        }
+        return $rv;
     }
 }

@@ -51,7 +51,7 @@ class requests_table extends \table_sql {
         $this->define_baseurl(helper::get_tab_url('requests'));
         $this->set_sql(
             'l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id as userid, u.name as username, ' .
-            helper::group_concat('p.status,\':\',p.pluginname,\':\',p.pluginversion','|||') . ' AS plugins',
+            helper::group_concat('p.status,\':\',p.pluginname,\':\',p.pluginversion', '|||') . ' AS plugins',
             '{' . log::TABLE . '} l '.
             'LEFT JOIN {'.user::TABLE.'} u ON l.ltsuserid = u.id '.
             'LEFT JOIN {'.log_plugin::TABLE.'} p ON p.logid = l.id ',

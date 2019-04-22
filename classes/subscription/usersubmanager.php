@@ -27,8 +27,12 @@ namespace local_ltsauthplugin\subscription;
 
 defined('MOODLE_INTERNAL') || die();
 
+use local_ltsauthplugin\output\user_exporter;
 use local_ltsauthplugin\output\user_sub_exporter;
+use local_ltsauthplugin\persistent\sub;
+use local_ltsauthplugin\persistent\user;
 use local_ltsauthplugin\persistent\user_sub;
+use local_ltsauthplugin\user\usermanager;
 
 /**
  * This is a class containing functions for sending authplugins
@@ -52,14 +56,15 @@ class usersubmanager {
     /**
      * get usersubs for display
      *
-     * @param int $ltsuserid
+     * @param user $user
      * @return user_sub_exporter[]
      */
-    public static function get_user_subs_for_display($ltsuserid) {
+    public static function get_user_subs_for_display(user $user) {
         $subs = submanager::get_subs_for_display();
-        return array_map(function(user_sub $us) use ($subs) {
-            return new user_sub_exporter($us, ['subs' => $subs]);
-        }, user_sub::get_records(['ltsuserid' => $ltsuserid], 'subscriptionid'));
+        $related = ['subs' => $subs, 'users' => [new user_exporter($user)]];
+        return array_map(function(user_sub $us) use ($related) {
+            return new user_sub_exporter($us, $related);
+        }, user_sub::get_records(['ltsuserid' => $user->get('id')], 'subscriptionid'));
     }
 
     /**
@@ -75,5 +80,24 @@ class usersubmanager {
         $sub->set('note', $data->note);
         $sub->set('expiredate', $data->expiredate);
         $sub->save();
+    }
+
+    /**
+     * get subscriptions that recently expired
+     * @param int $period
+     * @return user_sub_exporter[]
+     */
+    public static function get_expired(int $period) {
+        $usersubs = user_sub::get_records_select('expiredate < :now AND expiredate > :start',
+            ['now' => time(), 'start' => time() - $period], 'expiredate DESC');
+        if (!$usersubs) {
+            return [];
+        }
+        $subs = submanager::get_subs_for_display();
+        $users = usermanager::get_users_for_display();
+        $related = ['subs' => $subs, 'users' => $users];
+        return array_map(function(user_sub $us) use ($related) {
+            return new user_sub_exporter($us, $related);
+        }, $usersubs);
     }
 }

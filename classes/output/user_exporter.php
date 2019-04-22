@@ -15,46 +15,43 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class usesr
+ * Class user_exporter
  *
  * @package     local_ltsauthplugin
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_ltsauthplugin\persistent;
+namespace local_ltsauthplugin\output;
+
+use core\external\persistent_exporter;
+use local_ltsauthplugin\persistent\user;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core\persistent;
-
 /**
- * Class user
+ * Class user_exporter
  *
  * @package     local_ltsauthplugin
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends persistent {
-
-    /** @var string Table name this persistent is mapped to. */
-    const TABLE = 'local_ltsauthplugin_user';
+class user_exporter extends persistent_exporter {
 
     /**
-     * Properties definitions
+     * Defines the persistent class.
      *
-     * @return array
+     * @return string
      */
-    public static function define_properties() {
-        return [
-            'name' => [
-                'type' => PARAM_RAW,
-            ],
-            'note' => [
-                'type' => PARAM_RAW,
-                'default' => null,
-                'null' => NULL_ALLOWED,
-            ],
-        ];
+    protected static function define_class() {
+        return user::class;
+    }
+
+    /**
+     * Get id
+     * @return int
+     */
+    public function get_id() {
+        return $this->data->id;
     }
 }

@@ -47,4 +47,45 @@ class user_site_exporter extends persistent_exporter {
         return user_site::class;
     }
 
+    /**
+     * Returns a list of objects that are related to this persistent.
+     *
+     * @return array of 'propertyname' => array('type' => classname, 'required' => true)
+     */
+    protected static function define_related() {
+        return [
+            'users' => user_exporter::class . '[]',
+        ];
+    }
+
+    /**
+     * other properties
+     * @return array
+     */
+    protected static function define_other_properties() {
+        return [
+            'username' => [
+                'type' => PARAM_RAW
+            ]
+        ];
+    }
+
+    /**
+     * other values
+     * @param \renderer_base $output
+     * @return array
+     */
+    protected function get_other_values(\renderer_base $output) {
+        /** @var user_exporter[] $users */
+        $users = $this->related['users'];
+        $username = '?' . $this->data->ltsuserid;
+        foreach ($users as $user) {
+            if ($user->get_id() == $this->data->ltsuserid) {
+                $username = $user->export($output)->name;
+                break;
+            }
+        }
+        return ['username' => $username];
+    }
+
 }

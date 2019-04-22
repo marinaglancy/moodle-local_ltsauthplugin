@@ -26,8 +26,12 @@ namespace local_ltsauthplugin\user;
 
 defined('MOODLE_INTERNAL') || die();
 
+use local_ltsauthplugin\output\user_exporter;
 use local_ltsauthplugin\output\user_site_exporter;
+use local_ltsauthplugin\persistent\log;
+use local_ltsauthplugin\persistent\user;
 use local_ltsauthplugin\persistent\user_site;
+use local_ltsauthplugin\persistent\user_sub;
 
 /**
  *
@@ -52,13 +56,14 @@ class usersitemanager {
     /**
      * Get a list of user sites ready for display
      *
-     * @param int $ltsuserid
+     * @param user $user
      * @return user_site_exporter[]
      */
-    public static function get_user_sites_for_display($ltsuserid) {
-        return array_map(function(user_site $p) {
-            return new user_site_exporter($p);
-        }, user_site::get_records(['ltsuserid' => $ltsuserid], 'url'));
+    public static function get_user_sites_for_display(user $user) {
+        $related = ['users' => [new user_exporter($user)]];
+        return array_map(function(user_site $p) use ($related) {
+            return new user_site_exporter($p, $related);
+        }, user_site::get_records(['ltsuserid' => $user->get('id')], 'url'));
     }
 
     /**
@@ -70,5 +75,37 @@ class usersitemanager {
         $usersite->set('url', $data->url);
         $usersite->set('note', $data->note);
         $usersite->save();
+    }
+
+    /**
+     * get_user_sites_without_logs
+     * @param int $period
+     * @return user_site_exporter[]
+     */
+    public static function get_user_sites_without_logs(int $period) {
+        global $DB;
+
+        $sql = "SELECT us.*
+            FROM {".user_site::TABLE."} us
+            LEFT JOIN {".log::TABLE."} l ON l.ltsuserid = us.ltsuserid AND l.url = us.url AND l.timecreated > :start
+            WHERE
+            EXISTS (SELECT 1 FROM {".user_sub::TABLE."} usub WHERE usub.ltsuserid = us.ltsuserid AND usub.expiredate > :now)
+            AND l.id IS NULL
+            ORDER BY us.url";
+        $params = ['now' => time(), 'start' => time() - $period];
+
+        $records = $DB->get_records_sql($sql, $params);
+        if (!$records) {
+            return [];
+        }
+
+        $users = usermanager::get_users_for_display();
+        $related = ['users' => $users];
+
+        $instances = array();
+        foreach ($records as $key => $record) {
+            $instances[] = new user_site_exporter(new user_site(0, $record), $related);
+        }
+        return $instances;
     }
 }

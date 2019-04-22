@@ -61,6 +61,7 @@ class user_sub_exporter extends persistent_exporter {
     protected static function define_related() {
         return [
             'subs' => sub_exporter::class . '[]',
+            'users' => user_exporter::class . '[]',
         ];
     }
 
@@ -73,6 +74,9 @@ class user_sub_exporter extends persistent_exporter {
             'name' => [
                 'type' => PARAM_RAW
             ],
+            'username' => [
+                'type' => PARAM_RAW
+            ]
         ];
     }
 
@@ -84,13 +88,22 @@ class user_sub_exporter extends persistent_exporter {
     protected function get_other_values(\renderer_base $output) {
         /** @var sub_exporter[] $subs */
         $subs = $this->related['subs'];
+        /** @var user_exporter[] $users */
+        $users = $this->related['users'];
         $name = '?' . $this->data->subscriptionid;
+        $username = '?' . $this->data->ltsuserid;
         foreach ($subs as $sub) {
             if ($sub->get_id() == $this->data->subscriptionid) {
                 $name = $sub->export($output)->name;
                 break;
             }
         }
-        return ['name' => $name];
+        foreach ($users as $user) {
+            if ($user->get_id() == $this->data->ltsuserid) {
+                $username = $user->export($output)->name;
+                break;
+            }
+        }
+        return ['name' => $name, 'username' => $username];
     }
 }

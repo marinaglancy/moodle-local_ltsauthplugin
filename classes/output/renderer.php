@@ -96,21 +96,13 @@ class renderer extends \plugin_renderer_base {
         $table = new \html_table();
         $table->id = 'local_ltsauthplugin_usersummary';
         $table->head = array(
-            'ID',
             get_string('name'),
             get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
         );
-        $table->headspan = array(1, 1, 1, 1);
-        $table->colclasses = array(
-            'id', 'username', 'note', 'edit'
-        );
 
         $row = new \html_table_row();
         $row->cells = array();
-
-        $idcell = new \html_table_cell($authpluginuser->id);
-        $row->cells[] = $idcell;
 
         $usernamecell = new \html_table_cell($authpluginuser->name);
         $row->cells[] = $usernamecell;
@@ -119,7 +111,8 @@ class renderer extends \plugin_renderer_base {
         $row->cells[] = $notecell;
 
         $editurl = helper::get_tab_url('users', ['id' => $authpluginuser->id, 'action' => 'edituser']);
-        $editlink = \html_writer::link($editurl, get_string('edititem', 'local_ltsauthplugin'));
+        $editlink = \html_writer::link($editurl,
+            $this->output->pix_icon('i/settings', get_string('edititem', 'local_ltsauthplugin')));
         $editcell = new \html_table_cell($editlink);
         $row->cells[] = $editcell;
 
@@ -150,10 +143,11 @@ class renderer extends \plugin_renderer_base {
      * Return the html table of homeworks for a group  / course
      *
      * @param user_site_exporter[] $sites
+     * @param bool $showusername
+     * @param bool $showactions
      * @return string html of table
      */
-    public function show_siteitems_list($sites) {
-        global $DB;
+    public function show_user_sites_list($sites, $showusername = false, $showactions = true) {
 
         if (!$sites) {
             return $this->output->heading(get_string('noitems', 'local_ltsauthplugin'), 3, 'main');
@@ -162,15 +156,15 @@ class renderer extends \plugin_renderer_base {
         $table = new \html_table();
         $table->id = 'local_ltsauthplugin_itempanel';
         $table->head = array(
-            get_string('itemid', 'local_ltsauthplugin'),
             get_string('itemurl', 'local_ltsauthplugin'),
             get_string('note', 'local_ltsauthplugin'),
-            get_string('actions', 'local_ltsauthplugin')
-        );
-        $table->headspan = array(1, 1, 1, 2);
-        $table->colclasses = array(
-            'id', 'url', 'note', 'edit', 'delete'
-        );
+         );
+        if ($showactions) {
+            $table->head[] = get_string('actions', 'local_ltsauthplugin');
+        }
+        if ($showusername) {
+            array_unshift($table->head, get_string('username', 'local_ltsauthplugin'));
+        }
 
         // Loop through the items and add to table.
         foreach ($sites as $site) {
@@ -178,8 +172,10 @@ class renderer extends \plugin_renderer_base {
             $row = new \html_table_row();
             $row->cells = array();
 
-            $itemidcell = new \html_table_cell($item->id);
-            $row->cells[] = $itemidcell;
+            if ($showusername) {
+                $userurl = helper::get_tab_url('users', ['id' => $item->ltsuserid]);
+                $row->cells[] = new \html_table_cell(\html_writer::link($userurl, $item->username));
+            }
 
             $urlcell = new \html_table_cell($item->url);
             $row->cells[] = $urlcell;
@@ -187,16 +183,17 @@ class renderer extends \plugin_renderer_base {
             $notecell = new \html_table_cell($item->note);
             $row->cells[] = $notecell;
 
-            $itemediturl = helper::get_tab_url('users',
-                ['ltsuserid' => $item->ltsuserid, 'id' => $item->id, 'action' => 'editusersite']);
-            $itemeditlink = \html_writer::link($itemediturl, get_string('edititem', 'local_ltsauthplugin'));
-            $itemeditcell = new \html_table_cell($itemeditlink);
-            $row->cells[] = $itemeditcell;
+            if ($showactions) {
+                $itemediturl = helper::get_tab_url('users',
+                    ['ltsuserid' => $item->ltsuserid, 'id' => $item->id, 'action' => 'editusersite']);
+                $itemeditlink = \html_writer::link($itemediturl,
+                    $this->output->pix_icon('i/settings', get_string('edititem', 'local_ltsauthplugin')));
 
-            $itemdeleteurl = helper::get_tab_url('users', ['action' => 'deleteusersite', 'id' => $item->id]);
-            $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteitem', 'local_ltsauthplugin'));
-            $itemdeletecell = new \html_table_cell($itemdeletelink);
-            $row->cells[] = $itemdeletecell;
+                $itemdeleteurl = helper::get_tab_url('users', ['action' => 'deleteusersite', 'id' => $item->id]);
+                $itemdeletelink = \html_writer::link($itemdeleteurl,
+                    $this->output->pix_icon('i/delete', get_string('deleteitem', 'local_ltsauthplugin')));
+                $row->cells[] = new \html_table_cell($itemeditlink . ' ' . $itemdeletelink);
+            }
 
             $table->data[] = $row;
         }
@@ -226,9 +223,11 @@ class renderer extends \plugin_renderer_base {
      * Return the html table of subscriptions for a user
      *
      * @param user_sub_exporter[] $usersubs
+     * @param bool $showusername
+     * @param bool $showactions
      * @return string html of table
      */
-    public function show_subsitems_list($usersubs) {
+    public function show_user_subs_list($usersubs, $showusername = false, $showactions = true) {
         global $DB;
 
         if (!$usersubs) {
@@ -238,16 +237,16 @@ class renderer extends \plugin_renderer_base {
         $table = new \html_table();
         $table->id = 'local_ltsauthplugin_subsitempanel';
         $table->head = array(
-            'ID',
             get_string('subscriptionname', 'local_ltsauthplugin'),
             get_string('note', 'local_ltsauthplugin'),
             get_string('expiredate', 'local_ltsauthplugin'),
-            get_string('actions', 'local_ltsauthplugin')
         );
-        $table->headspan = array(1, 1, 1, 1, 2);
-        $table->colclasses = array(
-            'id', 'name', 'note', 'expiredate', 'edit', 'delete'
-        );
+        if ($showactions) {
+            $table->head[] = get_string('actions', 'local_ltsauthplugin');
+        }
+        if ($showusername) {
+            array_unshift($table->head, get_string('username', 'local_ltsauthplugin'));
+        }
 
         $items = [];
         foreach ($usersubs as $usersub) {
@@ -262,8 +261,10 @@ class renderer extends \plugin_renderer_base {
             $row = new \html_table_row();
             $row->cells = array();
 
-            $itemidcell = new \html_table_cell($item->id);
-            $row->cells[] = $itemidcell;
+            if ($showusername) {
+                $userurl = helper::get_tab_url('users', ['id' => $item->ltsuserid]);
+                $row->cells[] = new \html_table_cell(\html_writer::link($userurl, $item->username));
+            }
 
             $namecell = new \html_table_cell($item->name);
             $row->cells[] = $namecell;
@@ -274,16 +275,16 @@ class renderer extends \plugin_renderer_base {
             $itemexpiredatecell = new \html_table_cell(($item->expiredate ? date("d/m/Y", $item->expiredate) : '--'));
             $row->cells[] = $itemexpiredatecell;
 
-            $itemediturl = helper::get_tab_url('users',
-                ['ltsuserid' => $item->ltsuserid, 'id' => $item->id, 'action' => 'editusersub']);
-            $itemeditlink = \html_writer::link($itemediturl, get_string('editsub', 'local_ltsauthplugin'));
-            $itemeditcell = new \html_table_cell($itemeditlink);
-            $row->cells[] = $itemeditcell;
-
-            $itemdeleteurl = helper::get_tab_url('users', ['id' => $item->id, 'action' => 'deleteusersub']);
-            $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deletesub', 'local_ltsauthplugin'));
-            $itemdeletecell = new \html_table_cell($itemdeletelink);
-            $row->cells[] = $itemdeletecell;
+            if ($showactions) {
+                $itemediturl = helper::get_tab_url('users',
+                    ['ltsuserid' => $item->ltsuserid, 'id' => $item->id, 'action' => 'editusersub']);
+                $itemeditlink = \html_writer::link($itemediturl,
+                    $this->output->pix_icon('i/settings', get_string('editsub', 'local_ltsauthplugin')));
+                $itemdeleteurl = helper::get_tab_url('users', ['id' => $item->id, 'action' => 'deleteusersub']);
+                $itemdeletelink = \html_writer::link($itemdeleteurl,
+                    $this->output->pix_icon('i/delete', get_string('deletesub', 'local_ltsauthplugin')));
+                $row->cells[] = new \html_table_cell($itemeditlink . ' ' . $itemdeletelink);
+            }
 
             $table->data[] = $row;
         }
@@ -322,15 +323,10 @@ class renderer extends \plugin_renderer_base {
         $table = new \html_table();
         $table->id = 'local_ltsauthplugin_subsitempanel';
         $table->head = array(
-            'ID',
             get_string('subscriptionname', 'local_ltsauthplugin'),
             get_string('plugins', 'local_ltsauthplugin'),
             get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
-        );
-        $table->headspan = array(1, 1, 1, 1, 2);
-        $table->colclasses = array(
-            'id', 'name', 'plugins', 'note', 'edit', 'delete'
         );
 
         // Loop through the items and add to table.
@@ -339,9 +335,6 @@ class renderer extends \plugin_renderer_base {
 
             $row = new \html_table_row();
             $row->cells = array();
-
-            $itemidcell = new \html_table_cell($item->id);
-            $row->cells[] = $itemidcell;
 
             $namecell = new \html_table_cell($item->name);
             $row->cells[] = $namecell;
@@ -353,14 +346,13 @@ class renderer extends \plugin_renderer_base {
             $row->cells[] = $notecell;
 
             $itemediturl = helper::get_tab_url('subs', ['action' => 'editsub', 'id' => $item->id]);
-            $itemeditlink = \html_writer::link($itemediturl, get_string('editsub', 'local_ltsauthplugin'));
-            $itemeditcell = new \html_table_cell($itemeditlink);
-            $row->cells[] = $itemeditcell;
+            $itemeditlink = \html_writer::link($itemediturl,
+                $this->output->pix_icon('i/settings', get_string('editsub', 'local_ltsauthplugin')));
 
             $itemdeleteurl = helper::get_tab_url('subs', ['action' => 'deletesub', 'id' => $item->id]);
-            $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deletesub', 'local_ltsauthplugin'));
-            $itemdeletecell = new \html_table_cell($itemdeletelink);
-            $row->cells[] = $itemdeletecell;
+            $itemdeletelink = \html_writer::link($itemdeleteurl,
+                $this->output->pix_icon('i/delete', get_string('deletesub', 'local_ltsauthplugin')));
+            $row->cells[] = new \html_table_cell($itemeditlink . ' ' . $itemdeletelink);
 
             $table->data[] = $row;
         }
@@ -399,14 +391,9 @@ class renderer extends \plugin_renderer_base {
         $table = new \html_table();
         $table->id = 'local_ltsauthplugin_pluginsitempanel';
         $table->head = array(
-            'ID',
             get_string('ltspluginname', 'local_ltsauthplugin'),
             get_string('note', 'local_ltsauthplugin'),
             get_string('actions', 'local_ltsauthplugin')
-        );
-        $table->headspan = array(1, 1, 1, 2);
-        $table->colclasses = array(
-            'id', 'name', 'note', 'edit', 'delete'
         );
 
         // Loop through the items and add to table.
@@ -415,9 +402,6 @@ class renderer extends \plugin_renderer_base {
             $row = new \html_table_row();
             $row->cells = array();
 
-            $itemidcell = new \html_table_cell($item->id);
-            $row->cells[] = $itemidcell;
-
             $namecell = new \html_table_cell($item->name);
             $row->cells[] = $namecell;
 
@@ -425,14 +409,13 @@ class renderer extends \plugin_renderer_base {
             $row->cells[] = $notecell;
 
             $itemediturl = helper::get_tab_url('subs', ['action' => 'editplugin', 'id' => $item->id]);;
-            $itemeditlink = \html_writer::link($itemediturl, get_string('editplugin', 'local_ltsauthplugin'));
-            $itemeditcell = new \html_table_cell($itemeditlink);
-            $row->cells[] = $itemeditcell;
+            $itemeditlink = \html_writer::link($itemediturl,
+                $this->output->pix_icon('i/settings', get_string('editplugin', 'local_ltsauthplugin')));
 
             $itemdeleteurl = helper::get_tab_url('subs', ['action' => 'deleteplugin', 'id' => $item->id]);
-            $itemdeletelink = \html_writer::link($itemdeleteurl, get_string('deleteplugin', 'local_ltsauthplugin'));
-            $itemdeletecell = new \html_table_cell($itemdeletelink);
-            $row->cells[] = $itemdeletecell;
+            $itemdeletelink = \html_writer::link($itemdeleteurl,
+                $this->output->pix_icon('i/delete', get_string('deleteplugin', 'local_ltsauthplugin')));
+            $row->cells[] = new \html_table_cell($itemeditlink . ' ' . $itemdeletelink);
 
             $table->data[] = $row;
         }

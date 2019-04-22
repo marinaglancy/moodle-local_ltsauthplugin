@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/user/lib.php');
 
+use local_ltsauthplugin\output\user_exporter;
 use local_ltsauthplugin\persistent\user;
 use local_ltsauthplugin\persistent\user_site;
 use local_ltsauthplugin\persistent\user_sub;
@@ -75,5 +76,15 @@ class usermanager {
             usersitemanager::delete($site);
         }
         $ltsuser->delete();
+    }
+
+    /**
+     * Get list of users for display
+     * @return user_exporter[]
+     */
+    public static function get_users_for_display(): array {
+        return array_map(function(user $p) {
+            return new user_exporter($p);
+        }, user::get_records([], 'name'));
     }
 }

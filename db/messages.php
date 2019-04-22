@@ -15,17 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Defines message providers (types of message sent)
  *
- * @package   local_ltsauthplugin
- * @copyright 2019 Marina Glancy
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     local_ltsauthplugin
+ * @copyright   2019 Marina Glancy
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_ltsauthplugin';
-$plugin->version = 2019011907;
-$plugin->requires = 2010112400;  // Requires this Moodle version.
-$plugin->release = '1.0.0 (Build: 2019011900)';
-$plugin->maturity = MATURITY_STABLE;
+$messageproviders = array(
+    // Statistics digest.
+    'statsdigest' => array(
+        'capability' => 'local/ltsauthplugin:manage'
+    ),
+);

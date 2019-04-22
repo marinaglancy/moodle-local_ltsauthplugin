@@ -27,6 +27,7 @@ namespace local_ltsauthplugin\output;
 defined('MOODLE_INTERNAL') || die();
 
 use local_ltsauthplugin\helper;
+use local_ltsauthplugin\log_manager;
 use tabobject;
 use moodle_url;
 
@@ -150,7 +151,7 @@ class renderer extends \plugin_renderer_base {
     public function show_user_sites_list($sites, $showusername = false, $showactions = true) {
 
         if (!$sites) {
-            return $this->output->heading(get_string('noitems', 'local_ltsauthplugin'), 3, 'main');
+            return \html_writer::div(get_string('noitems', 'local_ltsauthplugin'));
         }
 
         $table = new \html_table();
@@ -231,7 +232,7 @@ class renderer extends \plugin_renderer_base {
         global $DB;
 
         if (!$usersubs) {
-            return $this->output->heading(get_string('nosubs', 'local_ltsauthplugin'), 3, 'main');
+            return \html_writer::div(get_string('nosubs', 'local_ltsauthplugin'));
         }
 
         $table = new \html_table();
@@ -317,7 +318,7 @@ class renderer extends \plugin_renderer_base {
         global $DB;
 
         if (!$subs) {
-            return $this->output->heading(get_string('nosubs', 'local_ltsauthplugin'), 3, 'main');
+            return \html_writer::div(get_string('nosubs', 'local_ltsauthplugin'));
         }
 
         $table = new \html_table();
@@ -367,7 +368,7 @@ class renderer extends \plugin_renderer_base {
         global $CFG;
 
         $output = $this->output->heading(get_string("showplugins", "local_ltsauthplugin"), 4);
-         $links = array();
+        $links = array();
 
         $additemurl = helper::get_tab_url('subs', ['action' => 'editplugin']);
         $links[] = \html_writer::link($additemurl, get_string('addnewplugin', 'local_ltsauthplugin'));
@@ -385,7 +386,7 @@ class renderer extends \plugin_renderer_base {
         global $DB;
 
         if (!$plugins) {
-            return $this->output->heading(get_string('noplugins', 'local_ltsauthplugin'), 3, 'main');
+            return \html_writer::div(get_string('noplugins', 'local_ltsauthplugin'));
         }
 
         $table = new \html_table();
@@ -420,6 +421,38 @@ class renderer extends \plugin_renderer_base {
             $table->data[] = $row;
         }
 
+        return \html_writer::table($table);
+    }
+
+    /**
+     * A preview of what request_table does (for stats)
+     *
+     * @param array $requests
+     */
+    public function show_requests($requests) {
+        if (!$requests) {
+            return \html_writer::div(get_string('norequests', 'local_ltsauthplugin'));
+        }
+
+        $table = new \html_table();
+        $table->id = 'local_ltsauthplugin_showrequests';
+        $table->head = array(
+            get_string('timecreated', 'local_ltsauthplugin'),
+            get_string('itemurl', 'local_ltsauthplugin'),
+            get_string('username', 'local_ltsauthplugin'),
+            get_string('status'),
+        );
+
+        foreach ($requests as $record) {
+            $row = new \html_table_row();
+            $row->cells[] = new \html_table_cell(userdate($record->timecreated, get_string('strftimedatetime', 'langconfig')));
+            $row->cells[] = new \html_table_cell($record->url);
+            $row->cells[] = new \html_table_cell($record->ltsuserid ?
+                \html_writer::link(helper::get_tab_url('users', ['id' => $record->ltsuserid]), $record->username) :
+                '');
+            $row->cells[] = new \html_table_cell(join(', ', log_manager::parse_statuses($record->status)));
+            $table->data[] = $row;
+        }
         return \html_writer::table($table);
     }
 }

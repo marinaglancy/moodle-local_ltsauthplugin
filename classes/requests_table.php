@@ -46,19 +46,23 @@ class requests_table extends \table_sql {
      * @param string $uniqueid
      */
     public function __construct(string $uniqueid) {
+        global $DB;
         parent::__construct($uniqueid);
+        $statusmask = optional_param('statusmask', 0, PARAM_INT);
+        $where = $statusmask ? '(' . $DB->sql_bitand('l.status', ':statusmask') . ' <> 0)' : '1=1';
+        $params = ['statusmask' => $statusmask];
 
-        $this->define_baseurl(helper::get_tab_url('requests'));
+        $this->define_baseurl(helper::get_tab_url('requests', ['statusmask' => $statusmask]));
         $this->set_sql(
             'l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id as userid, u.name as username, ' .
             helper::group_concat('p.status,\':\',p.pluginname,\':\',p.pluginversion', '|||') . ' AS plugins',
             '{' . log::TABLE . '} l '.
             'LEFT JOIN {'.user::TABLE.'} u ON l.ltsuserid = u.id '.
             'LEFT JOIN {'.log_plugin::TABLE.'} p ON p.logid = l.id ',
-            '1=1 GROUP BY l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id, u.name',
-            []
+            $where . ' GROUP BY l.id, l.url, l.timecreated, l.ltsuserid, l.status, l.addinfo, u.id, u.name',
+            $params
         );
-        $this->set_count_sql('SELECT COUNT(*) FROM {' . log::TABLE . '}');
+        $this->set_count_sql('SELECT COUNT(*) FROM {' . log::TABLE . '} l WHERE ' . $where, $params);
 
         $this->sortable(true, 'timecreated', SORT_DESC);
 
@@ -69,7 +73,7 @@ class requests_table extends \table_sql {
             '',
             get_string('timecreated', 'local_ltsauthplugin'),
             get_string('itemurl', 'local_ltsauthplugin'),
-            get_string('user'),
+            get_string('username', 'local_ltsauthplugin'),
             get_string('status'),
             get_string('plugins', 'local_ltsauthplugin'),
             get_string('addinfo', 'local_ltsauthplugin')

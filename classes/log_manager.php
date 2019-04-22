@@ -29,6 +29,7 @@ use local_ltsauthplugin\persistent\log;
 use local_ltsauthplugin\persistent\log_plugin;
 use local_ltsauthplugin\persistent\plugin;
 use local_ltsauthplugin\persistent\sub;
+use local_ltsauthplugin\persistent\user;
 use local_ltsauthplugin\persistent\user_site;
 use local_ltsauthplugin\persistent\user_sub;
 
@@ -277,5 +278,44 @@ class log_manager {
         } else if ($status == self::STATUS_SUB_ACTIVE) {
             return '';
         }
+    }
+
+    /**
+     * Mask for all statuses except OK.
+     * @return int
+     */
+    public static function get_not_ok_statuses_mask(): int {
+        return self::STATUS_SUB_MISSING | self::STATUS_PLUGIN_UNKNOWN | self::STATUS_URL_UNKNOWN | self::STATUS_SUB_EXPIRED;
+    }
+
+    /**
+     * Counts number of records with not OK status
+     * @param int $period
+     * @return int
+     */
+    public static function count_not_ok_records(int $period) {
+        global $DB;
+        $statusmask = self::get_not_ok_statuses_mask();
+        $where = 'timecreated > :start AND (' . $DB->sql_bitand('l.status', ':statusmask') . ' <> 0)';
+        $params = ['statusmask' => $statusmask, 'start' => time() - $period];
+        return $DB->count_records_sql('SELECT COUNT(*) FROM {' . log::TABLE . '} l WHERE ' . $where, $params);
+    }
+
+    /**
+     * Get last 10 records with not OK status
+     *
+     * @param int $period
+     * @return array
+     */
+    public static function get_not_ok_records(int $period) {
+        global $DB;
+        $statusmask = self::get_not_ok_statuses_mask();
+        $where = 'l.timecreated > :start AND (' . $DB->sql_bitand('l.status', ':statusmask') . ' <> 0)';
+        $params = ['statusmask' => $statusmask, 'start' => time() - $period];
+        return $DB->get_records_sql('SELECT l.id, l.timecreated, l.url, l.ltsuserid, u.name as username, l.status
+            FROM {' . log::TABLE . '} l
+            LEFT JOIN {' . user::TABLE . '} u ON u.id = l.ltsuserid
+            WHERE ' . $where . '
+            ORDER BY timecreated DESC', $params, 0, 10);
     }
 }

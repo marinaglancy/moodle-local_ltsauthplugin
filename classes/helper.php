@@ -405,7 +405,7 @@ class helper {
             log_manager::update_log_status(new log($id));
             redirect(self::get_tab_url('requests', ['page' => $page]));
         }
-        $table = new \local_ltsauthplugin\requests_table('requestslog');
+        $table = new \local_ltsauthplugin\requests_table('local_ltsauthplugin_requestslog');
         $rv .= $table->render();
         return $rv;
     }
@@ -441,24 +441,38 @@ class helper {
     /**
      * Display the statistics
      * @param renderer $renderer
+     * @param bool $showmoreinfo
      * @return string
      */
-    protected static function display_tab_stats(renderer $renderer) {
+    public static function display_tab_stats(renderer $renderer, bool $showmoreinfo = true) {
+        // TODO if necessary add strings here.
         $rv = '';
         // Expired in the last 24 hours.
-        if ($expiredsubs = usersubmanager::get_expired(DAYSECS)) {
-            $rv .= \html_writer::tag('h3', 'Expired in the last 24 hours');
-            $rv .= $renderer->show_user_subs_list($expiredsubs, true);
+        if (($expiredsubs = usersubmanager::get_expired(DAYSECS)) || $showmoreinfo) {
+            $rv .= \html_writer::tag('h3', 'Subscriptions expired in the last 24 hours');
+            $rv .= $renderer->show_user_subs_list($expiredsubs, true, $showmoreinfo);
         }
         // Expired in the last week.
-        if ($expiredsubs = usersubmanager::get_expired(7 * DAYSECS)) {
-            $rv .= \html_writer::tag('h3', 'Expired in the last week');
-            $rv .= $renderer->show_user_subs_list($expiredsubs, true);
+        if (($expiredsubs = usersubmanager::get_expired(7 * DAYSECS)) || $showmoreinfo) {
+            $rv .= \html_writer::tag('h3', 'Subscriptions expired in the last 7 days');
+            $rv .= $renderer->show_user_subs_list($expiredsubs, true, $showmoreinfo);
         }
         // No call home.
-        if ($usersites = usersitemanager::get_user_sites_without_logs(3 * DAYSECS)) {
-            $rv .= \html_writer::tag('h3', 'Sites that did not call home for 3 days');
-            $rv .= $renderer->show_user_sites_list($usersites, true);
+        if (($usersites = usersitemanager::get_user_sites_without_logs(3 * DAYSECS)) || $showmoreinfo) {
+            $rv .= \html_writer::tag('h3', 'Sites without any requests in the last 3 days');
+            $rv .= $renderer->show_user_sites_list($usersites, true, $showmoreinfo);
+        }
+        // Not ok requests.
+        if (($countrequests = log_manager::count_not_ok_records(DAYSECS)) || $showmoreinfo) {
+            $requests = log_manager::get_not_ok_records(DAYSECS);
+            $rv .= \html_writer::tag('h3', 'Requests in the last 24 hours that have errors in the statuses');
+            $rv .= $renderer->show_requests($requests);
+            $url = self::get_tab_url('requests', ['statusmask' => log_manager::get_not_ok_statuses_mask()]);
+            if ($countrequests > 10) {
+                $rv .= \html_writer::div(\html_writer::link($url, "Found {$countrequests}, showing only first 10, see more here"));
+            } else if ($countrequests) {
+                $rv .= \html_writer::div(\html_writer::link($url, "More details"));
+            }
         }
         return $rv;
     }

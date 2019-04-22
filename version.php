@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_ltsauthplugin';
-$plugin->version = 2019011907;
-$plugin->requires = 2010112400;  // Requires this Moodle version.
-$plugin->release = '1.0.0 (Build: 2019011900)';
+$plugin->version = 2019042200;
+$plugin->requires = 2018120300;  // Requires this Moodle version.
+$plugin->release = '1.0.0 (Build: 2019042200)';
 $plugin->maturity = MATURITY_STABLE;
